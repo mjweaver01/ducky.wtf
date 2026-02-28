@@ -30,9 +30,9 @@ npm run dev:cli -- config add-authtoken <TOKEN>
 npm run dev:cli -- http 3000
 ```
 
-### AWS Production
+### Production (AWS)
 
-See **[AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md)** for complete production deployment.
+See **[AWS_DEPLOYMENT.md](/docs/AWS_DEPLOYMENT.md)** for complete deployment guide to `ducky.wtf`.
 
 ```bash
 # Quick deploy
@@ -50,17 +50,17 @@ terraform apply
 
 ```bash
 # Configure
-ngrok-clone config add-authtoken <TOKEN>
-ngrok-clone config add-server-url wss://tunnel.yourdomain.com:4000
+ducky config add-authtoken <TOKEN>
+ducky config add-server-url wss://ducky.wtf:4000
 
 # Tunnel local port
-ngrok-clone http 3000
+ducky http 3000
 
 # Tunnel to specific address
-ngrok-clone http 192.168.1.2:8080
+ducky http 192.168.1.2:8080
 
 # Request specific URL
-ngrok-clone http 3000 --url https://myapp.tunnel.yourdomain.com
+ducky http 3000 --url https://myapp.ducky.wtf
 ```
 
 ## Architecture
@@ -90,11 +90,11 @@ Public (HTTPS) → ALB → ECS → Server → WebSocket Tunnel → CLI → Local
 # Core
 PORT=3000
 TUNNEL_PORT=4000
-TUNNEL_DOMAIN=tunnel.example.com
+TUNNEL_DOMAIN=ducky.wtf
 
 # Authentication (choose one)
 VALID_TOKENS=token1,token2           # Simple (dev/testing)
-AWS_SECRET_NAME=ngrok-clone/tokens   # Production (recommended)
+AWS_SECRET_NAME=ducky/tokens         # Production (recommended)
 
 # Security Limits
 MAX_TUNNELS_PER_TOKEN=5
@@ -137,7 +137,7 @@ Complete infrastructure with:
 - CloudWatch (logs + metrics)
 - Multi-AZ deployment
 
-See **[AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md)** for step-by-step guide.
+See **[AWS_DEPLOYMENT.md](/docs/AWS_DEPLOYMENT.md)** for step-by-step guide.
 
 **Cost**: ~$41/month (minimal setup)
 
@@ -318,8 +318,8 @@ terraform destroy -var-file=environments/staging.tfvars -auto-approve
 ```
 
 **Testing Documentation:**
-- [TESTING.md](TESTING.md) - Comprehensive testing guide (local, AWS, staging, production)
-- [AWS_LOCAL_TESTING.md](AWS_LOCAL_TESTING.md) - Detailed AWS infrastructure testing from local machine
+- [TESTING.md](/docs/TESTING.md) - Comprehensive testing guide (local, AWS, staging, production)
+- [AWS_LOCAL_TESTING.md](/docs/AWS_LOCAL_TESTING.md) - Detailed AWS infrastructure testing from local machine
 
 ## Contributing
 

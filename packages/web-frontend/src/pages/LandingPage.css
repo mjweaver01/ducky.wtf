@@ -27,7 +27,8 @@
 }
 
 .logo-icon {
-  font-size: 24px;
+  color: var(--primary);
+  flex-shrink: 0;
 }
 
 .nav-links {
@@ -43,6 +44,27 @@
 .hero-content {
   max-width: 800px;
   margin: 0 auto;
+}
+
+.hero-icon {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-duck {
+  color: var(--primary);
+  filter: drop-shadow(0 0 40px rgba(251, 191, 36, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .hero-title {
@@ -145,8 +167,15 @@
 }
 
 .feature-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  color: var(--primary);
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 12px;
 }
 
 .feature-card h3 {

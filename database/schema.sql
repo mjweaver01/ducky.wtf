@@ -116,7 +116,7 @@ CREATE TRIGGER update_custom_domains_updated_at BEFORE UPDATE ON custom_domains
 -- Password hash for 'admin123' using bcrypt (cost 10)
 INSERT INTO users (email, password_hash, full_name, is_active)
 VALUES (
-    'admin@example.com',
+    'admin@ducky.wtf',
     '$2b$10$rKJ5qKqPKEHeHqQw8xQXM.YCKqXJGEX6XQvqQZxQXWKXPKGQXJGEH',
     'Admin User',
     true

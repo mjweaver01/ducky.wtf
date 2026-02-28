@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Activity, Key, Globe, Settings, LogOut } from 'lucide-react';
+import DuckIcon from '../components/DuckIcon';
 import { authAPI, userAPI, type User } from '../api';
 import TokensTab from '../components/TokensTab';
 import TunnelsTab from '../components/TunnelsTab';
@@ -45,26 +47,26 @@ const DashboardPage: React.FC = () => {
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
-            <span className="logo-icon">🦆</span>
+            <DuckIcon size={28} className="logo-icon" />
             <span className="logo-text">ducky</span>
           </div>
         </div>
 
         <nav className="sidebar-nav">
           <Link to="/dashboard" className="nav-item">
-            <span className="nav-icon">📊</span>
+            <Activity size={20} className="nav-icon" />
             Tunnels
           </Link>
           <Link to="/dashboard/tokens" className="nav-item">
-            <span className="nav-icon">🔑</span>
+            <Key size={20} className="nav-icon" />
             Auth Tokens
           </Link>
           <Link to="/dashboard/domains" className="nav-item">
-            <span className="nav-icon">🌐</span>
+            <Globe size={20} className="nav-icon" />
             Custom Domains
           </Link>
           <Link to="/dashboard/settings" className="nav-item">
-            <span className="nav-icon">⚙️</span>
+            <Settings size={20} className="nav-icon" />
             Settings
           </Link>
         </nav>
@@ -78,6 +80,7 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
           <button onClick={handleLogout} className="btn btn-secondary btn-sm">
+            <LogOut size={16} />
             Logout
           </button>
         </div>

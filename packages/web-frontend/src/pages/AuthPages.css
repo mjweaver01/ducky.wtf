@@ -33,7 +33,11 @@
   font-weight: 700;
   margin-bottom: 24px;
   text-decoration: none;
-  color: var(--dark);
+  color: var(--text);
+}
+
+.auth-header .logo-icon {
+  color: var(--primary);
 }
 
 .auth-header h1 {

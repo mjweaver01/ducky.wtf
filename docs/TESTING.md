@@ -194,7 +194,7 @@ terraform destroy -var-file=environments/staging.tfvars -auto-approve
 
 ### Detailed Instructions
 
-For comprehensive AWS infrastructure testing instructions, see **[AWS_LOCAL_TESTING.md](AWS_LOCAL_TESTING.md)**.
+For comprehensive AWS infrastructure testing instructions, see **[AWS_LOCAL_TESTING.md](/docs/AWS_LOCAL_TESTING.md)**.
 
 ---
 
@@ -565,4 +565,4 @@ After successful testing:
 
 - Local testing: `./test-e2e.sh`
 - AWS testing: `./test-aws-local.sh staging`
-- Full details: [AWS_LOCAL_TESTING.md](AWS_LOCAL_TESTING.md)
+- Full details: [AWS_LOCAL_TESTING.md](/docs/AWS_LOCAL_TESTING.md)

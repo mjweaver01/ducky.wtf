@@ -78,7 +78,7 @@ const DomainsTab: React.FC = () => {
                 className="input"
                 value={newDomain}
                 onChange={(e) => setNewDomain(e.target.value)}
-                placeholder="tunnel.example.com"
+                placeholder="tunnel.ducky.wtf"
                 required
               />
             </div>
@@ -111,7 +111,7 @@ const DomainsTab: React.FC = () => {
                       <div style={{ marginTop: '12px', fontSize: '14px', color: 'var(--gray)' }}>
                         <p>Add this TXT record to your DNS:</p>
                         <code style={{ display: 'block', marginTop: '8px' }}>
-                          _ngrok-challenge.{domain.domain} TXT {domain.verificationToken}
+                          _ducky-challenge.{domain.domain} TXT {domain.verificationToken}
                         </code>
                       </div>
                     )}

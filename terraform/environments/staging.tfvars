@@ -1,6 +1,6 @@
 aws_region    = "us-east-1"
-project_name  = "ngrok-clone-staging"
-tunnel_domain = "staging.tunnel.yourdomain.com"
+project_name  = "ducky-staging"
+tunnel_domain = "staging.ducky.wtf"
 
 # Use comma-separated tokens (will be stored in Secrets Manager)
 valid_tokens_list = ["staging-token-1", "staging-token-2"]

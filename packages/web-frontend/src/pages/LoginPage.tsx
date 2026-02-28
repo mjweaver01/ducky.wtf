@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import DuckIcon from '../components/DuckIcon';
 import { authAPI } from '../api';
 import './AuthPages.css';
 
@@ -32,7 +33,7 @@ const LoginPage: React.FC = () => {
         <div className="auth-card">
           <div className="auth-header">
             <Link to="/" className="logo">
-              <span className="logo-icon">🦆</span>
+              <DuckIcon size={40} className="logo-icon" />
               <span className="logo-text">ducky</span>
             </Link>
             <h1>Welcome back</h1>

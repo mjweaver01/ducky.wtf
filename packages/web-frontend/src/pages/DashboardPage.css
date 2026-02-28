@@ -46,7 +46,7 @@
 }
 
 .nav-icon {
-  font-size: 20px;
+  flex-shrink: 0;
 }
 
 .sidebar-footer {

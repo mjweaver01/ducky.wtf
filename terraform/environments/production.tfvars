@@ -1,6 +1,6 @@
 aws_region    = "us-east-1"
-project_name  = "ngrok-clone"
-tunnel_domain = "tunnel.yourdomain.com"
+project_name  = "ducky"
+tunnel_domain = "ducky.wtf"
 
 # Use comma-separated tokens (will be stored in Secrets Manager)
 valid_tokens_list = ["prod-token-1", "prod-token-2", "prod-token-3"]
