@@ -2,6 +2,8 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { TunnelManager } from './tunnel-manager';
 import { AuthService } from './auth';
 import { TunnelMessage, TunnelRegistration } from '@ngrok-clone/shared';
+import { logger } from './logger';
+import { metrics } from './metrics';
 
 export class TunnelServer {
   private wss: WebSocketServer;
@@ -19,7 +21,8 @@ export class TunnelServer {
   }
 
   private handleConnection(ws: WebSocket): void {
-    console.log('New tunnel connection attempt');
+    const clientIp = (ws as any)._socket?.remoteAddress || 'unknown';
+    logger.debug('New tunnel connection attempt', { clientIp });
 
     ws.on('message', (data: Buffer) => {
       try {
@@ -29,7 +32,12 @@ export class TunnelServer {
           this.handleRegistration(ws, message.payload as TunnelRegistration);
         }
       } catch (error) {
-        console.error('Error processing message:', error);
+        logger.error('Error processing tunnel message', { 
+          error: error instanceof Error ? error.message : String(error),
+          clientIp
+        });
+        metrics.recordError('message_parse_error');
+        
         const errorMessage: TunnelMessage = {
           type: 'error',
           payload: { message: 'Invalid message format' },
@@ -40,12 +48,18 @@ export class TunnelServer {
     });
 
     ws.on('error', (error) => {
-      console.error('WebSocket error:', error);
+      logger.error('WebSocket error', { error: error.message, clientIp });
+      metrics.recordError('websocket_error');
     });
   }
 
   private handleRegistration(ws: WebSocket, registration: TunnelRegistration): void {
     if (!this.authService.validateToken(registration.authToken)) {
+      logger.warn('Invalid authentication token attempt', {
+        backendAddress: registration.backendAddress
+      });
+      metrics.recordError('auth_failed');
+      
       const errorMessage: TunnelMessage = {
         type: 'error',
         payload: { message: 'Invalid authentication token' },
@@ -65,11 +79,36 @@ export class TunnelServer {
 
       ws.send(JSON.stringify(responseMessage));
       
+      logger.info('Tunnel registered', {
+        tunnelId: assignment.tunnelId,
+        url: assignment.assignedUrl,
+        backendAddress: registration.backendAddress
+      });
+      
+      metrics.recordTunnelRegistered(registration.authToken);
+      
       console.log(`✅ Tunnel registered: ${assignment.assignedUrl} -> ${registration.backendAddress}`);
+      
+      ws.on('close', () => {
+        logger.info('Tunnel closed', {
+          tunnelId: assignment.tunnelId,
+          url: assignment.assignedUrl
+        });
+        metrics.recordTunnelClosed(registration.authToken);
+      });
+      
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Registration failed';
+      
+      logger.error('Tunnel registration failed', {
+        error: errorMsg,
+        backendAddress: registration.backendAddress
+      });
+      metrics.recordError('registration_failed');
+      
       const errorMessage: TunnelMessage = {
         type: 'error',
-        payload: { message: error instanceof Error ? error.message : 'Registration failed' },
+        payload: { message: errorMsg },
       };
       ws.send(JSON.stringify(errorMessage));
       ws.close();
@@ -77,12 +116,14 @@ export class TunnelServer {
   }
 
   start(): void {
+    logger.info('Tunnel server started', { port: this.port });
     console.log(`🔌 Tunnel server listening on port ${this.port}`);
   }
 
   stop(): Promise<void> {
     return new Promise((resolve) => {
       this.wss.close(() => {
+        logger.info('Tunnel server stopped');
         console.log('Tunnel server stopped');
         resolve();
       });

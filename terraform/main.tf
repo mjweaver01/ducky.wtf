@@ -179,6 +179,22 @@ resource "aws_acm_certificate" "main" {
   }
 }
 
+resource "aws_secretsmanager_secret" "tokens" {
+  name        = "${var.project_name}/valid-tokens"
+  description = "Valid authentication tokens for ngrok-clone"
+
+  tags = {
+    Name = "${var.project_name}-tokens"
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "tokens" {
+  secret_id = aws_secretsmanager_secret.tokens.id
+  secret_string = jsonencode({
+    tokens = split(",", var.valid_tokens)
+  })
+}
+
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
@@ -274,12 +290,32 @@ resource "aws_ecs_task_definition" "app" {
           value = var.tunnel_domain
         },
         {
-          name  = "VALID_TOKENS"
-          value = var.valid_tokens
+          name  = "AWS_SECRET_NAME"
+          value = aws_secretsmanager_secret.tokens.name
+        },
+        {
+          name  = "AWS_REGION"
+          value = var.aws_region
         },
         {
           name  = "NODE_ENV"
           value = "production"
+        },
+        {
+          name  = "MAX_TUNNELS_PER_TOKEN"
+          value = "5"
+        },
+        {
+          name  = "MAX_CONCURRENT_REQUESTS"
+          value = "100"
+        },
+        {
+          name  = "RATE_LIMIT_MAX_REQUESTS"
+          value = "1000"
+        },
+        {
+          name  = "LOG_LEVEL"
+          value = "info"
         }
       ]
 
@@ -370,4 +406,22 @@ resource "aws_iam_role" "ecs_task_role" {
   tags = {
     Name = "${var.project_name}-ecs-task-role"
   }
+}
+
+resource "aws_iam_role_policy" "ecs_secrets_policy" {
+  name = "${var.project_name}-ecs-secrets-policy"
+  role = aws_iam_role.ecs_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = aws_secretsmanager_secret.tokens.arn
+      }
+    ]
+  })
 }
