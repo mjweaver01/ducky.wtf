@@ -29,11 +29,14 @@ OPTIONS:
 
 CONFIG COMMANDS:
   config add-authtoken <token>    Save authentication token
+  config token <token>            Same as add-authtoken (short alias)
   config add-server-url <url>     Save server URL
+  config server <url>             Same as add-server-url (short alias)
 
 EXAMPLES:
   # Save your auth token
   ducky config add-authtoken abc123xyz
+  ducky config token abc123xyz
 
   # Start a tunnel to local port 3000
   ducky http 3000
@@ -90,7 +93,7 @@ function handleConfig(parsed: any) {
     configManager.addServerUrl(parsed.token);
   } else {
     console.error(`Unknown config subcommand: ${parsed.subcommand}`);
-    console.log('Available subcommands: add-authtoken, add-server-url');
+    console.log('Available subcommands: add-authtoken, token, add-server-url, server');
     process.exit(1);
   }
 }
