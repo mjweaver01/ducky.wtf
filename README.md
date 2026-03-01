@@ -1,5 +1,7 @@
 # ducky
 
+![duck](packages/web-frontend/public/duck.svg)
+
 Production-ready tunneling system built with TypeScript. Expose local services to the internet with HTTPS.
 
 ## Features
