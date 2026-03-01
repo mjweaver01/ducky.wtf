@@ -11,9 +11,14 @@ import ContactPage from './pages/ContactPage';
 import TermsPage from './pages/TermsPage';
 import DocsPage from './pages/DocsPage';
 
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+interface ProtectedRouteProps {
+  element: React.ReactNode;
+}
+
+/** Protects authenticated routes: redirects to /login when not logged in. Use as the route element. */
+const ProtectedRoute = ({ element }: ProtectedRouteProps) => {
   const isAuthenticated = authAPI.isAuthenticated();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <>{element}</> : <Navigate to="/login" replace />;
 };
 
 const App: React.FC = () => {
@@ -39,14 +44,10 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* App */}
+        {/* App — protected routes: auth logic lives inside ProtectedRoute */}
         <Route
           path="/dashboard/*"
-          element={
-            <PrivateRoute>
-              <DashboardPage />
-            </PrivateRoute>
-          }
+          element={<ProtectedRoute element={<DashboardPage />} />}
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

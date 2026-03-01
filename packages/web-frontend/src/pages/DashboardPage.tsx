@@ -23,8 +23,16 @@ const DashboardPage: React.FC = () => {
     try {
       const userData = await userAPI.getProfile();
       setUser(userData);
-    } catch (error) {
+    } catch (error: any) {
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        authAPI.clearToken();
+        navigate('/login', { replace: true });
+        return;
+      }
       console.error('Failed to load user:', error);
+      authAPI.clearToken();
+      navigate('/login', { replace: true });
     } finally {
       setLoading(false);
     }
@@ -41,6 +49,12 @@ const DashboardPage: React.FC = () => {
         <QuackingDuck size={75} wobble autoQuack />
       </div>
     );
+  }
+
+  if (!user) {
+    authAPI.clearToken();
+    navigate('/login', { replace: true });
+    return null;
   }
 
   return (
