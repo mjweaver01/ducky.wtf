@@ -99,7 +99,7 @@ node packages/cli/dist/index.js http 3000 \
 3. Enter domain: `tunnel.example.com`
 4. Add TXT record to DNS:
    ```
-   _ngrok-challenge.tunnel.example.com TXT <verification-token>
+   _ducky-challenge.tunnel.example.com TXT <verification-token>
    ```
 5. Click "Verify"
 6. Use custom domain with CLI:
@@ -230,7 +230,7 @@ lsof -i :3000,3001,3002,5173
 docker compose -f docker-compose.dev.yml logs -f
 
 # Database
-docker exec -it ducky-postgres psql -U ngrok -d ngrok_clone
+docker exec -it ducky-postgres psql -U ducky -d ducky
 
 # Health checks
 curl http://localhost:3002/health

@@ -190,7 +190,7 @@ cp .env.example .env
 
 Key variables:
 - `DATABASE_HOST=localhost`
-- `DATABASE_PASSWORD=ngrok_password`
+- `DATABASE_PASSWORD=ducky_password`
 - `JWT_SECRET=your-secret-key`
 - `BASE_DOMAIN=localhost`
 

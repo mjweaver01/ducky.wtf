@@ -3,16 +3,16 @@ services:
     image: postgres:16-alpine
     container_name: ducky-postgres
     environment:
-      POSTGRES_DB: ngrok_clone
-      POSTGRES_USER: ngrok
-      POSTGRES_PASSWORD: ngrok_password
+      POSTGRES_DB: ducky
+      POSTGRES_USER: ducky
+      POSTGRES_PASSWORD: ducky_password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ngrok"]
+      test: ["CMD-SHELL", "pg_isready -U ducky"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,9 +31,9 @@ services:
       LOG_LEVEL: info
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      DATABASE_NAME: ngrok_clone
-      DATABASE_USER: ngrok
-      DATABASE_PASSWORD: ngrok_password
+      DATABASE_NAME: ducky
+      DATABASE_USER: ducky
+      DATABASE_PASSWORD: ducky_password
     depends_on:
       postgres:
         condition: service_healthy

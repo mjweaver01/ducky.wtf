@@ -18,9 +18,9 @@ const PORT = parseInt(process.env.WEB_PORT || '3002');
 const dbConfig = {
   host: process.env.DATABASE_HOST || 'localhost',
   port: parseInt(process.env.DATABASE_PORT || '5432'),
-  database: process.env.DATABASE_NAME || 'ngrok_clone',
-  user: process.env.DATABASE_USER || 'ngrok',
-  password: process.env.DATABASE_PASSWORD || 'ngrok_password',
+  database: process.env.DATABASE_NAME || 'ducky',
+  user: process.env.DATABASE_USER || 'ducky',
+  password: process.env.DATABASE_PASSWORD || 'ducky_password',
   ssl: process.env.DATABASE_SSL === 'true',
 };
 
