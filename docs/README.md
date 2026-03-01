@@ -16,6 +16,7 @@ All project documentation is located in this directory.
 | **docker-compose.yml** | **Tunnel server only** (no DB, no API, no UI). Env-based tokens. Handy for CI or minimal tunnel-only tests. |
 
 ### Deployment
+- **[GETTING_LIVE.md](GETTING_LIVE.md)** - Step-by-step guide to get ducky live on AWS (Terraform, DNS, migrations)
 - **[AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md)** - Complete AWS production deployment guide
 - **[AWS_LOCAL_TESTING.md](AWS_LOCAL_TESTING.md)** - Test AWS infrastructure locally
 - **[DOCKER_AWS_LOCAL.md](DOCKER_AWS_LOCAL.md)** - Run Docker like AWS locally and use the tunnel (ngrok clone)
@@ -36,7 +37,7 @@ All project documentation is located in this directory.
 
 **For Users:**
 - 🚀 [Get Started](QUICKSTART_WEB_UI.md)
-- 🌐 [Deploy to AWS](AWS_DEPLOYMENT.md)
+- 🌐 [Get ducky live (step-by-step)](GETTING_LIVE.md) | [Deploy to AWS](AWS_DEPLOYMENT.md)
 - ✅ [Testing Guide](TESTING.md)
 
 **For Developers:**
@@ -46,7 +47,7 @@ All project documentation is located in this directory.
 - 🔧 [Web UI Details](WEB_UI_COMPLETE.md)
 
 **For DevOps:**
-- ☁️ [AWS Deployment](AWS_DEPLOYMENT.md)
+- ☁️ [Get live (step-by-step)](GETTING_LIVE.md) | [AWS Deployment](AWS_DEPLOYMENT.md)
 - 🤖 [CI/CD Setup](../.github/CICD.md)
 - 📊 [Domain Setup](DOMAIN.md)
 

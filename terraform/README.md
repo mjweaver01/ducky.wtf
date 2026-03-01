@@ -2,6 +2,8 @@
 
 Production-ready Terraform for the ducky tunnel server on AWS: ECS Fargate, HTTPS by default, optional RDS for UI-granted keys, and wss via NLB.
 
+**→ [Step-by-step guide to get live](../docs/GETTING_LIVE.md)** – prerequisites, build/push image, apply, DNS, migrations, and verification.
+
 ## Architecture
 
 - **VPC** with public subnets in 2 AZs
