@@ -17,6 +17,19 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
     setMenuOpen(false);
   }, [location.pathname]);
 
+  // Scroll to hash anchor or top on every navigation
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const timer = setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+      return () => clearTimeout(timer);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [location.pathname, location.hash]);
+
   return (
     <div className="landing">
       <nav className="navbar">
