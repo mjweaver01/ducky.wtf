@@ -1,15 +1,18 @@
-# Railway configuration for ducky.wtf
-# Each service must use its Dockerfile and repo root as build context (Root directory = empty).
+# Railway — root config (fallback if a service has no custom config path).
+# Prefer per-service configs so each service gets the right Dockerfile:
 #
-# Only three services (delete @ducky/cli and @ducky/database if Railway created them):
-# @ducky/server       | Dockerfile              | tunnel server (*.ducky.wtf)
-# @ducky/web-backend  | Dockerfile.web-backend  | API (api.ducky.wtf)
-# @ducky/web-frontend | Dockerfile.web-frontend | app (ducky.wtf)
+#   Service              | Config file path (set in Railway dashboard)
+#   @ducky/server        | /railway.server.toml
+#   @ducky/web-backend   | /railway.web-backend.toml
+#   @ducky/web-frontend  | /railway.web-frontend.toml
 #
-# Required env vars per service (set in Railway dashboard):
-#   server:       DATABASE_URL (auto-injected), BASE_DOMAIN, NODE_ENV, VALID_TOKENS (if not using DB auth)
-#   web-backend: DATABASE_URL (auto-injected), JWT_SECRET, SESSION_SECRET, NODE_ENV, WEB_URL
-#   web-frontend: VITE_API_URL (build arg — set as Railway variable)
+# Each of those files sets builder, dockerfilePath, and watchPatterns = ["**"]
+# so any push triggers a deploy and the correct Dockerfile is used.
+#
+# Root directory must stay empty for all services (build context = repo root).
+# Env vars (DATABASE_URL, JWT_SECRET, VITE_API_URL, etc.) set in dashboard.
 
 [build]
 builder = "DOCKERFILE"
+# Trigger on any change when using this root config
+watchPatterns = ["**"]

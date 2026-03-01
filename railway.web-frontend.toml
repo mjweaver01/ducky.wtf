@@ -1,0 +1,7 @@
+# Service: @ducky/web-frontend (app)
+# In Railway: set "Config file path" to /railway.web-frontend.toml for this service.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.web-frontend"
+watchPatterns = ["**"]

@@ -1,0 +1,7 @@
+# Service: @ducky/web-backend (API)
+# In Railway: set "Config file path" to /railway.web-backend.toml for this service.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.web-backend"
+watchPatterns = ["**"]

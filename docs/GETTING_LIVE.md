@@ -58,8 +58,8 @@ For each service below, click **+ New** → **GitHub Repo** (or **Empty Service*
 
 | Setting | Value |
 |---|---|
-| Dockerfile path | `Dockerfile` |
-| Root directory | empty (repo root) |
+| Config file path | `/railway.server.toml` |
+| Root directory | empty |
 
 **Environment variables** (set in Railway dashboard → service → Variables):
 
@@ -75,7 +75,7 @@ PORT=3000
 
 | Setting | Value |
 |---|---|
-| Dockerfile path | `Dockerfile.web-backend` |
+| Config file path | `/railway.web-backend.toml` |
 | Root directory | empty |
 
 **Environment variables**:
@@ -94,7 +94,7 @@ Link `DATABASE_URL` from the Postgres plugin (same as above).
 
 | Setting | Value |
 |---|---|
-| Dockerfile path | `Dockerfile.web-frontend` |
+| Config file path | `/railway.web-frontend.toml` |
 | Root directory | empty |
 
 **Environment variables** (used as Docker build args):
@@ -194,6 +194,7 @@ ducky http 3000
 3. **Workflow now uses `--ci`** — The deploy job runs `railway up --ci` so it waits for the Railway build to finish. If the build fails on Railway, the workflow will fail in GitHub and you’ll see the build logs in the Actions run. If it still passes but no deploy appears, check the same service in the Railway dashboard (Deployments tab) for failed or cancelled builds.
 4. **“Cannot find module '@ducky/shared'” or “No workspaces found”** — The Dockerfiles use an explicit build order (and the frontend builds standalone). If you still see these errors, clear Railway’s build cache: in each service → **Settings** → **Build** (or **Deploy**) → **Clear build cache** (or redeploy with cache disabled), then redeploy.
 5. **"No change detected" / Railway skips build** — Each Dockerfile has a `BUILD_REV` build arg. In Railway, add a variable **BUILD_REV** (e.g. set to the git commit SHA or any new value) and redeploy so the build runs. You can also use **Redeploy** with **Clear build cache**, or set **NO_CACHE=1** as an env var, to force a full rebuild.
+6. **"No changes to watched files"** — Railway only deploys when changed files match **Watch Paths**. In each service go to **Settings** → **Build** → **Watch Paths**. Either leave it **empty** (so any push triggers a deploy) or add patterns from repo root, e.g. `Dockerfile*`, `package.json`, `packages/**`.
 
 ---
 

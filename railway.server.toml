@@ -1,0 +1,8 @@
+# Service: @ducky/server (tunnel server)
+# In Railway: set "Config file path" to /railway.server.toml for this service.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+# Trigger deploy on any repo change (avoids "No changes to watched files")
+watchPatterns = ["**"]
