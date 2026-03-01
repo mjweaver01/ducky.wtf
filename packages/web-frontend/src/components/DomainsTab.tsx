@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Globe, Plus, Copy, Check, RefreshCw, Trash2, CheckCircle, Clock } from 'lucide-react';
 import { domainsAPI, type CustomDomain } from '../api';
-import DuckIcon from './DuckIcon';
+import QuackingDuck from './QuackingDuckIcon';
 
 const DomainsTab: React.FC = () => {
   const [domains, setDomains] = useState<CustomDomain[]>([]);
@@ -80,7 +80,7 @@ const DomainsTab: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  if (loading) return <div className="loading"><DuckIcon size={56} className="duck-loader" /></div>;
+  if (loading) return <div className="loading"><QuackingDuck size={100} wobble autoQuack /></div>;
 
   return (
     <div>

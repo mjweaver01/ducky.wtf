@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { Routes, Route, NavLink, useNavigate, Link } from 'react-router-dom';
 import { Activity, Key, Globe, Settings, LogOut, BookOpen } from 'lucide-react';
-import DuckIcon from '../components/DuckIcon';
-import { Link } from 'react-router-dom';
 import { authAPI, userAPI, type User } from '../api';
+import DuckIcon from '../components/DuckIcon';
+import QuackingDuck from '../components/QuackingDuckIcon';
 import TokensTab from '../components/TokensTab';
 import TunnelsTab from '../components/TunnelsTab';
 import DomainsTab from '../components/DomainsTab';
@@ -38,7 +38,7 @@ const DashboardPage: React.FC = () => {
   if (loading) {
     return (
       <div className="loading">
-        <DuckIcon size={56} className="duck-loader" />
+        <QuackingDuck size={75} wobble autoQuack />
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Key, Copy, Check, Plus, Trash2 } from 'lucide-react';
 import { tokensAPI, type Token } from '../api';
-import DuckIcon from './DuckIcon';
+import QuackingDuck from './QuackingDuckIcon';
 
 const TokensTab: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -60,7 +60,7 @@ const TokensTab: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  if (loading) return <div className="loading"><DuckIcon size={56} className="duck-loader" /></div>;
+  if (loading) return <div className="loading"><QuackingDuck size={75} wobble autoQuack /></div>;
 
   return (
     <div>

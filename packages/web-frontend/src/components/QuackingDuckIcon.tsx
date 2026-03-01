@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import DuckIcon from './DuckIcon';
-import './QuackingDuck.css';
+import './QuackingDuckIcon.css';
 
 interface QuackingDuckProps {
   size?: number;

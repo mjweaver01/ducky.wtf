@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Wifi, BarChart3, Database, Copy, Check, Square, ExternalLink } from 'lucide-react';
 import { tunnelsAPI, type Tunnel, type TunnelStats } from '../api';
-import DuckIcon from './DuckIcon';
+import QuackingDuck from './QuackingDuckIcon';
 
 const TUNNEL_DOMAIN = 'ducky.wtf';
 
@@ -57,7 +57,7 @@ const TunnelsTab: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  if (loading) return <div className="loading"><DuckIcon size={56} className="duck-loader" /></div>;
+  if (loading) return <div className="loading"><QuackingDuck size={75} wobble autoQuack /></div>;
 
   return (
     <div>
