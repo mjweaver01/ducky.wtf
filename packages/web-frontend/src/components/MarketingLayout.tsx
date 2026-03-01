@@ -181,7 +181,7 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
               <h4>Developers</h4>
               <Link to="/docs/api">API Reference</Link>
               <Link to="/docs/cli">CLI Docs</Link>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://github.com/mjweaver01/ducky" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
           </div>
           <div className="footer-bottom">

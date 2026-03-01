@@ -470,10 +470,12 @@
 }
 
 .docs-main {
-  flex: 1;
+  flex: 0 1 860px;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 48px 64px;
   min-width: 0;
-  max-width: 860px;
 }
 
 .doc-content h1 {
