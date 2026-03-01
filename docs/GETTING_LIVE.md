@@ -180,6 +180,12 @@ ducky http 3000
 
 **Service names:** With Railway’s GitHub integration, services are named after the package names: `@ducky/server`, `@ducky/web-backend`, `@ducky/web-frontend`. The workflow uses these by default. To override (e.g. with custom names or service IDs), set Actions **Variables** `RAILWAY_SERVICE_TUNNEL_SERVER`, `RAILWAY_SERVICE_WEB_BACKEND`, `RAILWAY_SERVICE_WEB_FRONTEND`.
 
+**If GitHub is green but nothing deploys on Railway:**
+
+1. **Dockerfile per service** — In Railway, each service must use the correct Dockerfile. Open each service → **Settings** → **Build** (or **Deploy**): set **Dockerfile path** to `Dockerfile` for the tunnel server, `Dockerfile.web-backend` for the API, and `Dockerfile.web-frontend` for the frontend. **Root directory** can stay empty (repo root).
+2. **Project token environment** — The project token must be for the **environment** where those three services live (e.g. Production). Create the token in that environment’s context.
+3. **Workflow now uses `--ci`** — The deploy job runs `railway up --ci` so it waits for the Railway build to finish. If the build fails on Railway, the workflow will fail in GitHub and you’ll see the build logs in the Actions run. If it still passes but no deploy appears, check the same service in the Railway dashboard (Deployments tab) for failed or cancelled builds.
+
 ---
 
 ## Summary checklist

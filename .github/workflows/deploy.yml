@@ -51,13 +51,13 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Deploy tunnel-server
-        run: railway up --service ${{ env.SVC_TUNNEL }} --detach
+        run: railway up --service ${{ env.SVC_TUNNEL }} --ci
 
       - name: Deploy web-backend
-        run: railway up --service ${{ env.SVC_BACKEND }} --detach
+        run: railway up --service ${{ env.SVC_BACKEND }} --ci
 
       - name: Deploy web-frontend
-        run: railway up --service ${{ env.SVC_FRONTEND }} --detach
+        run: railway up --service ${{ env.SVC_FRONTEND }} --ci
 
   notify:
     name: Notify Deployment Status
