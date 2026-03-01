@@ -3,40 +3,8 @@ import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { Terminal, Code2, Zap, ArrowRight } from 'lucide-react';
 import DuckIcon from '../components/DuckIcon';
 import MarketingLayout from '../components/MarketingLayout';
+import { docsNavItems, docsTrackedIds, type DocsNavItem } from '../docsNav';
 import './MarketingPages.css';
-
-/* ─── Sidebar nav items ─── */
-const navItems = [
-  {
-    group: 'Getting Started',
-    items: [
-      { label: 'Introduction', to: '/docs' },
-    ],
-  },
-  {
-    group: 'CLI Reference',
-    items: [
-      { label: 'Overview', to: '/docs/cli' },
-      { label: 'ducky http', to: '/docs/cli#http' },
-      { label: 'Config commands', to: '/docs/cli#config-commands' },
-    ],
-  },
-  {
-    group: 'API Reference',
-    items: [
-      { label: 'Authentication', to: '/docs/api' },
-      { label: 'Tunnels', to: '/docs/api#tunnels' },
-      { label: 'Tokens', to: '/docs/api#tokens' },
-      { label: 'Domains', to: '/docs/api#domains' },
-      { label: 'User', to: '/docs/api#user' },
-    ],
-  },
-];
-
-/* IDs that appear in the nav as hash links — only these are scroll-tracked */
-const trackedIds = navItems.flatMap((g) =>
-  g.items.filter((i) => i.to.includes('#')).map((i) => i.to.split('#')[1]),
-);
 
 /* ─── Scroll-spy hook ─── */
 function useActiveSection(): string | null {
@@ -50,7 +18,7 @@ function useActiveSection(): string | null {
       /* 120 px accounts for the sticky nav (65 px) plus a comfortable buffer */
       const threshold = 120;
       let current: string | null = null;
-      for (const id of trackedIds) {
+      for (const id of docsTrackedIds) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= threshold) {
           current = id;
@@ -399,7 +367,7 @@ const DocsShell: React.FC = () => {
           <DuckIcon size={20} className="logo-icon docs-logo-icon" />
           <span style={{ fontWeight: 700 }}>Docs</span>
         </div>
-        {navItems.map((group) => (
+        {docsNavItems.map((group) => (
           <div key={group.group} className="docs-nav-group">
             <div className="docs-nav-group-label">{group.group}</div>
             {group.items.map((item) => {
@@ -414,10 +382,10 @@ const DocsShell: React.FC = () => {
               } else {
                 /* Route-level item is active when on this route and no hash
                    section belonging to this route has scrolled into view yet */
-                const routeHashIds = navItems
+                const routeHashIds = docsNavItems
                   .flatMap((g) => g.items)
-                  .filter((i) => i.to.startsWith(item.to + '#'))
-                  .map((i) => i.to.split('#')[1]);
+                  .filter((i: DocsNavItem) => i.to.startsWith(item.to + '#'))
+                  .map((i: DocsNavItem) => i.to.split('#')[1]);
                 isActive = onThisRoute && !routeHashIds.includes(activeId ?? '');
               }
 

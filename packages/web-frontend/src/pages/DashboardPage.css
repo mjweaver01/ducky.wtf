@@ -254,7 +254,7 @@
     display: block;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1002;
     background: var(--dark-card);
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
@@ -276,9 +276,12 @@
   .dashboard-overlay {
     display: block;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 198;
+    z-index: 1000;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
@@ -290,7 +293,7 @@
   }
 
   .dashboard-mobile-menu-open .dashboard-mobile-header {
-    z-index: 201;
+    z-index: 1002;
   }
 
   .dashboard {
@@ -300,13 +303,12 @@
 
   .sidebar {
     position: fixed;
-    top: 0;
+    top: 56px;
     left: 0;
     bottom: 0;
     width: 280px;
     max-width: 85vw;
-    height: 100vh;
-    z-index: 200;
+    z-index: 1001;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
