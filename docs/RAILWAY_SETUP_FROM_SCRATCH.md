@@ -71,6 +71,8 @@ For **each** of the three services you kept, open it and set the following.
 - **Settings** → **Build**
   - **Dockerfile path:** `Dockerfile.web-frontend`
   - **Root directory:** leave **empty**
+  - **Build Command** and **Install Command:** leave **empty**
+- **Settings** → **Deploy** (or **Start**): set **Start Command** to **`npm start`** (otherwise Railway may run `npm start -w @ducky/web-frontend` and you get "No workspaces found" at container start)
 - **Variables**
   - Add: `VITE_API_URL` = your API URL (e.g. `https://api.ducky.wtf`)
 
@@ -94,6 +96,12 @@ Add the CNAMEs Railway shows at your DNS provider.
 
 - **Redeploy** each of the three services (or push a commit). The config files use `watchPatterns = ["**"]` so any push triggers a build.
 - For **GitHub Actions** deploys (`railway up`), set **RAILWAY_TOKEN** in the repo’s Actions secrets and ensure the workflow uses the same service names Railway shows (`@ducky/server`, `@ducky/web-backend`, `@ducky/web-frontend`).
+
+---
+
+## If you see "No workspaces found" for web-frontend
+
+That error at **container start** means Railway’s **Start Command** is something like `npm start -w @ducky/web-frontend` (monorepo style). Fix: open the web-frontend service → **Settings** → **Deploy** (or **Start**) and set **Start Command** to **`npm start`**. The frontend package has a `start` script that runs `serve -s dist -l 3000`, so the app will start correctly. Also clear any **Build Command** / **Install Command** under **Build** so the Dockerfile is the only build.
 
 ---
 
