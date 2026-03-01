@@ -54,8 +54,8 @@ For **each** of the three services you kept, open it and set the following.
   - **Dockerfile path:** `Dockerfile` (the file in the repo root)
   - **Root directory:** leave **empty**
 - **Variables**
-  - Add: `BASE_DOMAIN` = your domain (e.g. `ducky.wtf`), `NODE_ENV` = `production`, `PORT` = `3000`
-  - **+ Add Reference** → **PostgreSQL** → **DATABASE_URL**
+  - Add: `TUNNEL_DOMAIN` = your domain (e.g. `ducky.wtf`), `NODE_ENV` = `production`, `PORT` = `3000`
+  - **+ Add Reference** → **PostgreSQL** → **DATABASE_URL** (so the server can use DB auth)
 
 ### `@ducky/web-backend` (API)
 
@@ -117,3 +117,28 @@ That error at **container start** means Railway’s **Start Command** is somethi
 | 6 | Redeploy or push to trigger builds |
 
 All three app services use **Root directory** = empty so the build context is the repo root.
+
+---
+
+## Env vars checklist (connect everything)
+
+Set these in each service’s **Variables** (and use **+ Add Reference** for Postgres). Replace `ducky.wtf` and `api.ducky.wtf` with your real domain and API domain.
+
+| Variable | Where | Example / notes |
+|----------|--------|------------------|
+| **@ducky/server** | | |
+| `TUNNEL_DOMAIN` | Variable | `ducky.wtf` (domain for tunnels, e.g. `abc123.ducky.wtf`) |
+| `PORT` | Variable | `3000` |
+| `NODE_ENV` | Variable | `production` |
+| `DATABASE_URL` | **Reference** → PostgreSQL | (from Postgres plugin) |
+| **@ducky/web-backend** | | |
+| `WEB_PORT` | Variable | `3002` |
+| `NODE_ENV` | Variable | `production` |
+| `WEB_URL` | Variable | `https://ducky.wtf` (frontend URL for CORS) |
+| `JWT_SECRET` | Variable | Long random string (e.g. `openssl rand -hex 32`) |
+| `SESSION_SECRET` | Variable | Long random string (e.g. `openssl rand -hex 32`) |
+| `DATABASE_URL` | **Reference** → PostgreSQL | (from Postgres plugin) |
+| **@ducky/web-frontend** | | |
+| `VITE_API_URL` | Variable | `https://api.ducky.wtf` (backend API URL; used at **build time**—redeploy frontend after changing) |
+
+**Order:** Create/link `DATABASE_URL` first (reference from Postgres). Then set the rest so server and web-backend talk to Postgres, and frontend points at the API. After changing any variable, redeploy that service (and for `VITE_API_URL`, the frontend must be **rebuilt**).
