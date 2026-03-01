@@ -162,7 +162,7 @@ $ ducky http 3000
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2026 ducky. Built with TypeScript & AWS.</p>
+            <p>© {new Date().getFullYear()} ducky.</p>
           </div>
         </div>
       </footer>
