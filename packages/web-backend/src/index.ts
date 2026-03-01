@@ -35,8 +35,17 @@ try {
 // Middleware
 app.use(helmet());
 app.use(compression());
+const allowedOrigins = process.env.WEB_URL
+  ? process.env.WEB_URL.split(',').map((s) => s.trim())
+  : ['http://localhost:5173', 'http://localhost:3003'];
 app.use(cors({
-  origin: process.env.WEB_URL || 'http://localhost:5173',
+  origin(origin, cb) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
