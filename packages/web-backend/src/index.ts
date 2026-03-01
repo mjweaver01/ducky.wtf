@@ -36,7 +36,7 @@ try {
 app.use(helmet());
 app.use(compression());
 app.use(cors({
-  origin: process.env.WEB_URL || 'http://localhost:3003',
+  origin: process.env.WEB_URL || 'http://localhost:5173',
   credentials: true,
 }));
 app.use(express.json());
