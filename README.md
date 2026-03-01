@@ -2,19 +2,18 @@
 
 # ducky
 
-
-Production-ready tunneling system built with TypeScript. Expose local services to the internet with HTTPS.
+Expose local services to the internet with HTTPS.
 
 ## Features
 
-- 🔒 HTTPS with automatic certificates (AWS ACM)
-- 🚀 HTTP tunneling to local services
-- 🔐 Token authentication with AWS Secrets Manager
-- ⚡ WebSocket persistent tunnels
-- 🛡️ Rate limiting and DoS protection
-- 📊 Structured logging and metrics
-- ☁️ AWS deployment with Terraform
-- 🔧 Minimal dependencies (only `ws`)
+- HTTPS with automatic certificates (Railway)
+- HTTP tunneling to local services
+- Token authentication via database or environment variable
+- WebSocket persistent tunnels (single-port, no separate WebSocket port)
+- Rate limiting and DoS protection
+- Structured logging and metrics
+- Railway deployment (3 services + managed Postgres)
+- Minimal dependencies (only `ws`)
 
 ## Quick Start
 
@@ -23,66 +22,65 @@ Production-ready tunneling system built with TypeScript. Expose local services t
 ```bash
 npm install && npm run build
 
-# Start server (generates token)
-npm run dev:server
-
-# Configure CLI (new terminal)
-npm run dev:cli -- config add-authtoken <TOKEN>
-
-# Start tunnel (use port 3001 when using npm run dev; default 4000 for standalone server)
-npm run dev:cli -- http 3000 --server-url ws://localhost:3001
+# Start everything (Postgres in Docker + all services)
+npm run dev
 ```
 
-### Production (AWS)
+Access:
+- **Web UI**: http://localhost:5173
+- **API**: http://localhost:3002
+- **Tunnel metrics**: http://localhost:3000/metrics
 
-See **[AWS_DEPLOYMENT.md](/docs/AWS_DEPLOYMENT.md)** for complete deployment guide to `ducky.wtf`.
+### Start a Tunnel
 
 ```bash
-# Quick deploy
-docker build -t ducky .
-docker push <ecr-repo>/ducky:latest
+# 1. Log in at http://localhost:5173, create an auth token in the dashboard
+# 2. Configure the CLI
+ducky config add-authtoken YOUR_TOKEN
 
-cd terraform
-terraform apply
-
-# Configure DNS and wait for ACM validation
-# Done! HTTPS URLs automatically assigned
+# 3. Expose a local port
+ducky http 3000
 ```
 
 ## CLI Usage
 
 ```bash
 # Configure
-ducky config add-authtoken <TOKEN>
-ducky config add-server-url wss://ducky.wtf:4000
+ducky config add-authtoken YOUR_TOKEN
+ducky config add-server-url wss://tunnel.ducky.wtf/_tunnel
 
 # Tunnel local port
 ducky http 3000
 
-# Tunnel to specific address
+# Tunnel a specific address
 ducky http 192.168.1.2:8080
 
-# Request specific URL
+# Request a specific subdomain URL
 ducky http 3000 --url https://myapp.ducky.wtf
 ```
 
 ## Architecture
 
 ```
-Public (HTTPS) → ALB → ECS → Server → WebSocket Tunnel → CLI → Local Service
+Public (HTTPS) → Railway tunnel-server → WebSocket /_tunnel → CLI → Local Service
                           ↓
-                   Secrets Manager (tokens)
+                    PostgreSQL (Railway)
 ```
 
-**Server** (ECS Fargate):
-- HTTP/HTTPS forwarding via ALB
-- WebSocket tunnel management
-- Token validation from Secrets Manager
+**tunnel-server** (Railway, port 3000):
+- HTTP proxy — routes by `Host` header to the right tunnel
+- WebSocket registration — CLI connects via `wss://tunnel.ducky.wtf/_tunnel`
+- Token validation from PostgreSQL or `VALID_TOKENS` env var
 - Rate limiting and metrics
 
-**CLI** (Local):
-- Authenticates with server
-- Opens persistent tunnel
+**web-backend** (Railway, port 3002):
+- REST API for the dashboard (auth, tokens, tunnels, domains, users)
+
+**web-frontend** (Railway, port 3000):
+- React SPA served via `serve -s`
+
+**CLI** (local):
+- Opens persistent WebSocket to `/_tunnel`
 - Proxies requests to local service
 
 ## Configuration
@@ -92,12 +90,11 @@ Public (HTTPS) → ALB → ECS → Server → WebSocket Tunnel → CLI → Local
 ```bash
 # Core
 PORT=3000
-TUNNEL_PORT=4000
 TUNNEL_DOMAIN=ducky.wtf
 
 # Authentication (choose one)
-VALID_TOKENS=token1,token2           # Simple (dev/testing)
-AWS_SECRET_NAME=ducky/tokens         # Production (recommended)
+DATABASE_URL=postgresql://...     # Railway Postgres (recommended)
+VALID_TOKENS=token1,token2        # Simple (dev/testing)
 
 # Security Limits
 MAX_TUNNELS_PER_TOKEN=5
@@ -107,6 +104,17 @@ RATE_LIMIT_MAX_REQUESTS=1000
 # Logging
 LOG_LEVEL=info
 LOG_FILE=/var/log/ducky/server.log
+```
+
+### Web Backend Environment Variables
+
+```bash
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-secret-key
+SESSION_SECRET=your-session-secret
+WEB_URL=https://ducky.wtf          # CORS allowed origin
+WEB_PORT=3002
+NODE_ENV=production
 ```
 
 ### Security Features
@@ -121,132 +129,60 @@ All limits configurable via environment variables.
 
 ## Deployment
 
-### Docker
+### Docker (local)
 
 ```bash
+# Tunnel server only
 docker build -t ducky .
-docker run -p 3000:3000 -p 4000:4000 \
+docker run -p 3000:3000 \
   -e TUNNEL_DOMAIN=localhost \
   -e VALID_TOKENS=token1,token2 \
   ducky
+
+# Full dev stack
+docker compose -f docker-compose.dev.yml up -d
+npm run dev:web-backend
+npm run dev:web-frontend
 ```
 
-### AWS (Recommended)
+### Railway (production)
 
-Complete infrastructure with:
-- ECS Fargate + ALB
-- ACM certificates (auto-renewal)
-- Secrets Manager (token rotation)
-- CloudWatch (logs + metrics)
-- Multi-AZ deployment
+See **[GETTING_LIVE.md](/docs/GETTING_LIVE.md)** for the complete step-by-step guide.
 
-See **[AWS_DEPLOYMENT.md](/docs/AWS_DEPLOYMENT.md)** for step-by-step guide.
+Three Railway services + managed Postgres:
 
-**Cost**: ~$41/month (minimal setup)
+| Service | Dockerfile | Domain |
+|---|---|---|
+| `tunnel-server` | `Dockerfile` | `*.ducky.wtf` |
+| `web-backend` | `Dockerfile.web-backend` | `api.ducky.wtf` |
+| `web-frontend` | `Dockerfile.web-frontend` | `ducky.wtf` |
 
-## Observability
-
-### Structured Logging
-
-JSON logs with metadata:
-```json
-{
-  "timestamp": "2026-02-28T20:00:00.000Z",
-  "level": "info",
-  "message": "Tunnel registered",
-  "metadata": {
-    "tunnelId": "abc123",
-    "url": "https://xyz.tunnel.example.com"
-  }
-}
-```
-
-### Metrics (Auto-logged every 5 min)
-
-```
-📊 Metrics Summary
-Tunnels:      Active: 5, Total: 12
-Requests:     Total: 1543, Succeeded: 1520, Failed: 23
-Performance:  Avg: 45ms, P95: 120ms, P99: 250ms
-Errors:       Total: 23
-```
-
-## Monitoring
-
-```bash
-# Tail logs (AWS)
-aws logs tail /ecs/ducky --follow
-
-# View metrics
-aws logs tail /ecs/ducky --follow | grep "Metrics Summary"
-
-# Check health
-curl https://tunnel.yourdomain.com  # Returns 404 (expected)
-```
-
-## Scaling
-
-**Vertical** (increase task size):
-```hcl
-task_cpu    = "512"   # 0.5 vCPU
-task_memory = "1024"  # 1 GB
-```
-
-**Horizontal** (more tasks):
-```hcl
-desired_count = 3
-```
-
-**Auto-scaling** (CPU-based):
-```hcl
-target_value = 70.0  # Scale when CPU > 70%
-```
-
-## Security
-
-### Token Management
-
-**Development**:
-```bash
-VALID_TOKENS=token1,token2
-```
-
-**Production** (AWS Secrets Manager):
-```bash
-# Tokens stored encrypted
-# Auto-refresh every 5 minutes
-# Rotate without redeployment
-aws secretsmanager update-secret \
-  --secret-id ducky/valid-tokens \
-  --secret-string '{"tokens":["new-token"]}'
-```
-
-### Best Practices
-
-- ✅ Use HTTPS in production (ALB handles TLS)
-- ✅ Rotate tokens regularly
-- ✅ Monitor CloudWatch metrics
-- ✅ Set up budget alerts
-- ✅ Configure auto-scaling
-- ✅ Use Secrets Manager for tokens
-- ✅ Enable CloudWatch Logs
+**Cost**: ~$20–30/month (Railway Hobby + usage + Pro plan for wildcard domain)
 
 ## Project Structure
 
 ```
 ducky/
 ├── packages/
-│   ├── shared/     # TypeScript types
-│   ├── server/     # Tunnel server
-│   │   ├── auth.ts           # Token validation + Secrets Manager
+│   ├── shared/          # TypeScript types
+│   ├── database/        # PostgreSQL client + repositories
+│   ├── server/          # Tunnel server (HTTP proxy + WebSocket)
+│   │   ├── auth.ts          # Token validation (DB or env var)
 │   │   ├── tunnel-manager.ts # Tunnel registry + rate limiting
-│   │   ├── http-server.ts    # HTTP forwarding + request limits
-│   │   ├── logger.ts         # Structured logging
-│   │   └── metrics.ts        # Metrics collection
-│   └── cli/        # CLI agent
-├── terraform/      # AWS infrastructure
-├── Dockerfile      # Server container
-└── docker-compose.yml
+│   │   ├── http-server.ts   # HTTP forwarding + WebSocket upgrade
+│   │   ├── tunnel-server.ts # WebSocket CLI registration
+│   │   ├── logger.ts        # Structured logging
+│   │   └── metrics.ts       # Metrics collection
+│   ├── web-backend/     # Express REST API
+│   ├── web-frontend/    # React + Vite SPA
+│   └── cli/             # CLI agent
+├── Dockerfile               # tunnel-server image
+├── Dockerfile.web-backend   # web-backend image
+├── Dockerfile.web-frontend  # web-frontend image (serve -s)
+├── railway.toml             # Railway service config
+├── docker-compose.yml       # Tunnel server only (CI / minimal)
+├── docker-compose.dev.yml   # Development (Postgres + server in Docker)
+└── database/schema.sql      # PostgreSQL schema
 ```
 
 ## Limits
@@ -259,74 +195,76 @@ ducky/
 | Concurrent requests | 100 | `MAX_CONCURRENT_REQUESTS` |
 | Request timeout | 30s | `REQUEST_TIMEOUT` |
 
-## Dependencies
+## Observability
 
-**Runtime**: `ws` (WebSocket)  
-**Build**: TypeScript, tsx  
-**Infrastructure**: Docker, Terraform, AWS SDK
+### Structured Logging
 
-## Cost Estimate
+```json
+{
+  "timestamp": "2026-03-01T10:00:00.000Z",
+  "level": "info",
+  "message": "Tunnel registered",
+  "metadata": { "tunnelId": "abc123", "url": "https://abc123.ducky.wtf" }
+}
+```
 
-**Minimal AWS setup**: ~$41/month
-- ALB: $16
-- ECS Fargate (1 task): $11
-- CloudWatch Logs: $5
-- Secrets Manager: $0.40
-- Data transfer (100GB): $9
+### Metrics (auto-logged every 5 min)
 
-Use Fargate Spot for 70% savings.
+```
+Metrics Summary
+Tunnels:      Active: 5, Total: 12
+Requests:     Total: 1543, Succeeded: 1520, Failed: 23
+Performance:  Avg: 45ms, P95: 120ms, P99: 250ms
+```
+
+Metrics also available live at `/metrics` on the tunnel server.
+
+## Monitoring (Railway)
+
+```bash
+# Railway CLI — stream logs
+railway logs --service tunnel-server
+railway logs --service web-backend
+
+# Or check in the Railway dashboard under each service → Logs
+```
 
 ## Troubleshooting
 
 **CLI can't connect**:
 ```bash
-# Check WebSocket port
-wscat -c wss://tunnel.yourdomain.com:4000
+# Verify the server URL includes the /_tunnel path
+ducky config add-server-url wss://tunnel.ducky.wtf/_tunnel
 ```
 
-**Certificate issues**:
+**Tunnel not found for host**:
 ```bash
-# Check ACM status
-aws acm describe-certificate --certificate-arn <arn>
+# Check active tunnels
+curl https://tunnel.ducky.wtf/metrics
 ```
 
-**High latency**:
+**Database connection fails**:
 ```bash
-# Check metrics
-aws logs tail /ecs/ducky | grep "Performance"
+# Locally — check Postgres is running
+docker compose -f docker-compose.dev.yml ps
+
+# Production — check DATABASE_URL is set in Railway dashboard
 ```
 
 ## Testing
 
-### Local Development Testing
-
 ```bash
-# Automated E2E test (local Docker Compose)
+# Automated local E2E (uses Docker Compose)
 ./test-e2e.sh
 
-# Or manual testing
-npm run dev:server  # Terminal 1
-npm run dev:cli     # Terminal 2
+# Manual
+npm run dev:server   # Terminal 1
+npm run dev:cli      # Terminal 2
 ```
-
-### AWS Infrastructure Testing
-
-```bash
-# Test complete AWS deployment from local machine
-./test-aws-local.sh staging
-
-# Cleanup when done
-cd terraform
-terraform destroy -var-file=environments/staging.tfvars -auto-approve
-```
-
-**Testing Documentation:**
-- [TESTING.md](/docs/TESTING.md) - Comprehensive testing guide (local, AWS, staging, production)
-- [AWS_LOCAL_TESTING.md](/docs/AWS_LOCAL_TESTING.md) - Detailed AWS infrastructure testing from local machine
 
 ## Contributing
 
-This is a production implementation. For issues or improvements, open a PR.
+Open a PR — tests run automatically on push.
 
 ## License
 

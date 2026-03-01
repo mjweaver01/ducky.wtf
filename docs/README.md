@@ -1,55 +1,47 @@
-# 🦆 ducky Documentation
+# ducky Documentation
 
 All project documentation is located in this directory.
 
-## 📚 Documentation Index
+## Documentation Index
 
 ### Getting Started
-- **[QUICKSTART_WEB_UI.md](QUICKSTART_WEB_UI.md)** - Quick start guide for the web UI
-- **[DEV_COMMANDS.md](DEV_COMMANDS.md)** - Developer commands and workflows
+- **[QUICKSTART_WEB_UI.md](QUICKSTART_WEB_UI.md)** — Quick start guide for local development with the full web UI
+- **[DEV_COMMANDS.md](DEV_COMMANDS.md)** — Developer commands and workflows
 
 ### Docker Compose (when to use which)
+
 | File | Use when |
 |------|----------|
-| **docker-compose.aws-local.yml** | Run the **full stack** like production (Postgres + tunnel server + API + Web UI). One command: `npm run env:aws-local`. See [DOCKER_AWS_LOCAL.md](DOCKER_AWS_LOCAL.md). |
-| **docker-compose.dev.yml** | **Development**: Postgres + tunnel server in Docker; run API and frontend **locally** (`npm run dev:web-backend`, `npm run dev:web-frontend`) for hot reload. |
-| **docker-compose.yml** | **Tunnel server only** (no DB, no API, no UI). Env-based tokens. Handy for CI or minimal tunnel-only tests. |
+| **docker-compose.dev.yml** | **Development** — Postgres + tunnel server in Docker; run API and frontend locally (`npm run dev:web-backend`, `npm run dev:web-frontend`) for hot reload. |
+| **docker-compose.yml** | **Tunnel server only** — no DB, no API, no UI. Env-based tokens. Handy for CI or minimal tunnel-only tests. |
 
 ### Deployment
-- **[GETTING_LIVE.md](GETTING_LIVE.md)** - Step-by-step guide to get ducky live on AWS (Terraform, DNS, migrations)
-- **[AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md)** - Complete AWS production deployment guide
-- **[AWS_LOCAL_TESTING.md](AWS_LOCAL_TESTING.md)** - Test AWS infrastructure locally
-- **[DOCKER_AWS_LOCAL.md](DOCKER_AWS_LOCAL.md)** - Run Docker like AWS locally and use the tunnel (ngrok clone)
-- **[DOMAIN.md](DOMAIN.md)** - Domain configuration for ducky.wtf
+- **[GETTING_LIVE.md](GETTING_LIVE.md)** — Step-by-step guide to deploy ducky to Railway (DNS, schema, env vars)
+- **[DOMAIN.md](DOMAIN.md)** — DNS and domain configuration for ducky.wtf
 
 ### Testing
-- **[TESTING.md](TESTING.md)** - Comprehensive testing guide (local, AWS, staging, production)
-
-### Implementation Details
-- **[WEB_UI_COMPLETE.md](WEB_UI_COMPLETE.md)** - Complete web UI implementation details
+- **[TESTING.md](TESTING.md)** — Local and CI testing guide
 
 ### CI/CD
-- **[../.github/CICD.md](../.github/CICD.md)** - GitHub Actions CI/CD setup
+- **[../.github/CICD.md](../.github/CICD.md)** — GitHub Actions CI/CD setup with Railway
 
 ---
 
 ## Quick Links
 
 **For Users:**
-- 🚀 [Get Started](QUICKSTART_WEB_UI.md)
-- 🌐 [Get ducky live (step-by-step)](GETTING_LIVE.md) | [Deploy to AWS](AWS_DEPLOYMENT.md)
-- ✅ [Testing Guide](TESTING.md)
+- [Get Started](QUICKSTART_WEB_UI.md)
+- [Get ducky live (step-by-step)](GETTING_LIVE.md)
+- [Testing Guide](TESTING.md)
 
 **For Developers:**
-- 💻 [Dev Commands](DEV_COMMANDS.md)
-- 🐳 [Docker like AWS locally](DOCKER_AWS_LOCAL.md) — run & use tunnel
-- 🧪 [Local AWS Testing](AWS_LOCAL_TESTING.md)
-- 🔧 [Web UI Details](WEB_UI_COMPLETE.md)
+- [Dev Commands](DEV_COMMANDS.md)
+- [Testing Guide](TESTING.md)
 
 **For DevOps:**
-- ☁️ [Get live (step-by-step)](GETTING_LIVE.md) | [AWS Deployment](AWS_DEPLOYMENT.md)
-- 🤖 [CI/CD Setup](../.github/CICD.md)
-- 📊 [Domain Setup](DOMAIN.md)
+- [Get live on Railway](GETTING_LIVE.md)
+- [CI/CD Setup](../.github/CICD.md)
+- [Domain Setup](DOMAIN.md)
 
 ---
 

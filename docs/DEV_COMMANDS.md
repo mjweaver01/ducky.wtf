@@ -1,4 +1,4 @@
-# 🦆 ducky - Quick Commands
+# ducky - Quick Commands
 
 ## Local Development
 
@@ -8,7 +8,7 @@ npm run dev
 ```
 This starts:
 - PostgreSQL (Docker)
-- Tunnel Server (ports 3000, 3001)
+- Tunnel Server (port 3000)
 - Web Backend API (port 3002)
 - Web Frontend (port 5173)
 
@@ -45,37 +45,6 @@ npm run clean
 
 ---
 
-## Cloud Mode (AWS Test)
-
-Test the full AWS infrastructure from your local machine.
-
-### Test Staging Environment
-```bash
-npm run cloud
-```
-
-### Test Production Environment
-```bash
-npm run cloud:production
-```
-
-This will:
-1. ✅ Build application
-2. ✅ Build and push Docker image to ECR
-3. ✅ Deploy full AWS infrastructure (ECS, ALB, RDS, etc.)
-4. ✅ Run smoke tests
-5. ✅ Test complete tunnel flow
-
-**Cost**: ~$0.05/hour for staging, remember to destroy when done!
-
-### Cleanup After Cloud Test
-```bash
-cd terraform
-terraform destroy -var-file=environments/staging.tfvars -auto-approve
-```
-
----
-
 ## Individual Services
 
 ### Build
@@ -88,10 +57,10 @@ npm run build:web          # Build web backend + frontend
 
 ### Run Individual Services
 ```bash
-npm run dev:server         # Tunnel server
+npm run dev:server         # Tunnel server (port 3000)
 npm run dev:cli            # CLI (for development)
-npm run dev:web-backend    # Web API
-npm run dev:web-frontend   # React frontend
+npm run dev:web-backend    # Web API (port 3002)
+npm run dev:web-frontend   # React frontend (port 5173)
 ```
 
 ---
@@ -101,11 +70,6 @@ npm run dev:web-frontend   # React frontend
 ### Local E2E Test
 ```bash
 npm run test:e2e
-```
-
-### AWS Infrastructure Test
-```bash
-npm run test:aws
 ```
 
 ---
@@ -130,9 +94,12 @@ npm run dev
 
 ### 4. Start Tunnel (New Terminal)
 ```bash
-node packages/cli/dist/index.js http 3000 \
-  --token YOUR_TOKEN \
-  --server localhost
+# Using the installed CLI
+ducky config add-authtoken YOUR_TOKEN
+ducky http 3000
+
+# Or run directly from the build output
+node packages/cli/dist/index.js http 3000 --authtoken YOUR_TOKEN
 ```
 
 ### 5. Monitor in Dashboard
@@ -152,7 +119,7 @@ docker compose -f docker-compose.dev.yml up -d
 ### Port already in use
 ```bash
 # Find and kill process
-lsof -ti:3000,3001,3002,5173 | xargs kill -9
+lsof -ti:3000,3002,5173 | xargs kill -9
 
 # Or use stop command
 npm run stop
@@ -160,7 +127,7 @@ npm run stop
 
 ### Services won't stop
 ```bash
-# Kill all node processes (⚠️ careful!)
+# Kill all node processes (careful!)
 pkill -9 node
 
 # Or manually
@@ -220,7 +187,6 @@ packages/
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start everything (recommended) |
-| `npm run cloud` | Test AWS infrastructure |
 | `npm run build` | Build all packages |
 | `npm run test:e2e` | Run local E2E tests |
 | `npm run logs` | View all logs |
@@ -229,6 +195,6 @@ packages/
 
 ---
 
-**Status**: Ready to develop! 🦆
+**Status**: Ready to develop!
 
 Run `npm run dev` to get started.

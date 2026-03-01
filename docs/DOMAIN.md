@@ -1,93 +1,80 @@
-# 🦆 ducky.wtf - Production Domain Configuration
+# ducky.wtf - Domain Configuration
 
 ## Domain Setup
 
 Your production domain is: **ducky.wtf**
 
-### DNS Configuration
+All DNS records point to Railway services. Railway handles TLS automatically via Let's Encrypt.
 
-1. **Main Domain** (`ducky.wtf`):
-   - Points to: ALB (Application Load Balancer)
-   - Handles: Main website, API, tunnel server
+## DNS Configuration
 
-2. **Wildcard** (`*.ducky.wtf`):
-   - Points to: Same ALB
-   - Handles: All tunnel subdomains (e.g., `abc123.ducky.wtf`)
+| Name | Type | Points to |
+|---|---|---|
+| `ducky.wtf` | CNAME / ALIAS | Railway `web-frontend` service domain |
+| `*.ducky.wtf` | CNAME | Railway `tunnel-server` service domain |
+| `api.ducky.wtf` | CNAME | Railway `web-backend` service domain |
 
-3. **Staging** (`staging.ducky.wtf`):
-   - Points to: Staging ALB
-   - For testing before production
+> The wildcard `*.ducky.wtf` record covers all tunnel subdomains (e.g. `abc123.ducky.wtf`) as well as `tunnel.ducky.wtf` (the CLI WebSocket endpoint).
 
-## Terraform Configuration
+## Railway Custom Domain Setup
 
-Already configured in:
-- `terraform/environments/production.tfvars` → `ducky.wtf`
-- `terraform/environments/staging.tfvars` → `staging.ducky.wtf`
+In the Railway dashboard for each service:
 
-## SSL Certificates
+1. Go to the service → **Settings** → **Networking** → **Custom Domain**
+2. Enter the domain name
+3. Railway shows the CNAME target (e.g. `tunnel-server.railway.app`)
+4. Copy the CNAME value and create the record at your DNS provider
 
-AWS Certificate Manager (ACM) will automatically provision:
-- `ducky.wtf`
-- `*.ducky.wtf`
+### Example DNS Records (Cloudflare)
 
-Validation via DNS (CNAME records added by Terraform).
+```
+ducky.wtf         CNAME   abc123-web-frontend.railway.app   (proxied)
+*.ducky.wtf       CNAME   abc123-tunnel-server.railway.app  (DNS only — orange cloud OFF)
+api.ducky.wtf     CNAME   abc123-web-backend.railway.app    (proxied)
+```
+
+> **Important**: The `*.ducky.wtf` wildcard record should be set to **DNS only** (not proxied) if using Cloudflare, because Railway terminates TLS for that domain. Proxying it through Cloudflare would cause certificate conflicts.
+
+## TLS / HTTPS
+
+Railway automatically provisions Let's Encrypt certificates for all custom domains, including the wildcard. No manual certificate management needed.
+
+Certificates are renewed automatically before expiry.
 
 ## Example URLs
 
-### Production:
+### Production
 - **Web UI**: https://ducky.wtf
-- **API**: https://ducky.wtf/api
-- **WebSocket**: wss://ducky.wtf:3001
+- **API**: https://api.ducky.wtf/api
+- **CLI WebSocket**: wss://tunnel.ducky.wtf/_tunnel
 - **Tunnels**: https://[random].ducky.wtf
+- **Metrics**: https://tunnel.ducky.wtf/metrics (tunnel server, no auth)
 
-### Staging:
-- **Web UI**: https://staging.ducky.wtf
-- **Tunnels**: https://[random].staging.ducky.wtf
-
-## Route 53 Setup
+## CLI Configuration
 
 ```bash
-# Get your hosted zone ID
-aws route53 list-hosted-zones --query 'HostedZones[?Name==`ducky.wtf.`].Id' --output text
+# Save production server URL
+ducky config add-server-url wss://tunnel.ducky.wtf/_tunnel
 
-# After terraform apply, it will create:
-# - A record: ducky.wtf → ALB
-# - A record: *.ducky.wtf → ALB
-# - CNAME records for ACM validation
+# Start a tunnel
+ducky http 3000
+# Tunnel established: https://abc123.ducky.wtf -> localhost:3000
 ```
 
-## Usage Examples
+## Railway Pro Plan Requirement
 
-### CLI:
-```bash
-# Production
-ducky http 3000 --token YOUR_TOKEN --server ducky.wtf
+Wildcard custom domains (`*.ducky.wtf`) require the **Railway Pro plan** ($20/month). Without it:
+- `ducky.wtf`, `api.ducky.wtf`, and `tunnel.ducky.wtf` can be added on the Hobby plan
+- Individual tunnel subdomains (e.g. `abc123.ducky.wtf`) will **not route** until the wildcard is added
 
-# Staging
-ducky http 3000 --token YOUR_TOKEN --server staging.ducky.wtf
-```
-
-### Web UI:
-```bash
-# Production
-open https://ducky.wtf
-
-# Staging
-open https://staging.ducky.wtf
-```
+If you want to test before upgrading to Pro, you can use Railway's auto-generated service domains (e.g. `*.up.railway.app`) in the meantime.
 
 ## Nameservers
 
-Make sure `ducky.wtf` is pointed to Route 53 nameservers at your domain registrar.
+Make sure `ducky.wtf` is pointed to your DNS provider's nameservers at your domain registrar.
 
-Get nameservers:
-```bash
-aws route53 get-hosted-zone --id /hostedzone/YOUR_ZONE_ID \
-  --query 'DelegationSet.NameServers' --output table
-```
-
-Then update at your registrar (e.g., Namecheap, GoDaddy, etc.).
+If using Cloudflare, get the nameservers from the Cloudflare dashboard and set them at your registrar (e.g. Namecheap, GoDaddy).
 
 ---
 
-**Status**: Domain configured for production deployment! 🦆
+**Status**: Domain configured for Railway deployment

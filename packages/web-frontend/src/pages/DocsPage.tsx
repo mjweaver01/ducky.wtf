@@ -135,7 +135,7 @@ Flags:
   --authtoken <token>   Auth token (overrides saved config)
   --url       <url>     Request a specific tunnel URL
   --config    <path>    Path to a custom config file
-  --server-url <url>    Tunnel server WebSocket URL`}</code></pre>
+  --server-url <url>    Tunnel server WebSocket URL (default: ws://localhost:3000/_tunnel)`}</code></pre>
     </div>
     <div className="doc-codeblock">
       <div className="doc-codeblock-header">Examples</div>
@@ -159,14 +159,17 @@ ducky http 3000 --url https://myapp.ducky.wtf`}</code></pre>
     </p>
     <div className="doc-codeblock">
       <div className="doc-codeblock-header">Usage</div>
-      <pre><code>{`ducky config add-authtoken <token>     Save your auth token
-ducky config add-server-url <url>      Save a custom server URL`}</code></pre>
+      <pre><code>{`ducky config add-authtoken <token>          Save your auth token
+ducky config add-server-url <url>           Save a custom server URL
+
+# Production server URL
+ducky config add-server-url wss://tunnel.ducky.wtf/_tunnel`}</code></pre>
     </div>
     <div className="doc-codeblock">
       <div className="doc-codeblock-header">~/.ducky/config.json (example)</div>
       <pre><code>{`{
   "authToken": "YOUR_TOKEN",
-  "serverUrl": "wss://tunnel.ducky.wtf"
+  "serverUrl": "wss://tunnel.ducky.wtf/_tunnel"
 }`}</code></pre>
     </div>
   </div>

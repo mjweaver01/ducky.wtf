@@ -1,204 +1,180 @@
-# Step-by-step: Get ducky live on AWS
+# Step-by-step: Get ducky live on Railway
 
-This guide walks through deploying the tunnel server to AWS so it’s live with HTTPS and (optional) UI-granted keys.
-
----
-
-## Step 1: Prerequisites
-
-- **AWS account** and CLI configured (`aws sts get-caller-identity` works).
-- **Terraform** ≥ 1.0 (`terraform version`).
-- **Domain** you control for tunnel URLs (e.g. `ducky.wtf`). You’ll add DNS records in a later step.
-- **Docker** (to build and push the image).
+This guide walks through deploying the full ducky stack to Railway so it's live with HTTPS and database-backed authentication.
 
 ---
 
-## Step 2: Create an ECR repository (if you don’t have one)
+## Prerequisites
 
-```bash
-aws ecr create-repository --repository-name ducky --region us-east-1
-```
-
-Note the **repository URI** (e.g. `123456789012.dkr.ecr.us-east-1.amazonaws.com/ducky`). You’ll use it as `docker_image` and to push the image.
-
----
-
-## Step 3: Build and push the Docker image
-
-From the repo root:
-
-```bash
-# Build
-docker build -t ducky:latest -f Dockerfile .
-
-# Tag for ECR (replace with your account ID and region)
-docker tag ducky:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/ducky:latest
-
-# Log in to ECR
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
-
-# Push
-docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/ducky:latest
-```
-
-Use the same URI (with `:latest` or your tag) as `docker_image` in Terraform.
+- **Railway account** at [railway.app](https://railway.app) — Hobby plan ($5/month base) is sufficient to start; wildcard custom domains require Pro plan ($20/month).
+- **Domain** you control (e.g. `ducky.wtf`). You'll add DNS records in a later step.
+- **GitHub repo** — Railway deploys from Git.
+- **Railway CLI** (optional but useful): `npm install -g @railway/cli`
 
 ---
 
-## Step 4: Configure Terraform variables
+## Step 1: Create a Railway project
 
-**Option A – Use the production tfvars file**
+1. Go to [railway.app](https://railway.app) → **New Project**.
+2. Choose **Empty project**.
+3. Name it `ducky`.
+
+---
+
+## Step 2: Add PostgreSQL
+
+Inside the project, click **+ New** → **Database** → **Add PostgreSQL**.
+
+Railway will provision a managed Postgres instance and automatically make `DATABASE_URL` available to any service you link it to.
+
+Run the schema once the database is ready:
 
 ```bash
-cd terraform
-cp environments/production.tfvars terraform.tfvars
+# Using the Railway CLI
+railway connect postgres
+# Then in the psql prompt:
+\i database/schema.sql
 ```
 
-Edit `terraform.tfvars`:
+Or use the Railway dashboard → **PostgreSQL** → **Data** → **Query** tab and paste the contents of `database/schema.sql`.
 
-- Set **`tunnel_domain`** to your domain (e.g. `ducky.wtf`).
-- Set **`docker_image`** to your full ECR image URI (e.g. `123456789012.dkr.ecr.us-east-1.amazonaws.com/ducky:latest`).
-- Set **`database_username`** (e.g. `ducky_admin`).
-- **Do not put the real DB password in the file.** Use an env var or `-var` (see below).
+---
 
-**Option B – Use your own tfvars**
+## Step 3: Create the three services
 
-```bash
-cd terraform
-cp terraform.tfvars.example terraform.tfvars
+For each service below, click **+ New** → **GitHub Repo** (or **Empty Service** if you prefer to push via CLI), then configure as shown.
+
+### 3a. tunnel-server
+
+| Setting | Value |
+|---|---|
+| Service name | `tunnel-server` |
+| Dockerfile path | `Dockerfile` |
+| Root directory | `/` (repo root) |
+
+**Environment variables** (set in Railway dashboard → service → Variables):
+
+```
+BASE_DOMAIN=ducky.wtf
+NODE_ENV=production
+PORT=3000
 ```
 
-Edit all required values: `tunnel_domain`, `docker_image`, and either `use_database_auth` + `database_username` or `valid_tokens`.
+`DATABASE_URL` is auto-injected when you link the Postgres service — click the service → **Variables** → **+ Add Reference** → select `DATABASE_URL` from the Postgres plugin.
 
-**Set the database password (when using database auth)**
+### 3b. web-backend
 
-```bash
-export TF_VAR_database_password="your-secure-password"
+| Setting | Value |
+|---|---|
+| Service name | `web-backend` |
+| Dockerfile path | `Dockerfile.web-backend` |
+| Root directory | `/` |
+
+**Environment variables**:
+
+```
+NODE_ENV=production
+WEB_PORT=3002
+JWT_SECRET=<generate a strong random secret>
+SESSION_SECRET=<generate a strong random secret>
+WEB_URL=https://ducky.wtf
 ```
 
-Or pass it on the command line (don’t commit it):
+Link `DATABASE_URL` from the Postgres plugin (same as above).
 
+### 3c. web-frontend
+
+| Setting | Value |
+|---|---|
+| Service name | `web-frontend` |
+| Dockerfile path | `Dockerfile.web-frontend` |
+| Root directory | `/` |
+
+**Environment variables** (used as Docker build args):
+
+```
+VITE_API_URL=https://api.ducky.wtf
+```
+
+> Railway passes environment variables as build args when you set them as variables on the service. The `Dockerfile.web-frontend` accepts `VITE_API_URL` as a build arg.
+
+---
+
+## Step 4: Assign custom domains
+
+In Railway, go to each service → **Settings** → **Networking** → **Custom Domain**.
+
+| Service | Domain |
+|---|---|
+| `tunnel-server` | `*.ducky.wtf` (wildcard — requires Pro plan) |
+| `web-backend` | `api.ducky.wtf` |
+| `web-frontend` | `ducky.wtf` |
+
+Railway will show the CNAME target for each domain after you add it.
+
+> **Note on the wildcard**: Railway Pro plan is required for wildcard custom domains. Without it, individual tunnel subdomains like `abc123.ducky.wtf` won't route to the tunnel server.
+
+---
+
+## Step 5: Update DNS records
+
+At your DNS provider, create the CNAME records Railway shows you:
+
+| Name | Type | Value |
+|---|---|---|
+| `*.ducky.wtf` | CNAME | Railway tunnel-server domain |
+| `api.ducky.wtf` | CNAME | Railway web-backend domain |
+| `ducky.wtf` | CNAME (or ALIAS) | Railway web-frontend domain |
+
+Railway automatically provisions TLS certificates via Let's Encrypt once DNS propagates (usually a few minutes).
+
+---
+
+## Step 6: Verify the deployment
+
+**Web UI:**
+```
+https://ducky.wtf  →  should load the React app
+```
+
+**API health:**
 ```bash
-terraform apply -var-file=terraform.tfvars -var="database_password=your-secure-password"
+curl https://api.ducky.wtf/health
+# {"status":"healthy","database":"connected",...}
+```
+
+**Tunnel server metrics:**
+```bash
+curl https://tunnel.ducky.wtf/metrics
+# {"activeTunnels":0,...}
 ```
 
 ---
 
-## Step 5: Initialize and apply Terraform
+## Step 7: Configure the CLI and start a tunnel
+
+1. Create an account at `https://ducky.wtf` and generate an auth token in the dashboard.
+2. Configure the CLI:
 
 ```bash
-cd terraform
-terraform init
-terraform plan -var-file=terraform.tfvars
-# Fix any errors, then:
-terraform apply -var-file=terraform.tfvars
-```
-
-If you’re not using a `terraform.tfvars` file:
-
-```bash
-terraform plan -var-file=environments/production.tfvars -var="docker_image=YOUR_ECR_URI" -var="database_password=YOUR_PASSWORD"
-terraform apply -var-file=environments/production.tfvars -var="docker_image=YOUR_ECR_URI" -var="database_password=YOUR_PASSWORD"
-```
-
-Type `yes` when prompted. Wait for the apply to finish (VPC, ALB, NLB, ECS, RDS if enabled, etc.).
-
----
-
-## Step 6: Create DNS records
-
-Terraform will output what you need. Run:
-
-```bash
-terraform output certificate_validation_records
-terraform output alb_dns_name
-terraform output tunnel_nlb_dns_name   # if using tunnel subdomain
-```
-
-**6a. Certificate validation (required for HTTPS)**
-
-In your DNS provider, create the **CNAME** records shown in `certificate_validation_records` (one per domain, e.g. `_xxx.ducky.wtf` and `_xxx.*.ducky.wtf`).  
-Wait until ACM shows the certificate as **Issued** (can take 5–30 minutes). You can check in the AWS Console → Certificate Manager.
-
-**6b. ALB (HTTPS traffic)**
-
-Create:
-
-- **Name:** `tunnel_domain` (e.g. `ducky.wtf`) → **Type:** CNAME → **Value:** `alb_dns_name` from output.
-- **Name:** `*.tunnel_domain` (e.g. `*.ducky.wtf`) → **Type:** CNAME → **Value:** same ALB DNS name.
-
-**6c. NLB (WebSocket / CLI)**
-
-If you use a tunnel subdomain (e.g. `tunnel_subdomain = "tunnel"`):
-
-- **Name:** `tunnel_subdomain.tunnel_domain` (e.g. `tunnel.ducky.wtf`) → **Type:** CNAME → **Value:** `tunnel_nlb_dns_name` from output.
-
----
-
-## Step 7: Run database migrations (database auth only)
-
-If you deployed with `use_database_auth = true`, run your schema once RDS is available:
-
-```bash
-terraform output -raw rds_endpoint
-# Example: ducky-db.xxxx.us-east-1.rds.amazonaws.com:5432
-```
-
-Using `psql` (or any Postgres client):
-
-```bash
-export PGHOST="ducky-db.xxxx.us-east-1.rds.amazonaws.com"
-export PGPORT=5432
-export PGDATABASE=ducky
-export PGUSER=ducky_admin   # or whatever you set as database_username
-export PGPASSWORD="your-secure-password"
-
-psql -f database/schema.sql
-```
-
-Or use your usual migration tool against that host, port, database, and user.
-
----
-
-## Step 8: Verify the deployment
-
-**8a. HTTPS and tunnel routing**
-
-After ACM is issued and DNS has propagated:
-
-- Open `https://<tunnel_domain>` (e.g. `https://ducky.wtf`). You may see “No tunnel found” or a 404 until a tunnel is active; that’s expected.
-- Optional: `https://<tunnel_domain>/metrics` should return JSON.
-
-**8b. WebSocket (CLI)**
-
-Get the tunnel endpoint:
-
-```bash
-terraform output -raw tunnel_endpoint
-# e.g. wss://tunnel.ducky.wtf
-```
-
-Configure the CLI and start a tunnel (use a token from your UI if using database auth, or a token from `valid_tokens` in legacy mode):
-
-```bash
-ducky config add-server-url wss://tunnel.ducky.wtf
 ducky config add-authtoken YOUR_TOKEN
-ducky http 3000
+ducky config add-server-url wss://tunnel.ducky.wtf/_tunnel
 ```
 
-You should see a public URL like `https://xxxx.ducky.wtf`. Visiting it should hit your local service.
+3. Start a tunnel:
+
+```bash
+ducky http 3000
+# Tunnel established: https://abc123.ducky.wtf -> localhost:3000
+```
 
 ---
 
-## Step 9: Optional – Web UI and API
+## Step 8: Set up CI/CD (optional)
 
-This Terraform stack runs the **tunnel server** only. If you use the Web UI and API (for creating tokens, etc.):
-
-- Deploy the **web backend** and **frontend** separately (e.g. same ECS cluster with another task/service, or another host).
-- Point the API at the same RDS endpoint and DB name/user/password.
-- Ensure the API’s `WEB_URL` and CORS match your frontend URL.
-
-The tunnel server reads tokens from RDS when `DATABASE_*` is set, so tokens created in the UI work with the CLI once the tunnel server is using that database.
+1. Generate a Railway token: Railway dashboard → **Account** → **Tokens** → **New Token**.
+2. Add it as `RAILWAY_TOKEN` in your GitHub repo → **Settings** → **Secrets and variables** → **Actions**.
+3. Push to `master` — `.github/workflows/deploy.yml` will automatically deploy all three services.
 
 ---
 
@@ -206,14 +182,11 @@ The tunnel server reads tokens from RDS when `DATABASE_*` is set, so tokens crea
 
 | Step | Action |
 |------|--------|
-| 1 | AWS CLI, Terraform, domain, Docker ready |
-| 2 | ECR repo created |
-| 3 | Image built and pushed to ECR |
-| 4 | `terraform.tfvars` (or env) set: domain, docker_image, database_* or valid_tokens |
-| 5 | `terraform init` and `terraform apply` |
-| 6 | DNS: ACM validation CNAMEs, ALB CNAMEs, NLB CNAME (if used) |
-| 7 | Run DB migrations against RDS endpoint (if database auth) |
-| 8 | Test HTTPS and CLI tunnel |
-| 9 | (Optional) Deploy Web UI/API and point to same RDS |
-
-For more detail on variables and architecture, see [terraform/README.md](../terraform/README.md).
+| 1 | Railway project created |
+| 2 | PostgreSQL plugin added, schema applied |
+| 3 | Three services created with correct Dockerfiles and env vars |
+| 4 | Custom domains assigned in Railway (Pro plan for wildcard) |
+| 5 | DNS CNAMEs created at your registrar |
+| 6 | Health checks pass — web UI, API, and metrics all respond |
+| 7 | CLI configured, test tunnel works end-to-end |
+| 8 | `RAILWAY_TOKEN` secret added to GitHub for auto-deploy |

@@ -1,6 +1,6 @@
 # Quick Start Guide - Web UI
 
-## 🚀 Start Everything (Local Development)
+## Start Everything (Local Development)
 
 ### 1. Start Database
 ```bash
@@ -15,25 +15,21 @@ npm run build
 
 ### 3. Start All Services
 
-**Option A: Three Terminals**
+**Option A: One command**
 ```bash
-# Terminal 1 - Tunnel Server
-npm run dev:server
-
-# Terminal 2 - Web API
-npm run dev:web-backend
-
-# Terminal 3 - Frontend
-cd packages/web-frontend
-npm install  # First time only
 npm run dev
 ```
 
-**Option B: Background Processes**
+**Option B: Three Terminals**
 ```bash
-npm run dev:server > server.log 2>&1 &
-npm run dev:web-backend > api.log 2>&1 &
-cd packages/web-frontend && npm run dev
+# Terminal 1 - Tunnel Server (port 3000)
+npm run dev:server
+
+# Terminal 2 - Web API (port 3002)
+npm run dev:web-backend
+
+# Terminal 3 - Frontend (port 5173)
+npm run dev:web-frontend
 ```
 
 ### 4. Open Browser
@@ -43,7 +39,7 @@ cd packages/web-frontend && npm run dev
 
 ---
 
-## 👤 First User
+## First User
 
 ### Default Admin (created by schema.sql):
 - **Email**: `admin@ducky.wtf`
@@ -57,7 +53,7 @@ cd packages/web-frontend && npm run dev
 
 ---
 
-## 🔑 Create Auth Token
+## Create Auth Token
 
 1. Login to dashboard
 2. Click "Auth Tokens" in sidebar
@@ -67,23 +63,25 @@ cd packages/web-frontend && npm run dev
 
 ---
 
-## 🌐 Start Tunnel
+## Start Tunnel
 
 ```bash
-# Build CLI first
+# Build CLI first (if not already built)
 npm run build:cli
 
-# Start tunnel
-node packages/cli/dist/index.js http 3000 \
-  --token YOUR_TOKEN_HERE \
-  --server localhost
+# Using installed CLI
+ducky config add-authtoken YOUR_TOKEN_HERE
+ducky http 3000
 
-# Tunnel URL shown in terminal and dashboard
+# Or run directly
+node packages/cli/dist/index.js http 3000 --authtoken YOUR_TOKEN_HERE
 ```
+
+The tunnel URL appears in both the terminal and the dashboard.
 
 ---
 
-## 📊 View in Dashboard
+## View in Dashboard
 
 1. Go to Dashboard → Tunnels
 2. See your active tunnel
@@ -92,7 +90,7 @@ node packages/cli/dist/index.js http 3000 \
 
 ---
 
-## 🌐 Add Custom Domain
+## Add Custom Domain
 
 1. Dashboard → Custom Domains
 2. Click "Add Domain"
@@ -104,14 +102,12 @@ node packages/cli/dist/index.js http 3000 \
 5. Click "Verify"
 6. Use custom domain with CLI:
    ```bash
-   node packages/cli/dist/index.js http 3000 \
-     --token YOUR_TOKEN \
-     --server custom.ducky.wtf
+   ducky http 3000 --url https://tunnel.example.com
    ```
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Database connection fails
 ```bash
@@ -128,7 +124,7 @@ docker compose -f docker-compose.dev.yml logs postgres
 ### API returns 500 errors
 ```bash
 # Check database connection in API logs
-cat api.log | grep -i "database"
+cat logs/web-backend.log | grep -i "database"
 
 # Verify environment variables
 cat .env
@@ -136,26 +132,27 @@ cat .env
 
 ### Frontend can't connect to API
 ```bash
-# Check packages/web-frontend/.env
+# Check packages/web-frontend/.env or .env
 # Should have: VITE_API_URL=http://localhost:3002
 
 # Restart frontend dev server
-cd packages/web-frontend && npm run dev
+npm run dev:web-frontend
 ```
 
 ### Tunnel doesn't appear in dashboard
 ```bash
-# Verify DATABASE_HOST is set for server
+# Verify DATABASE_HOST or DATABASE_URL is set for the server
 # Check server logs for database errors
-# Ensure you're using a token from the database (not env var token)
+cat logs/server.log | grep -i "database"
+# Ensure you're using a token from the database (created in dashboard)
 ```
 
 ---
 
-## 🧹 Clean Reset
+## Clean Reset
 
 ```bash
-# Start and remove all data
+# Remove all data and containers
 docker compose -f docker-compose.dev.yml down -v
 
 # Remove built files
@@ -166,18 +163,15 @@ npm install
 npm run build
 
 # Start fresh
-docker compose -f docker-compose.dev.yml up -d
-npm run dev:server &
-npm run dev:web-backend &
-cd packages/web-frontend && npm run dev
+npm run dev
 ```
 
 ---
 
-## 📝 Testing Checklist
+## Testing Checklist
 
 - [ ] Database starts successfully
-- [ ] Tunnel server starts (port 3000, 3001)
+- [ ] Tunnel server starts (port 3000)
 - [ ] Web backend API starts (port 3002)
 - [ ] Frontend dev server starts (port 5173)
 - [ ] Can register new user
@@ -193,38 +187,27 @@ cd packages/web-frontend && npm run dev
 
 ---
 
-## 🚢 Production Deployment
+## Production Deployment
 
 See:
-- **[AWS_DEPLOYMENT.md](/docs/AWS_DEPLOYMENT.md)** - Complete AWS guide
-- **[WEB_UI_COMPLETE.md](/docs/WEB_UI_COMPLETE.md)** - Full implementation details
-- **[TESTING.md](/docs/TESTING.md)** - E2E testing guide
+- **[GETTING_LIVE.md](GETTING_LIVE.md)** — Deploy everything to Railway
+- **[TESTING.md](TESTING.md)** — E2E testing guide
 
-Key additions needed for production:
-1. RDS PostgreSQL instance (Terraform)
-2. ECS task/service for web-backend (Terraform)
-3. ALB rules for web traffic (Terraform)
-4. S3 + CloudFront for frontend (or Nginx container)
-5. Update security groups for database access
-6. Set strong JWT_SECRET and SESSION_SECRET
-7. Enable DATABASE_SSL=true
+Key things needed for production:
+1. Railway project with PostgreSQL plugin
+2. Three services: `tunnel-server`, `web-backend`, `web-frontend`
+3. Custom domains assigned in Railway
+4. Set strong `JWT_SECRET` and `SESSION_SECRET`
+5. `DATABASE_URL` linked from Railway Postgres plugin
 
 ---
 
-## 📚 Documentation
+## Quick Commands
 
-- **API**: See `packages/web-backend/src/routes/`
-- **Database**: See `database/schema.sql`
-- **Frontend**: See `packages/web-frontend/src/`
-- **Full Guide**: See [WEB_UI_COMPLETE.md](/docs/WEB_UI_COMPLETE.md)
-
----
-
-**Quick Commands**:
 ```bash
 # Status
 docker ps
-lsof -i :3000,3001,3002,5173
+lsof -i :3000,3002,5173
 
 # Logs
 docker compose -f docker-compose.dev.yml logs -f
