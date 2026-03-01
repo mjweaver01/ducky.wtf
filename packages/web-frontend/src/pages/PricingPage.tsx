@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Check, Zap, Crown, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
-import DuckIcon from '../components/DuckIcon';
 import MarketingLayout from '../components/MarketingLayout';
 
 const PricingPage: React.FC = () => {
@@ -87,7 +86,7 @@ const PricingPage: React.FC = () => {
       <div style={{ minHeight: '100vh', background: 'var(--dark)', padding: '60px 20px' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <DuckIcon size={140} />
+            {/* <DuckIcon size={140} /> */}
             <h1 className="hero-title">Simple, transparent pricing</h1>
             <p style={{ fontSize: '20px', color: 'var(--text-muted)' }}>
               Start free, upgrade when you need static URLs
@@ -145,7 +144,9 @@ const PricingPage: React.FC = () => {
                       <Icon size={28} style={{ color: 'var(--primary)' }} />
                       <h3 style={{ fontSize: '24px', fontWeight: 600 }}>{plan.name}</h3>
                     </div>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>{plan.description}</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+                      {plan.description}
+                    </p>
                   </div>
 
                   <div style={{ marginBottom: '24px' }}>
@@ -201,7 +202,9 @@ const PricingPage: React.FC = () => {
               borderRadius: '12px',
             }}
           >
-            <h3 style={{ fontSize: '24px', marginBottom: '16px' }}>Questions? We're here to help</h3>
+            <h3 style={{ fontSize: '24px', marginBottom: '16px' }}>
+              Questions? We're here to help
+            </h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
               Contact us at support@ducky.wtf or visit our documentation
             </p>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
-import { Activity, Key, Globe, Settings, LogOut, BookOpen, Menu, X } from 'lucide-react';
+import { Activity, Key, Globe, Settings, LogOut, BookOpen, Menu, X, Crown, Zap, Building2 } from 'lucide-react';
 import { authAPI, userAPI, type User } from '../api';
 import DuckIcon from '../components/DuckIcon';
 import QuackingDuck from '../components/QuackingDuckIcon';
@@ -47,6 +47,39 @@ const DashboardPage: React.FC = () => {
   const handleLogout = () => {
     authAPI.clearToken();
     navigate('/login');
+  };
+
+  const getPlanIcon = (plan: string) => {
+    switch (plan) {
+      case 'pro':
+        return Crown;
+      case 'enterprise':
+        return Building2;
+      default:
+        return Zap;
+    }
+  };
+
+  const getPlanColor = (plan: string) => {
+    switch (plan) {
+      case 'pro':
+        return 'rgb(234, 179, 8)'; // gold
+      case 'enterprise':
+        return 'rgb(147, 51, 234)'; // purple
+      default:
+        return 'rgb(59, 130, 246)'; // blue
+    }
+  };
+
+  const getPlanDisplay = (plan: string) => {
+    switch (plan) {
+      case 'pro':
+        return 'Pro';
+      case 'enterprise':
+        return 'Enterprise';
+      default:
+        return 'Free';
+    }
   };
 
   if (loading) {
@@ -143,9 +176,25 @@ const DashboardPage: React.FC = () => {
             <div className="user-avatar">{user?.email?.[0].toUpperCase()}</div>
             <div className="user-details">
               <div className="user-name">{user?.fullName || 'User'}</div>
-              <div className="user-email">{user?.email}</div>
+              <div className="user-plan">
+                {React.createElement(getPlanIcon(user?.plan || 'free'), {
+                  size: 12,
+                  style: { color: getPlanColor(user?.plan || 'free') },
+                })}
+                <span>{getPlanDisplay(user?.plan || 'free')}</span>
+              </div>
             </div>
           </div>
+          {user?.plan === 'free' && (
+            <Link
+              to="/pricing"
+              className="btn btn-primary btn-sm"
+              style={{ width: '100%', marginBottom: '8px' }}
+            >
+              <Crown size={16} />
+              Upgrade to Pro
+            </Link>
+          )}
           <button
             onClick={handleLogout}
             className="btn btn-secondary btn-sm"

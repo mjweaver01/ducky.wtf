@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { User, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Lock, CheckCircle, AlertCircle, CreditCard, Crown, Zap, Building2 } from 'lucide-react';
 import { userAPI, type User as UserType } from '../api';
+import { Link } from 'react-router-dom';
+import api from '../api/client';
 
 interface SettingsTabProps {
   user: UserType | null;
@@ -18,6 +20,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ user, onUpdate }) => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [profileMessage, setProfileMessage] = useState<MessageState>(null);
   const [passwordMessage, setPasswordMessage] = useState<MessageState>(null);
+  const [billingLoading, setBillingLoading] = useState(false);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +56,50 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ user, onUpdate }) => {
       });
     } finally {
       setPasswordLoading(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    setBillingLoading(true);
+    try {
+      const response = await api.post<{ url: string }>('/billing/create-portal-session');
+      window.location.href = response.data.url;
+    } catch (err: any) {
+      alert('Failed to open billing portal. Please try again.');
+      setBillingLoading(false);
+    }
+  };
+
+  const getPlanIcon = (plan: string) => {
+    switch (plan) {
+      case 'pro':
+        return Crown;
+      case 'enterprise':
+        return Building2;
+      default:
+        return Zap;
+    }
+  };
+
+  const getPlanColor = (plan: string) => {
+    switch (plan) {
+      case 'pro':
+        return 'rgb(234, 179, 8)';
+      case 'enterprise':
+        return 'rgb(147, 51, 234)';
+      default:
+        return 'rgb(59, 130, 246)';
+    }
+  };
+
+  const getPlanDisplay = (plan: string) => {
+    switch (plan) {
+      case 'pro':
+        return 'Pro Plan';
+      case 'enterprise':
+        return 'Enterprise Plan';
+      default:
+        return 'Free Plan';
     }
   };
 
@@ -132,6 +179,87 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ user, onUpdate }) => {
             {profileLoading ? 'Saving…' : 'Save Changes'}
           </button>
         </form>
+      </div>
+
+      <div className="card" style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              background: 'rgba(251, 191, 36, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--primary)',
+              flexShrink: 0,
+            }}
+          >
+            <CreditCard size={20} />
+          </div>
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Subscription</h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+              Manage your plan and billing
+            </p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '16px',
+            background: 'rgba(251, 191, 36, 0.05)',
+            border: '1px solid rgba(251, 191, 36, 0.2)',
+            borderRadius: '8px',
+            marginBottom: '16px',
+          }}
+        >
+          {React.createElement(getPlanIcon(user?.plan || 'free'), {
+            size: 24,
+            style: { color: getPlanColor(user?.plan || 'free') },
+          })}
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 600, marginBottom: '2px' }}>
+              {getPlanDisplay(user?.plan || 'free')}
+            </div>
+            {user?.plan === 'free' ? (
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                Upgrade to unlock static URLs and custom domains
+              </div>
+            ) : (
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                {user?.planExpiresAt &&
+                  `Renews on ${new Date(user.planExpiresAt).toLocaleDateString()}`}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {user?.plan === 'free' ? (
+            <Link to="/pricing" className="btn btn-primary">
+              <Crown size={16} />
+              Upgrade Plan
+            </Link>
+          ) : (
+            <button
+              onClick={handleManageBilling}
+              className="btn btn-secondary"
+              disabled={billingLoading}
+            >
+              {billingLoading ? 'Loading…' : 'Manage Billing'}
+            </button>
+          )}
+          {user?.plan !== 'free' && (
+            <Link to="/pricing" className="btn btn-secondary">
+              View Plans
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="card">
