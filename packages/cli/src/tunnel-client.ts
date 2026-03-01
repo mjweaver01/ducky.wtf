@@ -6,7 +6,7 @@ import {
   TunnelAssignment, 
   HttpRequest,
   HttpResponse 
-} from '@ngrok-clone/shared';
+} from '@ducky/shared';
 
 export interface TunnelOptions {
   authToken: string;
