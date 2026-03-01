@@ -1,0 +1,27 @@
+FROM node:25-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY packages/web-frontend/package*.json ./packages/web-frontend/
+
+RUN npm install
+
+COPY packages/web-frontend/ ./packages/web-frontend/
+
+ARG VITE_API_URL=http://localhost:3002
+ENV VITE_API_URL=${VITE_API_URL}
+
+RUN npm run build -w @ducky/web-frontend
+
+FROM node:25-alpine
+
+WORKDIR /app
+
+RUN npm install -g serve
+
+COPY --from=builder /app/packages/web-frontend/dist ./dist
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]

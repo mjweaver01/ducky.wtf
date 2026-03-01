@@ -1,3 +1,4 @@
+import * as http from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { TunnelManager } from './tunnel-manager';
 import { AuthService } from './auth';
@@ -9,15 +10,22 @@ export class TunnelServer {
   private wss: WebSocketServer;
   private tunnelManager: TunnelManager;
   private authService: AuthService;
-  private port: number;
 
-  constructor(tunnelManager: TunnelManager, authService: AuthService, port: number = 4000) {
+  constructor(tunnelManager: TunnelManager, authService: AuthService, server: http.Server) {
     this.tunnelManager = tunnelManager;
     this.authService = authService;
-    this.port = port;
-    this.wss = new WebSocketServer({ port: this.port });
-
+    this.wss = new WebSocketServer({ noServer: true });
     this.wss.on('connection', this.handleConnection.bind(this));
+
+    server.on('upgrade', (req, socket, head) => {
+      if (req.url === '/_tunnel') {
+        this.wss.handleUpgrade(req, socket, head, (ws) => {
+          this.wss.emit('connection', ws, req);
+        });
+      } else {
+        socket.destroy();
+      }
+    });
   }
 
   private handleConnection(ws: WebSocket): void {
@@ -117,8 +125,8 @@ export class TunnelServer {
   }
 
   start(): void {
-    logger.info('Tunnel server started', { port: this.port });
-    console.log(`🔌 Tunnel server listening on port ${this.port}`);
+    logger.info('Tunnel WebSocket handler attached');
+    console.log('🔌 Tunnel WebSocket handler ready on /_tunnel');
   }
 
   stop(): Promise<void> {

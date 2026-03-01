@@ -9,6 +9,10 @@ export class HttpServer {
   private server: http.Server;
   private tunnelManager: TunnelManager;
   private port: number;
+
+  getServer(): http.Server {
+    return this.server;
+  }
   private readonly MAX_REQUEST_SIZE = 10 * 1024 * 1024; // 10MB
 
   constructor(tunnelManager: TunnelManager, port: number = 3000) {

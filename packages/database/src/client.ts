@@ -86,6 +86,28 @@ export class Database {
   }
 }
 
+export function getDatabaseConfigFromEnv(): DatabaseConfig {
+  if (process.env.DATABASE_URL) {
+    const url = new URL(process.env.DATABASE_URL);
+    return {
+      host: url.hostname,
+      port: parseInt(url.port) || 5432,
+      database: url.pathname.slice(1),
+      user: url.username,
+      password: decodeURIComponent(url.password),
+      ssl: process.env.DATABASE_SSL !== 'false',
+    };
+  }
+  return {
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: parseInt(process.env.DATABASE_PORT || '5432'),
+    database: process.env.DATABASE_NAME || 'ducky',
+    user: process.env.DATABASE_USER || 'ducky',
+    password: process.env.DATABASE_PASSWORD || 'ducky_password',
+    ssl: process.env.DATABASE_SSL === 'true',
+  };
+}
+
 // Singleton instance
 let dbInstance: Database | null = null;
 

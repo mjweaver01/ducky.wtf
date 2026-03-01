@@ -2,7 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import { initDatabase } from '@ducky/database';
+import { initDatabase, getDatabaseConfigFromEnv } from '@ducky/database';
 
 import authRoutes from './routes/auth';
 import tokenRoutes from './routes/tokens';
@@ -13,18 +13,8 @@ import userRoutes from './routes/user';
 const app = express();
 const PORT = parseInt(process.env.WEB_PORT || '3002');
 
-// Initialize database
-const dbConfig = {
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: parseInt(process.env.DATABASE_PORT || '5432'),
-  database: process.env.DATABASE_NAME || 'ducky',
-  user: process.env.DATABASE_USER || 'ducky',
-  password: process.env.DATABASE_PASSWORD || 'ducky_password',
-  ssl: process.env.DATABASE_SSL === 'true',
-};
-
 try {
-  initDatabase(dbConfig);
+  initDatabase(getDatabaseConfigFromEnv());
   console.log('✓ Database connected');
 } catch (error) {
   console.error('✗ Database connection failed:', error);

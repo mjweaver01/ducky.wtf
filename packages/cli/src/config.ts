@@ -63,7 +63,7 @@ export class ConfigManager {
   }
 
   getServerUrl(): string {
-    return this.config.serverUrl || 'ws://localhost:4000';
+    return this.config.serverUrl || 'ws://localhost:3000/_tunnel';
   }
 
   getConfig(): Config {

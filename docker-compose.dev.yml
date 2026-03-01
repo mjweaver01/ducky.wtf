@@ -1,6 +1,5 @@
 # Development: Postgres + tunnel server in Docker; run API and frontend locally for hot reload.
 # Use: docker compose -f docker-compose.dev.yml up -d  then  npm run dev:web-backend  and  npm run dev:web-frontend
-# For full stack in Docker (like AWS): use docker-compose.aws-local.yml (npm run env:aws-local).
 
 services:
   postgres:
@@ -26,11 +25,9 @@ services:
     container_name: ducky-server
     ports:
       - "3000:3000"
-      - "3001:3001"
     environment:
       NODE_ENV: development
       PORT: 3000
-      TUNNEL_PORT: 3001
       BASE_DOMAIN: localhost
       LOG_LEVEL: info
       DATABASE_HOST: postgres

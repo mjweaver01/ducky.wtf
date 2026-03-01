@@ -1,66 +1,29 @@
-import { TokenRepository, getDatabase } from '@ducky/database';
+import { TokenRepository } from '@ducky/database';
 import * as crypto from 'crypto';
-import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 
 export class AuthService {
   private tokenRepo: TokenRepository;
   private validTokens: Set<string>;
-  private secretsClient?: SecretsManagerClient;
-  private secretName?: string;
   private useDatabaseAuth: boolean;
 
   constructor() {
     this.validTokens = new Set();
     this.tokenRepo = new TokenRepository();
     
-    // Determine if we should use database or environment-based auth
-    this.useDatabaseAuth = !!process.env.DATABASE_HOST;
+    this.useDatabaseAuth = !!(process.env.DATABASE_HOST || process.env.DATABASE_URL);
     
     if (!this.useDatabaseAuth) {
-      // Legacy mode: use environment variables or Secrets Manager
-      if (process.env.AWS_SECRET_NAME) {
-        this.secretName = process.env.AWS_SECRET_NAME;
-        this.secretsClient = new SecretsManagerClient({ 
-          region: process.env.AWS_REGION || 'us-east-1' 
-        });
-        this.loadTokensFromSecretsManager();
-        setInterval(() => this.loadTokensFromSecretsManager(), 5 * 60 * 1000);
-      } else {
-        const tokensEnv = process.env.VALID_TOKENS || '';
-        this.validTokens = new Set(tokensEnv.split(',').filter(t => t.trim()));
-        
-        if (this.validTokens.size === 0) {
-          const defaultToken = this.generateToken();
-          this.validTokens.add(defaultToken);
-          console.log('⚠️  No VALID_TOKENS configured. Generated default token:', defaultToken);
-          console.log('   Set VALID_TOKENS environment variable or AWS_SECRET_NAME for production use.');
-        }
+      const tokensEnv = process.env.VALID_TOKENS || '';
+      this.validTokens = new Set(tokensEnv.split(',').filter(t => t.trim()));
+      
+      if (this.validTokens.size === 0) {
+        const defaultToken = this.generateToken();
+        this.validTokens.add(defaultToken);
+        console.log('⚠️  No VALID_TOKENS configured. Generated default token:', defaultToken);
+        console.log('   Set VALID_TOKENS environment variable for production use.');
       }
     } else {
       console.log('✓ Using database authentication');
-    }
-  }
-
-  private async loadTokensFromSecretsManager(): Promise<void> {
-    if (!this.secretsClient || !this.secretName) return;
-
-    try {
-      const command = new GetSecretValueCommand({
-        SecretId: this.secretName,
-      });
-
-      const response = await this.secretsClient.send(command);
-      
-      if (response.SecretString) {
-        const secret = JSON.parse(response.SecretString);
-        
-        const tokens = secret.tokens || [];
-        this.validTokens = new Set(tokens.filter((t: string) => t.trim()));
-        
-        console.log(`✓ Loaded ${this.validTokens.size} tokens from Secrets Manager`);
-      }
-    } catch (error) {
-      console.error('Failed to load tokens from Secrets Manager:', error);
     }
   }
 

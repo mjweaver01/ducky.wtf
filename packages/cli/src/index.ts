@@ -25,7 +25,7 @@ OPTIONS:
   --url <url>           Request a specific URL for the tunnel
   --config <path>       Path to config file
   --authtoken <token>   Authentication token (overrides config)
-  --server-url <url>    Tunnel server URL (default: ws://localhost:4000)
+  --server-url <url>    Tunnel server URL (default: ws://localhost:3000/_tunnel)
 
 CONFIG COMMANDS:
   config add-authtoken <token>    Save authentication token

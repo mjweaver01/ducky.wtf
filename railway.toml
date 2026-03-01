@@ -1,0 +1,16 @@
+# Railway configuration for ducky.wtf
+# Three services — each references its own Dockerfile.
+# Set env vars and custom domains per service in the Railway dashboard.
+#
+# Services:
+#   tunnel-server  -> Dockerfile              -> *.ducky.wtf  (wildcard, requires Pro plan)
+#   web-backend    -> Dockerfile.web-backend  -> api.ducky.wtf
+#   web-frontend   -> Dockerfile.web-frontend -> ducky.wtf
+#
+# Required env vars per service (set in Railway dashboard):
+#   tunnel-server:  DATABASE_URL (auto-injected), BASE_DOMAIN, NODE_ENV, VALID_TOKENS (if not using DB auth)
+#   web-backend:    DATABASE_URL (auto-injected), JWT_SECRET, SESSION_SECRET, NODE_ENV, WEB_URL
+#   web-frontend:   VITE_API_URL (build arg — set as Railway variable)
+
+[build]
+builder = "DOCKERFILE"

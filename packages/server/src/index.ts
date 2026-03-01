@@ -6,15 +6,19 @@ import { TunnelServer } from './tunnel-server';
 import { HttpServer } from './http-server';
 import { logger } from './logger';
 import { metrics } from './metrics';
+import { initDatabase, getDatabaseConfigFromEnv } from '@ducky/database';
 
 async function main() {
   const httpPort = parseInt(process.env.PORT || '3000', 10);
-  const tunnelPort = parseInt(process.env.TUNNEL_PORT || '4000', 10);
   const tunnelDomain = process.env.TUNNEL_DOMAIN || 'localhost';
+
+  if (process.env.DATABASE_HOST || process.env.DATABASE_URL) {
+    initDatabase(getDatabaseConfigFromEnv());
+    console.log('✓ Database connected');
+  }
 
   logger.info('Starting ducky server', {
     httpPort,
-    tunnelPort,
     tunnelDomain,
     nodeVersion: process.version,
     env: process.env.NODE_ENV || 'development'
@@ -22,8 +26,8 @@ async function main() {
 
   const authService = new AuthService();
   const tunnelManager = new TunnelManager(tunnelDomain, httpPort);
-  const tunnelServer = new TunnelServer(tunnelManager, authService, tunnelPort);
   const httpServer = new HttpServer(tunnelManager, httpPort);
+  const tunnelServer = new TunnelServer(tunnelManager, authService, httpServer.getServer());
 
   tunnelServer.start();
   await httpServer.start();
@@ -32,7 +36,6 @@ async function main() {
   
   logger.info('Server ready', {
     httpPort,
-    tunnelPort,
     tunnelDomain,
     validTokens: authService.getValidTokens().length,
     limits
@@ -40,9 +43,10 @@ async function main() {
 
   console.log('\n📋 Configuration:');
   console.log(`   HTTP Port: ${httpPort}`);
-  console.log(`   Tunnel Port: ${tunnelPort}`);
+  console.log(`   Tunnel Path: /_tunnel`);
   console.log(`   Base Domain: ${tunnelDomain}`);
   console.log(`   Valid Tokens: ${authService.getValidTokens().length} configured`);
+  console.log(`   Auth Mode: ${(process.env.DATABASE_HOST || process.env.DATABASE_URL) ? 'database' : 'token'}`);
   console.log('\n⚙️  Limits:');
   console.log(`   Max tunnels per token: ${limits.maxTunnelsPerToken}`);
   console.log(`   Max concurrent requests: ${limits.maxConcurrentRequests}`);
