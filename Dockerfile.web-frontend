@@ -1,6 +1,9 @@
 # Build context must be repo root. In Railway: Dockerfile path = Dockerfile.web-frontend, Root directory = empty.
-# Standalone build: no root workspaces, avoid "No workspaces found" in CI.
 FROM node:25-alpine AS builder
+
+# Set BUILD_REV in Railway variables to force a fresh build when "no change detected".
+ARG BUILD_REV=unknown
+RUN echo "Build revision: $BUILD_REV"
 
 WORKDIR /app
 

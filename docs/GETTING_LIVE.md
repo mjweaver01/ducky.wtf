@@ -193,6 +193,7 @@ ducky http 3000
 2. **Project token environment** — The project token must be for the **environment** where those three services live (e.g. Production). Create the token in that environment’s context.
 3. **Workflow now uses `--ci`** — The deploy job runs `railway up --ci` so it waits for the Railway build to finish. If the build fails on Railway, the workflow will fail in GitHub and you’ll see the build logs in the Actions run. If it still passes but no deploy appears, check the same service in the Railway dashboard (Deployments tab) for failed or cancelled builds.
 4. **“Cannot find module '@ducky/shared'” or “No workspaces found”** — The Dockerfiles use an explicit build order (and the frontend builds standalone). If you still see these errors, clear Railway’s build cache: in each service → **Settings** → **Build** (or **Deploy**) → **Clear build cache** (or redeploy with cache disabled), then redeploy.
+5. **"No change detected" / Railway skips build** — Each Dockerfile has a `BUILD_REV` build arg. In Railway, add a variable **BUILD_REV** (e.g. set to the git commit SHA or any new value) and redeploy so the build runs. You can also use **Redeploy** with **Clear build cache**, or set **NO_CACHE=1** as an env var, to force a full rebuild.
 
 ---
 
