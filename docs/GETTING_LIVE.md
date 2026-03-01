@@ -178,6 +178,8 @@ ducky http 3000
 
 **Note:** Use a **project token** from the project’s Settings → Tokens, not an account token from Account → Tokens. The CLI uses `RAILWAY_TOKEN` for deployments and expects a project-scoped token.
 
+**Service names:** With Railway’s GitHub integration, services are named after the package names: `@ducky/server`, `@ducky/web-backend`, `@ducky/web-frontend`. The workflow uses these by default. To override (e.g. with custom names or service IDs), set Actions **Variables** `RAILWAY_SERVICE_TUNNEL_SERVER`, `RAILWAY_SERVICE_WEB_BACKEND`, `RAILWAY_SERVICE_WEB_FRONTEND`.
+
 ---
 
 ## Summary checklist

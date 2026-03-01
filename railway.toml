@@ -2,7 +2,7 @@
 # Three services — each references its own Dockerfile.
 # Set env vars and custom domains per service in the Railway dashboard.
 #
-# Services:
+# Services (GitHub integration names them @ducky/server, @ducky/web-backend, @ducky/web-frontend):
 #   tunnel-server  -> Dockerfile              -> *.ducky.wtf  (wildcard, requires Pro plan)
 #   web-backend    -> Dockerfile.web-backend  -> api.ducky.wtf
 #   web-frontend   -> Dockerfile.web-frontend -> ducky.wtf
