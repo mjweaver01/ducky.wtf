@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, NavLink, useNavigate, Link } from 'react-router-dom';
-import { Activity, Key, Globe, Settings, LogOut, BookOpen } from 'lucide-react';
+import { Routes, Route, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
+import { Activity, Key, Globe, Settings, LogOut, BookOpen, Menu, X } from 'lucide-react';
 import { authAPI, userAPI, type User } from '../api';
 import DuckIcon from '../components/DuckIcon';
 import QuackingDuck from '../components/QuackingDuckIcon';
@@ -13,11 +13,17 @@ import './DashboardPage.css';
 const DashboardPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     loadUser();
   }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const loadUser = async () => {
     try {
@@ -58,7 +64,33 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard${mobileMenuOpen ? ' dashboard-mobile-menu-open' : ''}`}>
+      {/* Mobile header: logo + hamburger */}
+      <header className="dashboard-mobile-header" aria-hidden="true">
+        <div className="dashboard-mobile-header-inner">
+          <div className="logo">
+            <DuckIcon size={28} className="logo-icon" />
+            <span className="logo-text">ducky</span>
+          </div>
+          <button
+            type="button"
+            className="dashboard-hamburger"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Overlay when mobile menu is open */}
+      <div
+        className="dashboard-overlay"
+        aria-hidden="true"
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
