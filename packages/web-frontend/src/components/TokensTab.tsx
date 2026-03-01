@@ -430,7 +430,7 @@ const TokensTab: React.FC = () => {
                         <Crown
                           size={14}
                           style={{ color: 'rgb(234, 179, 8)' }}
-                          title="Upgrade to Pro for static URLs"
+                          aria-label="Upgrade to Pro for static URLs"
                         />
                       </div>
                     )}

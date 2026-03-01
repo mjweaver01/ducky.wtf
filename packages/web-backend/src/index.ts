@@ -10,6 +10,7 @@ import tokenRoutes from './routes/tokens';
 import tunnelRoutes from './routes/tunnels';
 import domainRoutes from './routes/domains';
 import userRoutes from './routes/user';
+import billingRoutes from './routes/billing';
 
 const app = express();
 const PORT = parseInt(process.env.WEB_PORT || '3002');
@@ -42,6 +43,11 @@ app.use((req, res, next) => {
 // Middleware
 app.use(helmet());
 app.use(compression());
+
+// Special handling for Stripe webhooks (needs raw body)
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+
+// Regular body parsing for everything else
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -56,6 +62,7 @@ app.use('/api/', limiter);
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', magicLinkRoutes);
+app.use('/api/billing', billingRoutes);
 app.use('/api/tokens', tokenRoutes);
 app.use('/api/tunnels', tunnelRoutes);
 app.use('/api/domains', domainRoutes);

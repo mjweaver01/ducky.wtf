@@ -1,192 +1,213 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Check, ArrowRight, Clock } from 'lucide-react';
-import MarketingLayout from '../components/MarketingLayout';
-import './MarketingPages.css';
-
-const plans = [
-  {
-    name: 'Free',
-    price: '$0',
-    period: 'forever',
-    description: 'Everything you need to get started. No credit card required.',
-    cta: 'Get Started',
-    ctaTo: '/signup',
-    available: true,
-    highlight: true,
-    features: [
-      '1 active tunnel at a time',
-      'Shared subdomains (*.ducky.wtf)',
-      '100 requests / minute',
-      '1 GB data transfer / month',
-      'HTTPS by default',
-      'Community support',
-    ],
-  },
-  {
-    name: 'Pro',
-    price: '$9',
-    period: 'per month',
-    description: 'More tunnels, custom domains, and higher limits.',
-    available: false,
-    highlight: false,
-    features: [
-      'Unlimited active tunnels',
-      'Custom domains',
-      '1,000 requests / minute',
-      '50 GB data transfer / month',
-      'Request inspector & replay',
-      'Real-time analytics dashboard',
-      'Priority email support',
-    ],
-  },
-  {
-    name: 'Business',
-    price: '$29',
-    period: 'per month',
-    description: 'Team access, audit logs, and SLA guarantees.',
-    available: false,
-    highlight: false,
-    features: [
-      'Everything in Pro',
-      'Team member access',
-      'Unlimited rate limits',
-      'Unlimited data transfer',
-      'Custom rate-limit rules',
-      'Audit logs',
-      '99.9% uptime SLA',
-      'Dedicated support channel',
-    ],
-  },
-];
-
-const faqs = [
-  {
-    q: 'Is ducky really free?',
-    a: 'Yes — the Free plan has no time limit and requires no credit card. You can run one tunnel at a time on shared ducky.wtf subdomains indefinitely.',
-  },
-  {
-    q: 'When will paid plans be available?',
-    a: "We're actively working on Pro and Business plans. Sign up for the Free plan and we'll notify you when they launch.",
-  },
-  {
-    q: 'What counts as a "request"?',
-    a: 'Every HTTP request forwarded through your tunnel counts as one request. WebSocket connections count as one request for the initial handshake.',
-  },
-  {
-    q: 'Can I get notified when paid plans launch?',
-    a: "Yes — sign up for a free account and we'll email you when Pro and Business plans become available.",
-  },
-];
+import React, { useState } from 'react';
+import { Check, Zap, Crown, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/client';
 
 const PricingPage: React.FC = () => {
-  return (
-    <MarketingLayout>
-      <section className="marketing-hero">
-        <div className="container">
-          <div className="marketing-hero-content">
-            <h1 className="marketing-hero-title">Simple, transparent pricing</h1>
-            <p className="marketing-hero-subtitle">
-              Free to start. Paid plans with more power are coming soon.
-            </p>
-          </div>
-        </div>
-      </section>
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<string | null>(null);
 
-      <section className="pricing-section">
-        <div className="container">
-          <div className="pricing-grid">
-            {plans.map((plan) => (
+  const handleCheckout = async (plan: 'pro' | 'enterprise') => {
+    setLoading(plan);
+    try {
+      const response = await api.post<{ url: string }>('/billing/create-checkout-session', { plan });
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to start checkout. Please try again.');
+      setLoading(null);
+    }
+  };
+
+  const plans = [
+    {
+      name: 'Free',
+      price: '$0',
+      period: 'forever',
+      description: 'Perfect for trying out ducky',
+      icon: Zap,
+      features: [
+        'Unlimited tunnels',
+        'HTTPS URLs',
+        'Dashboard access',
+        'Token management',
+        'Random URL each time',
+      ],
+      limitations: [
+        'No static URLs',
+      ],
+      cta: 'Get Started Free',
+      onClick: () => navigate('/signup'),
+      popular: false,
+    },
+    {
+      name: 'Pro',
+      price: '$9',
+      period: '/month',
+      description: 'For developers and small teams',
+      icon: Crown,
+      features: [
+        'Everything in Free',
+        'Static tunnel URLs',
+        'Custom subdomains',
+        'Regenerate anytime',
+        'Perfect for webhooks',
+        'Priority support',
+      ],
+      limitations: [],
+      cta: 'Start Pro Trial',
+      onClick: () => handleCheckout('pro'),
+      popular: true,
+    },
+    {
+      name: 'Enterprise',
+      price: '$49',
+      period: '/month',
+      description: 'For teams and organizations',
+      icon: Building2,
+      features: [
+        'Everything in Pro',
+        'Custom domains',
+        'Team management',
+        'SSO (coming soon)',
+        'SLA guarantee',
+        'Dedicated support',
+      ],
+      limitations: [],
+      cta: 'Start Enterprise Trial',
+      onClick: () => handleCheckout('enterprise'),
+      popular: false,
+    },
+  ];
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--dark)', padding: '60px 20px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <h1 style={{ fontSize: '48px', marginBottom: '16px', color: 'var(--text)' }}>
+            Simple, transparent pricing
+          </h1>
+          <p style={{ fontSize: '20px', color: 'var(--text-muted)' }}>
+            Start free, upgrade when you need static URLs
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '32px',
+          marginBottom: '60px'
+        }}>
+          {plans.map((plan) => {
+            const Icon = plan.icon;
+            return (
               <div
                 key={plan.name}
-                className={`pricing-card${plan.highlight ? ' pricing-card-highlight' : ''}${!plan.available ? ' pricing-card-unavailable' : ''}`}
+                className="card"
+                style={{
+                  position: 'relative',
+                  border: plan.popular ? '2px solid var(--primary)' : '1px solid var(--border)',
+                  background: plan.popular ? 'rgba(var(--primary-rgb), 0.03)' : 'var(--card-bg)',
+                }}
               >
-                {!plan.available && (
-                  <div className="pricing-badge pricing-badge-soon">
-                    <Clock size={11} />
-                    Coming Soon
+                {plan.popular && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'var(--primary)',
+                    color: 'white',
+                    padding: '4px 16px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                  }}>
+                    MOST POPULAR
                   </div>
                 )}
 
-                <div className="pricing-header">
-                  <h3 className="pricing-name">{plan.name}</h3>
-                  <div className="pricing-price">
-                    <span
-                      className={`pricing-amount${!plan.available ? ' pricing-amount-muted' : ''}`}
-                    >
-                      {plan.price}
-                    </span>
-                    <span className="pricing-period">/{plan.period}</span>
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <Icon size={28} style={{ color: 'var(--primary)' }} />
+                    <h3 style={{ fontSize: '24px', fontWeight: 600 }}>{plan.name}</h3>
                   </div>
-                  <p className="pricing-description">{plan.description}</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+                    {plan.description}
+                  </p>
                 </div>
 
-                {plan.available ? (
-                  <Link
-                    to={plan.ctaTo!}
-                    className="btn btn-primary btn-block"
-                    style={{ marginBottom: '28px' }}
-                  >
-                    {plan.cta}
-                    <ArrowRight size={16} />
-                  </Link>
-                ) : (
-                  <button
-                    disabled
-                    className="btn btn-secondary btn-block"
-                    style={{ marginBottom: '28px', opacity: 0.45, cursor: 'not-allowed' }}
-                  >
-                    Not yet available
-                  </button>
-                )}
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                    <span style={{ fontSize: '48px', fontWeight: 700, color: 'var(--text)' }}>
+                      {plan.price}
+                    </span>
+                    <span style={{ fontSize: '16px', color: 'var(--text-muted)' }}>
+                      {plan.period}
+                    </span>
+                  </div>
+                </div>
 
-                <ul className="pricing-features">
-                  {plan.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className={`pricing-feature${!plan.available ? ' pricing-feature-muted' : ''}`}
-                    >
-                      <Check
-                        size={15}
-                        className={`pricing-check${!plan.available ? ' pricing-check-muted' : ''}`}
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                <button
+                  onClick={plan.onClick}
+                  disabled={loading === plan.name.toLowerCase()}
+                  className={`btn ${plan.popular ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ width: '100%', marginBottom: '24px' }}
+                >
+                  {loading === plan.name.toLowerCase() ? 'Loading...' : plan.cta}
+                </button>
+
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {plan.features.map((feature) => (
+                      <li key={feature} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '12px',
+                        fontSize: '14px',
+                      }}>
+                        <Check size={16} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      </section>
 
-      <section className="faq-section">
-        <div className="container">
-          <h2 className="section-title">Frequently asked questions</h2>
-          <div className="faq-grid">
-            {faqs.map((faq) => (
-              <div key={faq.q} className="faq-item">
-                <h4 className="faq-question">{faq.q}</h4>
-                <p className="faq-answer">{faq.a}</p>
-              </div>
-            ))}
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          background: 'var(--card-bg)',
+          border: '1px solid var(--border)',
+          borderRadius: '12px',
+        }}>
+          <h3 style={{ fontSize: '24px', marginBottom: '16px' }}>
+            Questions? We're here to help
+          </h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
+            Contact us at support@ducky.wtf or visit our documentation
+          </p>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <button
+              onClick={() => navigate('/contact')}
+              className="btn btn-secondary"
+            >
+              Contact Sales
+            </button>
+            <button
+              onClick={() => navigate('/docs')}
+              className="btn btn-secondary"
+            >
+              View Documentation
+            </button>
           </div>
         </div>
-      </section>
-
-      <section className="cta-section">
-        <div className="container">
-          <div className="cta-content">
-            <h2>Start tunneling for free</h2>
-            <p>No credit card. No time limit. Just sign up and go.</p>
-            <Link to="/signup" className="btn btn-primary btn-large">
-              Get Started for Free
-              <ArrowRight size={20} />
-            </Link>
-          </div>
-        </div>
-      </section>
-    </MarketingLayout>
+      </div>
+    </div>
   );
 };
 

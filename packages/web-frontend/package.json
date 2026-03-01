@@ -10,12 +10,13 @@
     "start": "serve -s dist -l 3000"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^8.8.0",
     "axios": "^1.6.7",
-    "serve": "^14.2.4",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^6.22.0"
+    "react-router-dom": "^6.22.0",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

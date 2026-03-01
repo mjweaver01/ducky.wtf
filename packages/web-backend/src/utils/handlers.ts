@@ -23,13 +23,13 @@ export const asyncHandler =
  *   if (!assertOwned(record, req.user!.id, res, 'Token')) return;
  *   // record is narrowed to T (non-null) here
  */
-export function assertOwned<T extends { user_id: string }>(
+export function assertOwned<T extends { user_id?: string | null }>(
   record: T | null,
   userId: string,
   res: Response,
   label: string
 ): record is T {
-  if (!record || record.user_id !== userId) {
+  if (!record || !record.user_id || record.user_id !== userId) {
     res.status(404).json({ error: `${label} not found` });
     return false;
   }

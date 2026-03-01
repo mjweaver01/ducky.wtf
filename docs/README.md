@@ -9,6 +9,11 @@ All project documentation is located in this directory.
 - **[DEV_COMMANDS.md](DEV_COMMANDS.md)** — Developer commands and workflows
 - **[FEATURES.md](FEATURES.md)** — Complete feature list and technical details
 
+### Deployment & Configuration
+- **[STRIPE_SETUP.md](STRIPE_SETUP.md)** — Stripe payment integration setup
+- **[GETTING_LIVE.md](GETTING_LIVE.md)** — Deploy to Railway (production)
+- **[DOMAIN.md](DOMAIN.md)** — DNS and domain configuration
+
 ### Docker Compose (when to use which)
 
 | File | Use when |
