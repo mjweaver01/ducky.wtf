@@ -14,6 +14,13 @@ echo -e "${BLUE}║  🦆 ducky - Local Development Environment                 
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
+# Load root .env so all packages (server, web-backend, etc.) inherit env when run via this script
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+fi
+
 # Check if everything is built
 if [ ! -d "packages/server/dist" ] || [ ! -d "packages/cli/dist" ] || [ ! -d "packages/database/dist" ] || [ ! -d "packages/web-backend/dist" ]; then
     echo -e "${YELLOW}→ Building packages...${NC}"
@@ -22,8 +29,12 @@ if [ ! -d "packages/server/dist" ] || [ ! -d "packages/cli/dist" ] || [ ! -d "pa
     echo ""
 fi
 
-# Start PostgreSQL
+# Start PostgreSQL (start Docker Compose service if not running)
 echo -e "${YELLOW}→ Starting PostgreSQL...${NC}"
+if ! docker info >/dev/null 2>&1; then
+  echo -e "${RED}Docker is not running. Start Docker Desktop (or the Docker daemon) and run npm run dev again.${NC}"
+  exit 1
+fi
 docker compose -f docker-compose.dev.yml up -d postgres
 echo -e "${GREEN}✓ PostgreSQL started${NC}"
 
@@ -40,6 +51,14 @@ echo ""
 # Create log directory
 mkdir -p logs
 
+# Kill anything already on 3000, 3001, 3002 so our new processes bind
+for port in 3000 3001 3002; do
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -ti :$port | xargs kill -9 2>/dev/null || true
+  fi
+done
+sleep 1
+
 # Start tunnel server in background
 echo -e "${YELLOW}→ Starting tunnel server (port 3000, 3001)...${NC}"
 npm run dev:server > logs/server.log 2>&1 &
@@ -47,30 +66,43 @@ SERVER_PID=$!
 echo $SERVER_PID > logs/server.pid
 echo -e "${GREEN}✓ Tunnel server started (PID: $SERVER_PID)${NC}"
 
-# Start web backend in background
+# Start web backend in background (use Docker Postgres credentials so .env doesn't need editing)
+export DATABASE_NAME=ducky DATABASE_USER=ducky DATABASE_PASSWORD=ducky_password
 echo -e "${YELLOW}→ Starting web backend API (port 3002)...${NC}"
 npm run dev:web-backend > logs/web-backend.log 2>&1 &
 BACKEND_PID=$!
 echo $BACKEND_PID > logs/web-backend.pid
 echo -e "${GREEN}✓ Web backend started (PID: $BACKEND_PID)${NC}"
 
-# Wait a bit for servers to start
-sleep 3
-
+# Wait for web backend to be reachable (avoid "connection refused" when frontend loads)
+echo -e "${YELLOW}→ Waiting for web backend (port 3002)...${NC}"
+for i in $(seq 1 30); do
+  if curl -s -o /dev/null -w "%{http_code}" http://localhost:3002/health 2>/dev/null | grep -q 200; then
+    echo -e "${GREEN}✓ Web backend ready${NC}"
+    break
+  fi
+  if [ "$i" -eq 30 ]; then
+    echo -e "${RED}Web backend did not become ready. Check logs/web-backend.log${NC}"
+    exit 1
+  fi
+  sleep 1
+done
 echo ""
+
 echo -e "${BLUE}════════════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}✓ Backend services running!${NC}"
 echo ""
 echo -e "${YELLOW}Services:${NC}"
-echo "  • PostgreSQL:    http://localhost:5432"
-echo "  • Tunnel Server: http://localhost:3000 (WS: 3001)"
-echo "  • Web API:       http://localhost:3002"
+echo "  • PostgreSQL:     localhost:5432"
+echo "  • Tunnel Server:  http://localhost:3000 (WS: 3001)"
+echo "  • Web API:        http://localhost:3002 (backend for app)"
+echo "  • Web UI:         http://localhost:5173 (open in browser)"
 echo ""
 echo -e "${YELLOW}Logs:${NC}"
 echo "  • Server:  tail -f logs/server.log"
 echo "  • Backend: tail -f logs/web-backend.log"
 echo ""
-echo -e "${YELLOW}Health Checks:${NC}"
+echo -e "${YELLOW}Health:${NC}"
 echo "  • curl http://localhost:3000/metrics"
 echo "  • curl http://localhost:3002/health"
 echo ""

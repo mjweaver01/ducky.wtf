@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
@@ -32,22 +31,26 @@ try {
   process.exit(1);
 }
 
+const allowedOrigins = [process.env.WEB_URL || 'http://localhost:5173'];
+
+// CORS: set headers ourselves so the response origin can never be wrong
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 // Middleware
 app.use(helmet());
 app.use(compression());
-const allowedOrigins = process.env.WEB_URL
-  ? process.env.WEB_URL.split(',').map((s) => s.trim())
-  : ['http://localhost:5173', 'http://localhost:3003'];
-app.use(cors({
-  origin(origin, cb) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

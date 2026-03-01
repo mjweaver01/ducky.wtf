@@ -2,30 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Gauge, BarChart3, Globe, Wrench } from 'lucide-react';
 import DuckIcon from '../components/DuckIcon';
+import MarketingLayout from '../components/MarketingLayout';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="landing">
-      <nav className="navbar">
-        <div className="container">
-          <div className="nav-content">
-            <div className="logo">
-              <DuckIcon size={28} className="logo-icon" />
-              <span className="logo-text">ducky</span>
-            </div>
-            <div className="nav-links">
-              <Link to="/login" className="btn btn-secondary">
-                Login
-              </Link>
-              <Link to="/signup" className="btn btn-primary">
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <MarketingLayout>
       <section className="hero">
         <div className="container">
           <div className="hero-content">
@@ -131,42 +113,7 @@ $ ducky http 3000
           </div>
         </div>
       </section>
-
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
-              <div className="logo">
-                <DuckIcon size={24} className="logo-icon" />
-                <span className="logo-text">ducky</span>
-              </div>
-              <p>Secure tunnels to localhost</p>
-            </div>
-            <div className="footer-section">
-              <h4>Product</h4>
-              <a href="#features">Features</a>
-              <a href="/docs">Documentation</a>
-              <a href="/pricing">Pricing</a>
-            </div>
-            <div className="footer-section">
-              <h4>Company</h4>
-              <a href="/about">About</a>
-              <a href="/contact">Contact</a>
-              <a href="/terms">Terms</a>
-            </div>
-            <div className="footer-section">
-              <h4>Developers</h4>
-              <a href="/docs/api">API Reference</a>
-              <a href="/docs/cli">CLI Docs</a>
-              <a href="https://github.com">GitHub</a>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>© {new Date().getFullYear()} ducky.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </MarketingLayout>
   );
 };
 

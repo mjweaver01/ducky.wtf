@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { Activity, Key, Globe, Settings, LogOut } from 'lucide-react';
+import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { Activity, Key, Globe, Settings, LogOut, BookOpen } from 'lucide-react';
 import DuckIcon from '../components/DuckIcon';
+import { Link } from 'react-router-dom';
 import { authAPI, userAPI, type User } from '../api';
 import TokensTab from '../components/TokensTab';
 import TunnelsTab from '../components/TunnelsTab';
@@ -37,7 +38,7 @@ const DashboardPage: React.FC = () => {
   if (loading) {
     return (
       <div className="loading">
-        <div className="spinner"></div>
+        <DuckIcon size={56} className="duck-loader" />
       </div>
     );
   }
@@ -53,21 +54,28 @@ const DashboardPage: React.FC = () => {
         </div>
 
         <nav className="sidebar-nav">
-          <Link to="/dashboard" className="nav-item">
+          <NavLink to="/dashboard" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
             <Activity size={20} className="nav-icon" />
             Tunnels
-          </Link>
-          <Link to="/dashboard/tokens" className="nav-item">
+          </NavLink>
+          <NavLink to="/dashboard/tokens" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
             <Key size={20} className="nav-icon" />
             Auth Tokens
-          </Link>
-          <Link to="/dashboard/domains" className="nav-item">
+          </NavLink>
+          <NavLink to="/dashboard/domains" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
             <Globe size={20} className="nav-icon" />
             Custom Domains
-          </Link>
-          <Link to="/dashboard/settings" className="nav-item">
+          </NavLink>
+          <NavLink to="/dashboard/settings" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
             <Settings size={20} className="nav-icon" />
             Settings
+          </NavLink>
+
+          <div className="nav-divider" />
+
+          <Link to="/docs" className="nav-item">
+            <BookOpen size={20} className="nav-icon" />
+            Docs
           </Link>
         </nav>
 
@@ -79,7 +87,7 @@ const DashboardPage: React.FC = () => {
               <div className="user-email">{user?.email}</div>
             </div>
           </div>
-          <button onClick={handleLogout} className="btn btn-secondary btn-sm">
+          <button onClick={handleLogout} className="btn btn-secondary btn-sm" style={{ width: '100%' }}>
             <LogOut size={16} />
             Logout
           </button>
