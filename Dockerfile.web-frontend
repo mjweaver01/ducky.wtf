@@ -4,7 +4,7 @@ FROM node:25-alpine AS builder
 
 WORKDIR /app
 
-COPY packages/web-frontend/package*.json ./
+COPY packages/web-frontend/package.json ./
 RUN npm install
 
 COPY packages/web-frontend/ ./

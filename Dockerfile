@@ -3,11 +3,11 @@ FROM node:25-alpine AS builder
 
 WORKDIR /app
 
-# Copy only package.json (not lockfile) so npm only sees the 3 packages we copy; avoids "No workspaces found"
+# Root package.json only (no lockfile) — npm then only sees the 3 packages we COPY below
 COPY package.json ./
-COPY packages/shared/package*.json ./packages/shared/
-COPY packages/database/package*.json ./packages/database/
-COPY packages/server/package*.json ./packages/server/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/database/package.json ./packages/database/
+COPY packages/server/package.json ./packages/server/
 
 RUN npm install
 
@@ -26,12 +26,12 @@ FROM node:25-alpine
 WORKDIR /app
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
-COPY --from=builder /app/packages/shared/package*.json ./packages/shared/
+COPY --from=builder /app/packages/shared/package.json ./packages/shared/
 COPY --from=builder /app/packages/database/dist ./packages/database/dist
-COPY --from=builder /app/packages/database/package*.json ./packages/database/
+COPY --from=builder /app/packages/database/package.json ./packages/database/
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
-COPY --from=builder /app/packages/server/package*.json ./packages/server/
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/packages/server/package.json ./packages/server/
+COPY --from=builder /app/package.json ./
 
 RUN npm install --omit=dev
 
