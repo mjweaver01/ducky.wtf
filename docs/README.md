@@ -10,7 +10,10 @@ All project documentation is located in this directory.
 - **[FEATURES.md](FEATURES.md)** — Complete feature list and technical details
 
 ### Deployment & Configuration
-- **[STRIPE_SETUP.md](STRIPE_SETUP.md)** — Stripe payment integration setup
+- **[STRIPE_README.md](STRIPE_README.md)** — Stripe documentation index (start here)
+  - **[STRIPE_QUICK_START.md](STRIPE_QUICK_START.md)** — 5-minute setup guide
+  - **[STRIPE_SETUP_WALKTHROUGH.md](STRIPE_SETUP_WALKTHROUGH.md)** — Complete walkthrough
+  - **[STRIPE_SETUP.md](STRIPE_SETUP.md)** — Technical reference
 - **[GETTING_LIVE.md](GETTING_LIVE.md)** — Deploy to Railway (production)
 - **[DOMAIN.md](DOMAIN.md)** — DNS and domain configuration
 
@@ -38,6 +41,7 @@ All project documentation is located in this directory.
 **For Users:**
 - [Get Started](QUICKSTART.md)
 - [Features & Plans](FEATURES.md)
+- [Stripe Setup (Payments)](STRIPE_README.md)
 - [Get ducky live (step-by-step)](GETTING_LIVE.md)
 - [Testing Guide](TESTING.md)
 
@@ -47,6 +51,7 @@ All project documentation is located in this directory.
 - [Testing Guide](TESTING.md)
 
 **For DevOps:**
+- [Stripe Setup](STRIPE_README.md)
 - [Get live on Railway](GETTING_LIVE.md)
 - [CI and deploy](../.github/CICD.md)
 - [Domain Setup](DOMAIN.md)
