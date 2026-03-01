@@ -18,10 +18,10 @@ This project uses GitHub Actions for continuous deployment to Railway.
 
 ## Initial Setup
 
-### 1. Create a Railway Token
+### 1. Create a Railway project token
 
-1. Go to [railway.app](https://railway.app) → **Account Settings** → **Tokens**.
-2. Click **New Token**, name it `github-actions`, copy the value.
+1. Open your **project** in Railway (the one with tunnel-server, web-backend, web-frontend) → **Project Settings** → **Tokens**.
+2. Create a token for the environment you deploy to (e.g. production); copy the value. Use this as `RAILWAY_TOKEN` — the CLI expects a **project token** for `railway up`, not an account token from Account → Tokens.
 
 ### 2. Configure GitHub Secrets
 

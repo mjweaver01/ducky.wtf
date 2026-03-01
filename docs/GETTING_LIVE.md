@@ -172,9 +172,11 @@ ducky http 3000
 
 ## Step 8: Set up CI/CD (optional)
 
-1. Generate a Railway token: Railway dashboard → **Account** → **Tokens** → **New Token**.
+1. Generate a **project token** (required for `railway up` in CI): open your **ducky project** in Railway → **Project Settings** (gear or project menu) → **Tokens** → create a token for the environment you deploy to (e.g. production).
 2. Add it as `RAILWAY_TOKEN` in your GitHub repo → **Settings** → **Secrets and variables** → **Actions**.
 3. Push to `master` — `.github/workflows/deploy.yml` will automatically deploy all three services.
+
+**Note:** Use a **project token** from the project’s Settings → Tokens, not an account token from Account → Tokens. The CLI uses `RAILWAY_TOKEN` for deployments and expects a project-scoped token.
 
 ---
 
