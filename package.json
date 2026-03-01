@@ -26,12 +26,15 @@
     "logs:server": "tail -f logs/server.log",
     "logs:backend": "tail -f logs/web-backend.log",
     "stop": "pkill -f 'node.*@ducky' || true",
-    "clean": "rm -rf packages/*/dist logs/*.log logs/*.pid"
+    "clean": "rm -rf packages/*/dist logs/*.log logs/*.pid",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,js,json}\"",
+    "format:check": "prettier --check \"packages/**/*.{ts,tsx,js,json}\""
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "typescript": "^5.3.0",
-    "tsx": "^4.7.0"
+    "prettier": "^3.8.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
   },
   "engines": {
     "node": ">=25.0.0"

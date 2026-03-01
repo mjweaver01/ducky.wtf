@@ -1,0 +1,20 @@
+# Dependencies
+**/node_modules
+
+# Build artifacts
+**/dist
+
+# Logs
+logs/
+*.log
+
+# Lock files
+**/*.lock
+**/package-lock.json
+
+# Database
+database/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
