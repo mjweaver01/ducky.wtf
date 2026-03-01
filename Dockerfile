@@ -1,16 +1,11 @@
 FROM node:25-alpine AS builder
 WORKDIR /app
 
-COPY package.json ./
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/database/package.json ./packages/database/
-COPY packages/server/package.json ./packages/server/
-RUN npm install
+# Copy full monorepo so npm workspaces resolve (avoids "No workspaces found" when Railway context differs)
+COPY package.json package-lock.json tsconfig.json ./
+COPY packages/ ./packages/
+RUN npm ci
 
-COPY tsconfig.json ./
-COPY packages/shared/ ./packages/shared/
-COPY packages/database/ ./packages/database/
-COPY packages/server/ ./packages/server/
 RUN npm run build -w @ducky/shared && npm run build -w @ducky/database && npm run build -w @ducky/server
 
 FROM node:25-alpine

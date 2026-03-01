@@ -1,18 +1,12 @@
-# Railway — root config (fallback if a service has no custom config path).
-# Prefer per-service configs so each service gets the right Dockerfile:
+# Railway — set Dockerfile path per service in the dashboard (not this file).
 #
-#   Service              | Config file path (set in Railway dashboard)
-#   @ducky/server        | /railway.server.toml
-#   @ducky/web-backend   | /railway.web-backend.toml
-#   @ducky/web-frontend  | /railway.web-frontend.toml
+#   Service              | Dockerfile path
+#   @ducky/server        | Dockerfile
+#   @ducky/web-backend   | Dockerfile.web-backend
+#   @ducky/web-frontend  | Dockerfile.web-frontend
 #
-# Each of those files sets builder, dockerfilePath, and watchPatterns = ["**"]
-# so any push triggers a deploy and the correct Dockerfile is used.
-#
-# Root directory must stay empty for all services (build context = repo root).
-# Env vars (DATABASE_URL, JWT_SECRET, VITE_API_URL, etc.) set in dashboard.
+# Root directory = empty for all. Env vars (DATABASE_URL, JWT_SECRET, VITE_API_URL, etc.) in dashboard.
 
 [build]
 builder = "DOCKERFILE"
-# Trigger on any change when using this root config
 watchPatterns = ["**"]

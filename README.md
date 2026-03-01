@@ -167,6 +167,7 @@ All developer docs live in [`docs/`](docs/):
 |---|---|
 | [DEV_COMMANDS.md](docs/DEV_COMMANDS.md) | All `npm run` commands and dev workflows |
 | [GETTING_LIVE.md](docs/GETTING_LIVE.md) | Deploy to Railway (production) |
+| [RAILWAY_SETUP_FROM_SCRATCH.md](docs/RAILWAY_SETUP_FROM_SCRATCH.md) | Recreate the three Railway services (dashboard only) |
 | [TESTING.md](docs/TESTING.md) | Local and CI testing guide |
 | [DOMAIN.md](docs/DOMAIN.md) | DNS and domain configuration |
 | [QUICKSTART_WEB_UI.md](docs/QUICKSTART_WEB_UI.md) | Full local stack walkthrough |
