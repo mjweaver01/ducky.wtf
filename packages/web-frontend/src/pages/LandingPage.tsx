@@ -38,11 +38,14 @@ const LandingPage: React.FC = () => {
               </div>
               <pre className="code-content">
                 <code>
-                  {`$ npm install -g ducky
-$ ducky http 3000
-
-✓ Tunnel established
-  https://abc123.ducky.wtf → http://localhost:3000`}
+                  {'$ npm install -g '}
+                  <span className="code-primary">ducky</span>
+                  {'\n$ '}
+                  <span className="code-primary">ducky</span>
+                  {' http 3000\n\n'}✓ Tunnel established
+                  {'\n  https://abc123.'}
+                  <span className="code-primary">ducky.wtf</span>
+                  {' → http://localhost:3000'}
                 </code>
               </pre>
             </div>

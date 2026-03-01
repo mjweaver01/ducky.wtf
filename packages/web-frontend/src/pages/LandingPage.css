@@ -303,6 +303,10 @@
   padding: 0;
 }
 
+.code-content .code-primary {
+  color: var(--primary);
+}
+
 .features {
   padding: 80px 0;
   background: var(--dark);
