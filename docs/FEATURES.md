@@ -59,6 +59,7 @@ ducky provides secure HTTP tunneling with a modern web dashboard for managing tu
 - ✅ **Regenerate subdomain** — get a new static subdomain anytime
 - ✅ Perfect for webhooks, integrations, and sharing
 - ✅ Memorable, persistent subdomains
+- ✅ **Custom domains** (Enterprise only) — use your own domain (e.g., `tunnel.yourcompany.com`)
 
 ---
 

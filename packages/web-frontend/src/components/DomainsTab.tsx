@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Globe, Plus, Copy, Check, RefreshCw, Trash2, CheckCircle, Clock } from 'lucide-react';
-import { domainsAPI, type CustomDomain } from '../api';
+import { Globe, Plus, Copy, Check, RefreshCw, Trash2, CheckCircle, Clock, Crown } from 'lucide-react';
+import { domainsAPI, userAPI, type CustomDomain, type User } from '../api';
 import QuackingDuck from './QuackingDuckIcon';
 
 const DomainsTab: React.FC = () => {
   const [domains, setDomains] = useState<CustomDomain[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [newDomain, setNewDomain] = useState('');
@@ -13,8 +14,23 @@ const DomainsTab: React.FC = () => {
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadDomains();
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    try {
+      const [domainsData, userData] = await Promise.all([
+        domainsAPI.list(),
+        userAPI.getProfile(),
+      ]);
+      setDomains(domainsData);
+      setUser(userData);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadDomains = async () => {
     try {
@@ -22,8 +38,6 @@ const DomainsTab: React.FC = () => {
       setDomains(data);
     } catch (error) {
       console.error('Failed to load domains:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -35,8 +49,13 @@ const DomainsTab: React.FC = () => {
       setNewDomain('');
       setShowAdd(false);
       loadDomains();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to add domain:', error);
+      if (error.response?.status === 403) {
+        alert('Custom domains require Enterprise plan. Please upgrade to continue.');
+      } else {
+        alert('Failed to add domain. Please try again.');
+      }
     } finally {
       setAdding(false);
     }
@@ -94,14 +113,48 @@ const DomainsTab: React.FC = () => {
         <h1 className="page-title">Custom Domains</h1>
         <p className="page-subtitle">Use your own domain for tunnel URLs</p>
         <div className="page-actions">
-          <button onClick={() => setShowAdd(true)} className="btn btn-primary">
+          <button 
+            onClick={() => setShowAdd(true)} 
+            className="btn btn-primary"
+            disabled={user?.plan !== 'enterprise'}
+            title={user?.plan !== 'enterprise' ? 'Requires Enterprise plan' : ''}
+          >
             <Plus size={16} />
             Add Domain
           </button>
         </div>
       </div>
 
-      {showAdd && (
+      {user?.plan !== 'enterprise' && (
+        <div
+          className="card"
+          style={{
+            marginBottom: '24px',
+            borderColor: 'rgba(234, 179, 8, 0.5)',
+            background: 'rgba(234, 179, 8, 0.05)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+            <Crown size={24} style={{ color: 'rgb(234, 179, 8)', flexShrink: 0, marginTop: '2px' }} />
+            <div>
+              <h3 style={{ color: 'rgb(234, 179, 8)', marginBottom: '8px' }}>
+                Upgrade to Enterprise for Custom Domains
+              </h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                Custom domains are an Enterprise feature. Use your own branded domain (e.g., tunnel.yourcompany.com) instead of subdomains on ducky.wtf.
+              </p>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => (window.location.href = '/pricing')}
+              >
+                View Enterprise Plan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAdd && user?.plan === 'enterprise' && (
         <div className="card" style={{ marginBottom: '24px' }}>
           <h3 style={{ marginBottom: '16px' }}>Add Custom Domain</h3>
           <form onSubmit={handleAdd}>
