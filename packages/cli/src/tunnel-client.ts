@@ -15,6 +15,9 @@ export interface TunnelOptions {
   requestedUrl?: string;
 }
 
+/** Agent for backend requests so many concurrent requests don't get serialized by default connection limits */
+const BACKEND_AGENT = new http.Agent({ keepAlive: true, maxSockets: 50 });
+
 export class TunnelClient {
   private ws: WebSocket | null = null;
   private options: TunnelOptions;
@@ -115,6 +118,17 @@ export class TunnelClient {
     }, delay);
   }
 
+  private sendErrorResponse(requestId: string, statusCode: number, body: string): void {
+    const response: HttpResponse = {
+      id: requestId,
+      statusCode,
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+    };
+    const message: TunnelMessage = { type: 'response', payload: response };
+    this.ws?.send(JSON.stringify(message));
+  }
+
   private async handleRequest(request: HttpRequest): Promise<void> {
     try {
       const [host, portStr] = this.options.backendAddress.split(':');
@@ -132,6 +146,15 @@ export class TunnelClient {
         path: request.url,
         method: request.method,
         headers,
+        agent: BACKEND_AGENT,
+      };
+
+      const BACKEND_TIMEOUT_MS = 15000;
+      let responseSent = false;
+      const sendOnce = (statusCode: number, body: string) => {
+        if (responseSent) return;
+        responseSent = true;
+        this.sendErrorResponse(request.id, statusCode, body);
       };
 
       const proxyReq = http.request(requestOptions, (proxyRes) => {
@@ -142,6 +165,9 @@ export class TunnelClient {
         });
 
         proxyRes.on('end', () => {
+          if (responseSent) return;
+          responseSent = true;
+
           const headers: Record<string, string | string[]> = {};
           for (const [key, value] of Object.entries(proxyRes.headers)) {
             if (value !== undefined) {
@@ -169,20 +195,14 @@ export class TunnelClient {
 
       proxyReq.on('error', (error) => {
         console.error(`Error forwarding request to ${this.options.backendAddress}:`, error.message);
+        sendOnce(502, 'Bad Gateway: Could not connect to local service');
+      });
 
-        const response: HttpResponse = {
-          id: request.id,
-          statusCode: 502,
-          headers: { 'Content-Type': 'text/plain' },
-          body: 'Bad Gateway: Could not connect to local service',
-        };
-
-        const message: TunnelMessage = {
-          type: 'response',
-          payload: response,
-        };
-
-        this.ws?.send(JSON.stringify(message));
+      proxyReq.setTimeout(BACKEND_TIMEOUT_MS, () => {
+        if (!proxyReq.destroyed) {
+          proxyReq.destroy();
+          sendOnce(502, 'Bad Gateway: Backend did not respond in time');
+        }
       });
 
       if (request.body) {
@@ -192,6 +212,11 @@ export class TunnelClient {
       proxyReq.end();
     } catch (error) {
       console.error('Error handling request:', error);
+      this.sendErrorResponse(
+        request.id,
+        502,
+        `Bad Gateway: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
