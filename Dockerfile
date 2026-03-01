@@ -14,7 +14,9 @@ COPY packages/shared/ ./packages/shared/
 COPY packages/database/ ./packages/database/
 COPY packages/server/ ./packages/server/
 
-RUN npm run build
+RUN npm run build -w @ducky/shared && \
+    npm run build -w @ducky/database && \
+    npm run build -w @ducky/server
 
 FROM node:25-alpine
 
