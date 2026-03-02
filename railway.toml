@@ -10,3 +10,7 @@
 [build]
 builder = "DOCKERFILE"
 watchPatterns = ["**"]
+
+# Override Railway's workspace auto-detection
+buildCommand = ""
+installCommand = ""
