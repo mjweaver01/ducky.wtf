@@ -3,8 +3,12 @@ import { Check, Zap, Crown, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import MarketingLayout from '../components/MarketingLayout';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 
 const PricingPage: React.FC = () => {
+  useMetadata(pageMetadata.pricing);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState<string | null>(null);
   const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');

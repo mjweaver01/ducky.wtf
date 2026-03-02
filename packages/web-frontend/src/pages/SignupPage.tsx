@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import DuckIcon from '../components/DuckIcon';
 import { authAPI } from '../api';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 import './AuthPages.css';
 
 const SignupPage: React.FC = () => {
+  useMetadata(pageMetadata.signup);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');

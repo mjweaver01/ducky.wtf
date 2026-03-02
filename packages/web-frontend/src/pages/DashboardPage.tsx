@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
-import { Activity, Key, Globe, Settings, LogOut, BookOpen, Menu, X, Crown, Zap, Building2 } from 'lucide-react';
+import {
+  Activity,
+  Key,
+  Globe,
+  Settings,
+  LogOut,
+  BookOpen,
+  Menu,
+  X,
+  Crown,
+  Zap,
+  Building2,
+} from 'lucide-react';
 import { authAPI, userAPI, type User } from '../api';
 import DuckIcon from '../components/DuckIcon';
 import QuackingDuck from '../components/QuackingDuckIcon';
@@ -8,9 +20,13 @@ import TokensTab from '../components/TokensTab';
 import TunnelsTab from '../components/TunnelsTab';
 import DomainsTab from '../components/DomainsTab';
 import SettingsTab from '../components/SettingsTab';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 import './DashboardPage.css';
 
 const DashboardPage: React.FC = () => {
+  useMetadata(pageMetadata.dashboard);
+
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

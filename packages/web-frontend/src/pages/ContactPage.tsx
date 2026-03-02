@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Send, MessageSquare, BookOpen, Bug } from 'lucide-react';
 import MarketingLayout from '../components/MarketingLayout';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 import './MarketingPages.css';
 
 const topics = [
@@ -34,6 +36,8 @@ const contactCards = [
 ];
 
 const ContactPage: React.FC = () => {
+  useMetadata(pageMetadata.contact);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [topic, setTopic] = useState('general');

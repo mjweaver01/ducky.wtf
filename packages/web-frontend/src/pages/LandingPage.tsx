@@ -4,9 +4,13 @@ import { ArrowRight, Shield, Gauge, BarChart3, Globe, Wrench } from 'lucide-reac
 import DuckIcon from '../components/DuckIcon';
 import QuackingDuck from '../components/QuackingDuckIcon';
 import MarketingLayout from '../components/MarketingLayout';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
+  useMetadata(pageMetadata.home);
+
   return (
     <MarketingLayout>
       <section className="hero">

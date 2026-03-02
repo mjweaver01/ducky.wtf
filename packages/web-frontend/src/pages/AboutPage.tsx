@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Shield, Heart } from 'lucide-react';
 import MarketingLayout from '../components/MarketingLayout';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 import './MarketingPages.css';
 
 const values = [
@@ -23,6 +25,8 @@ const values = [
 ];
 
 const AboutPage: React.FC = () => {
+  useMetadata(pageMetadata.about);
+
   return (
     <MarketingLayout>
       <section className="marketing-hero">

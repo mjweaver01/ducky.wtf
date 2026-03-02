@@ -1,5 +1,7 @@
 import React from 'react';
 import MarketingLayout from '../components/MarketingLayout';
+import { useMetadata } from '../hooks/useMetadata';
+import { pageMetadata } from '../metadata';
 import './MarketingPages.css';
 
 const LAST_UPDATED = 'February 1, 2026';
@@ -60,6 +62,8 @@ const sections = [
 ];
 
 const TermsPage: React.FC = () => {
+  useMetadata(pageMetadata.terms);
+
   return (
     <MarketingLayout>
       <section className="marketing-hero">
