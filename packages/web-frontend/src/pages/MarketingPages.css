@@ -762,8 +762,13 @@
     grid-template-columns: 1fr;
   }
 
+  .contact-form-wrap {
+    padding: 20px !important;
+  }
+
   .contact-form-grid {
     grid-template-columns: 1fr !important;
+    gap: 0 !important;
   }
 
   .docs-layout {
