@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { tunnelsAPI, type Tunnel, type TunnelStats } from '../api';
 import QuackingDuck from './QuackingDuckIcon';
+import './TunnelsTab.css';
 
 const TUNNEL_DOMAIN = 'ducky.wtf';
 
@@ -86,18 +87,14 @@ const TunnelsTab: React.FC = () => {
             <div className="stat-icon stat-icon-primary">
               <Activity size={20} />
             </div>
-            <div className="stat-value stat-value-primary">
-              {stats.activeTunnels}
-            </div>
+            <div className="stat-value stat-value-primary">{stats.activeTunnels}</div>
             <div className="stat-label">Active Tunnels</div>
           </div>
           <div className="card stat-card">
             <div className="stat-icon stat-icon-success">
               <Wifi size={20} />
             </div>
-            <div className="stat-value stat-value-success">
-              {stats.totalTunnels}
-            </div>
+            <div className="stat-value stat-value-success">{stats.totalTunnels}</div>
             <div className="stat-label">Total Tunnels</div>
           </div>
           <div className="card stat-card">
@@ -113,9 +110,7 @@ const TunnelsTab: React.FC = () => {
             <div className="stat-icon stat-icon-warning">
               <Database size={20} />
             </div>
-            <div className="stat-value stat-value-warning">
-              {formatBytes(stats.totalBytes)}
-            </div>
+            <div className="stat-value stat-value-warning">{formatBytes(stats.totalBytes)}</div>
             <div className="stat-label">Data Transferred</div>
           </div>
         </div>

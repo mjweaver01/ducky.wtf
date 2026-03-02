@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Key, Copy, Check, Plus, Trash2, Crown, RefreshCw, Edit2, X } from 'lucide-react';
 import { tokensAPI, userAPI, type Token, type User } from '../api';
 import QuackingDuck from './QuackingDuckIcon';
+import './TokensTab.css';
 
 const TokensTab: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -22,10 +23,7 @@ const TokensTab: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [tokensData, userData] = await Promise.all([
-        tokensAPI.list(),
-        userAPI.getProfile(),
-      ]);
+      const [tokensData, userData] = await Promise.all([tokensAPI.list(), userAPI.getProfile()]);
       setTokens(tokensData);
       setUser(userData);
     } catch (error) {
@@ -93,7 +91,7 @@ const TokensTab: React.FC = () => {
       setSubdomainError('Subdomain cannot be empty');
       return;
     }
-    
+
     if (!/^[a-z0-9]{3,20}$/.test(customSubdomain)) {
       setSubdomainError('Must be 3-20 characters (lowercase letters and numbers only)');
       return;
@@ -157,11 +155,10 @@ const TokensTab: React.FC = () => {
           <div className="upgrade-banner-content">
             <Crown size={24} className="upgrade-banner-icon" />
             <div>
-              <h3 className="upgrade-banner-title">
-                Upgrade to Pro for Static URLs
-              </h3>
+              <h3 className="upgrade-banner-title">Upgrade to Pro for Static URLs</h3>
               <p className="upgrade-banner-text">
-                Free accounts get a new random URL each time you start the CLI. Upgrade to Pro or Enterprise to get a permanent static URL that never changes.
+                Free accounts get a new random URL each time you start the CLI. Upgrade to Pro or
+                Enterprise to get a permanent static URL that never changes.
               </p>
               <button
                 className="btn btn-primary btn-sm"
@@ -194,9 +191,7 @@ const TokensTab: React.FC = () => {
             </button>
           </div>
           <div className="token-display">
-            <div className="token-display-code">
-              {createdToken.token}
-            </div>
+            <div className="token-display-code">{createdToken.token}</div>
             <button
               onClick={() => handleCopy(createdToken.token, 'created')}
               className={`btn ${copiedId === 'created' ? 'btn-primary' : 'btn-secondary'} token-display-copy`}
@@ -277,9 +272,7 @@ const TokensTab: React.FC = () => {
                   </td>
                   <td>
                     <div className="token-table-actions">
-                      <span className="token-table-code">
-                        {token.token.slice(0, 24)}…
-                      </span>
+                      <span className="token-table-code">{token.token.slice(0, 24)}…</span>
                       <button
                         onClick={() => handleCopy(token.token, token.id)}
                         className="btn btn-secondary token-table-btn-sm"
@@ -303,9 +296,7 @@ const TokensTab: React.FC = () => {
                                 placeholder="myapp"
                                 autoFocus
                               />
-                              <span className="token-subdomain-suffix">
-                                .ducky.wtf
-                              </span>
+                              <span className="token-subdomain-suffix">.ducky.wtf</span>
                               <button
                                 onClick={() => handleSaveSubdomain(token.id)}
                                 className="btn btn-primary token-subdomain-btn"
@@ -320,9 +311,7 @@ const TokensTab: React.FC = () => {
                               </button>
                             </div>
                             {subdomainError && (
-                              <p className="token-subdomain-error">
-                                {subdomainError}
-                              </p>
+                              <p className="token-subdomain-error">{subdomainError}</p>
                             )}
                           </div>
                         ) : (
@@ -332,7 +321,10 @@ const TokensTab: React.FC = () => {
                             </span>
                             <button
                               onClick={() =>
-                                handleCopy(`https://${token.subdomain}.ducky.wtf`, `url-${token.id}`)
+                                handleCopy(
+                                  `https://${token.subdomain}.ducky.wtf`,
+                                  `url-${token.id}`
+                                )
                               }
                               className="btn btn-secondary token-table-btn-sm"
                               title="Copy URL"
@@ -362,9 +354,7 @@ const TokensTab: React.FC = () => {
                       </div>
                     ) : (
                       <div className="token-random-url">
-                        <span className="token-random-url-text">
-                          Random URL each time
-                        </span>
+                        <span className="token-random-url-text">Random URL each time</span>
                         <Crown
                           size={14}
                           className="token-random-url-icon"
