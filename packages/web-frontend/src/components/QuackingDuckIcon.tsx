@@ -27,7 +27,7 @@ const QuackingDuck: React.FC<QuackingDuckProps> = ({
 
   const triggerQuack = useCallback(() => {
     if (isQuackingRef.current || pendingQuackRef.current) return;
-    
+
     if (wobble) {
       pendingQuackRef.current = true;
     } else {
@@ -72,12 +72,12 @@ const QuackingDuck: React.FC<QuackingDuckProps> = ({
     .join(' ');
 
   return (
-    <div 
-      className={containerClass} 
+    <div
+      className={containerClass}
       onClick={triggerQuack}
       onAnimationIteration={handleAnimationIteration}
     >
-      <DuckIcon size={size} />
+      <DuckIcon size={size} hover={false} />
     </div>
   );
 };
