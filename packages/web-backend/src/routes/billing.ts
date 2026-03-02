@@ -28,7 +28,7 @@ router.post(
     }
     
     const priceId = getPriceId(plan as 'pro' | 'enterprise', interval as 'month' | 'year');
-    if (!priceId) {
+    if (!priceId || priceId === '') {
       return res.status(400).json({ error: 'Price not configured for this plan and interval' });
     }
     
