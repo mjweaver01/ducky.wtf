@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
-import DuckIcon from './DuckIcon';
 import Logo from './Logo';
 import { authAPI } from '../api';
 import { docsNavItems } from '../docsNav';

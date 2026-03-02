@@ -766,6 +766,10 @@
   resize: vertical;
 }
 
+.contact-form-error {
+  margin-bottom: 1rem;
+}
+
 /* About page section title */
 .section-title {
   text-align: center;

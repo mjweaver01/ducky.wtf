@@ -43,11 +43,41 @@ const ContactPage: React.FC = () => {
   const [topic, setTopic] = useState('general');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app this would POST to a contact endpoint
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+      const response = await fetch(`${apiUrl}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          topic,
+          message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.error || 'Failed to send message. Please try emailing us directly.');
+      }
+    } catch (err) {
+      setError('Failed to send message. Please try emailing us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -89,6 +119,11 @@ const ContactPage: React.FC = () => {
               ) : (
                 <>
                   <h2 className="contact-form-title">Send a message</h2>
+                  {error && (
+                    <div className="alert alert-error contact-form-error">
+                      {error}
+                    </div>
+                  )}
                   <form onSubmit={handleSubmit}>
                     <div className="contact-form-grid">
                       <div className="form-group">
@@ -102,6 +137,7 @@ const ContactPage: React.FC = () => {
                           required
                           placeholder="Your name"
                           autoComplete="name"
+                          disabled={isSubmitting}
                         />
                       </div>
                       <div className="form-group">
@@ -115,6 +151,7 @@ const ContactPage: React.FC = () => {
                           required
                           placeholder="you@example.com"
                           autoComplete="email"
+                          disabled={isSubmitting}
                         />
                       </div>
                     </div>
@@ -125,6 +162,7 @@ const ContactPage: React.FC = () => {
                         className="input"
                         value={topic}
                         onChange={(e) => setTopic(e.target.value)}
+                        disabled={isSubmitting}
                       >
                         {topics.map((t) => (
                           <option key={t.value} value={t.value}>
@@ -143,11 +181,16 @@ const ContactPage: React.FC = () => {
                         required
                         placeholder="Tell us what's on your mind..."
                         rows={6}
+                        disabled={isSubmitting}
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary btn-block">
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary btn-block"
+                      disabled={isSubmitting}
+                    >
                       <Send size={16} />
-                      Send Message
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </button>
                   </form>
                 </>

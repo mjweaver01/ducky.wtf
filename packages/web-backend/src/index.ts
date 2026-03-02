@@ -11,6 +11,7 @@ import tunnelRoutes from './routes/tunnels';
 import domainRoutes from './routes/domains';
 import userRoutes from './routes/user';
 import billingRoutes from './routes/billing';
+import contactRoutes from './routes/contact';
 
 const app = express();
 const PORT = parseInt(process.env.WEB_PORT || '3002');
@@ -69,6 +70,7 @@ app.use('/api/tokens', tokenRoutes);
 app.use('/api/tunnels', tunnelRoutes);
 app.use('/api/domains', domainRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health check
 app.get('/health', async (req, res) => {

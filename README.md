@@ -43,6 +43,7 @@ ducky status
 ```
 
 **Benefits of logging in:**
+
 - **Pro/Enterprise**: Get a static URL that never changes
 - Keep tunnel history in your dashboard
 - Manage multiple devices/tokens
@@ -116,6 +117,7 @@ When you run `ducky http 3000`, the CLI opens a persistent outbound WebSocket co
 - **Yearly billing** with 17% savings (2 months free)
 - Custom domain support (Enterprise)
 - Token-based auth, manageable from the dashboard
+- **Contact form API** with email notifications (Gmail SMTP)
 - **Stripe payment integration** for Pro/Enterprise subscriptions
 - **Billing management** via Stripe Customer Portal
 - Rate limiting and request size protection
@@ -144,10 +146,10 @@ See [docs/QUICKSTART.md](docs/QUICKSTART.md) for the full guide.
 
 `npm run dev` starts Postgres in Docker plus all services with hot reload:
 
-| Service | URL |
-|---|---|
-| Web UI | http://localhost:5173 |
-| API | http://localhost:3002 |
+| Service       | URL                   |
+| ------------- | --------------------- |
+| Web UI        | http://localhost:5173 |
+| API           | http://localhost:3002 |
 | Tunnel server | http://localhost:3000 |
 
 Default login: `admin@ducky.wtf` / `admin123`
@@ -197,21 +199,23 @@ For larger changes, open an issue first to discuss the approach.
 
 All developer docs live in [`docs/`](docs/):
 
-| Doc | Contents |
-|---|---|
-| [QUICKSTART.md](docs/QUICKSTART.md) | Get started in 2 minutes |
-| [DEV_COMMANDS.md](docs/DEV_COMMANDS.md) | All `npm run` commands and dev workflows |
-| [FEATURES.md](docs/FEATURES.md) | Complete feature list and technical documentation |
-| **Stripe Integration** | |
-| [STRIPE_README.md](docs/STRIPE_README.md) | Stripe documentation index (start here) |
-| [STRIPE_QUICK_START.md](docs/STRIPE_QUICK_START.md) | 5-minute Stripe setup (local) |
-| [STRIPE_PRODUCTION_QUICK.md](docs/STRIPE_PRODUCTION_QUICK.md) | 5-minute Stripe setup (production) |
-| [STRIPE_YEARLY_PRICING.md](docs/STRIPE_YEARLY_PRICING.md) | Add yearly billing with 17% discount |
-| **Deployment** | |
-| [GETTING_LIVE.md](docs/GETTING_LIVE.md) | Deploy to Railway (production) |
+| Doc                                                                 | Contents                                             |
+| ------------------------------------------------------------------- | ---------------------------------------------------- |
+| [QUICKSTART.md](docs/QUICKSTART.md)                                 | Get started in 2 minutes                             |
+| [DEV_COMMANDS.md](docs/DEV_COMMANDS.md)                             | All `npm run` commands and dev workflows             |
+| [FEATURES.md](docs/FEATURES.md)                                     | Complete feature list and technical documentation    |
+| **Email**                                                           |                                                      |
+| [EMAIL_FORWARDING.md](docs/EMAIL_FORWARDING.md)                     | Set up email forwarding with ImprovMX (5 min)       |
+| **Stripe Integration**                                              |                                                      |
+| [STRIPE_README.md](docs/STRIPE_README.md)                           | Stripe documentation index (start here)              |
+| [STRIPE_QUICK_START.md](docs/STRIPE_QUICK_START.md)                 | 5-minute Stripe setup (local)                        |
+| [STRIPE_PRODUCTION_QUICK.md](docs/STRIPE_PRODUCTION_QUICK.md)       | 5-minute Stripe setup (production)                   |
+| [STRIPE_YEARLY_PRICING.md](docs/STRIPE_YEARLY_PRICING.md)           | Add yearly billing with 17% discount                 |
+| **Deployment**                                                      |                                                      |
+| [GETTING_LIVE.md](docs/GETTING_LIVE.md)                             | Deploy to Railway (production)                       |
 | [RAILWAY_SETUP_FROM_SCRATCH.md](docs/RAILWAY_SETUP_FROM_SCRATCH.md) | Recreate the three Railway services (dashboard only) |
-| [TESTING.md](docs/TESTING.md) | Local and CI testing guide |
-| [DOMAIN.md](docs/DOMAIN.md) | DNS and domain configuration |
+| [TESTING.md](docs/TESTING.md)                                       | Local and CI testing guide                           |
+| [DOMAIN.md](docs/DOMAIN.md)                                         | DNS and domain configuration                         |
 
 CI and Railway auto-deploy: [.github/CICD.md](.github/CICD.md)
 

@@ -188,10 +188,9 @@ const DomainsTab: React.FC = () => {
           </div>
         ) : (
           <div>
-            {domains.map((domain, i) => {
+            {domains.map((domain) => {
               const txtName = `_ducky-challenge.${domain.domain}`;
               const txtValue = domain.verificationToken;
-              const isLast = i === domains.length - 1;
 
               return (
                 <div key={domain.id} className="domain-item">
