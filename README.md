@@ -148,7 +148,7 @@ See [docs/QUICKSTART.md](docs/QUICKSTART.md) for the full guide.
 
 | Service       | URL                   |
 | ------------- | --------------------- |
-| Web UI        | http://localhost:5173 |
+| Web UI        | http://localhost:9179 |
 | API           | http://localhost:3002 |
 | Tunnel server | http://localhost:3000 |
 

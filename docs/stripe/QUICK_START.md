@@ -59,7 +59,7 @@ stripe listen --forward-to localhost:3002/api/billing/webhook
 
 ### 7. Test Payment
 ```
-1. Open: http://localhost:5173
+1. Open: http://localhost:9179
 2. Login → Click "Upgrade to Pro"
 3. Use card: 4242 4242 4242 4242
 4. Check webhook terminal for [200] POST

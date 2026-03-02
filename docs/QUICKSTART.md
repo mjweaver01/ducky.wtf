@@ -41,9 +41,9 @@ This starts:
 - PostgreSQL (Docker)
 - Tunnel Server (port 3000)
 - Web Backend API (port 3002)
-- Web Frontend (port 5173)
+- Web Frontend (port 9179)
 
-**That's it!** Open http://localhost:5173
+**That's it!** Open http://localhost:9179
 
 ---
 
@@ -65,7 +65,7 @@ ducky http 3000
 ```
 
 **Option C: Traditional approach**
-1. **Sign up** at http://localhost:5173
+1. **Sign up** at http://localhost:9179
    - Default login: `admin@ducky.wtf` / `admin123`
    - Or create a new account
 
@@ -136,7 +136,7 @@ ducky login
 
 | Service | URL |
 |---------|-----|
-| Web UI | http://localhost:5173 |
+| Web UI | http://localhost:9179 |
 | API Health | http://localhost:3002/health |
 | Server Metrics | http://localhost:3000/metrics |
 | Database | localhost:5432 (user: `ducky`, pass: `ducky_password`) |
@@ -166,7 +166,7 @@ ducky http 8080
 ```bash
 npm run stop
 # or
-lsof -ti:3000,3002,5173 | xargs kill -9
+lsof -ti:3000,3002,9179 | xargs kill -9
 ```
 
 ### Database won't start

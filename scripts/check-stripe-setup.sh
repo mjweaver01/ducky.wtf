@@ -120,7 +120,7 @@ if [ $ERRORS -eq 0 ]; then
     echo "   Terminal 3: stripe listen --forward-to localhost:3002/api/billing/webhook"
     echo ""
     echo "2. Test payment:"
-    echo "   - Open: http://localhost:5173"
+    echo "   - Open: http://localhost:9179"
     echo "   - Login → Click 'Upgrade to Pro'"
     echo "   - Use card: 4242 4242 4242 4242"
     echo ""

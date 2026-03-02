@@ -65,7 +65,7 @@ npm run dev
 ```
 
 ### 3. Test a Payment
-1. Open http://localhost:5173
+1. Open http://localhost:9179
 2. Login or signup
 3. Navigate to `/pricing`
 4. Toggle between Monthly/Yearly billing

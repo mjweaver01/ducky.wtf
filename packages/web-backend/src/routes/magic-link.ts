@@ -25,7 +25,7 @@ router.post(
 
     // TODO: Send email with magic link
     // For now, return the link in dev mode
-    const magicUrl = `${process.env.WEB_URL || 'http://localhost:5173'}/auth/magic?token=${magicLink.token}`;
+    const magicUrl = `${process.env.WEB_URL || 'http://localhost:9179'}/auth/magic?token=${magicLink.token}`;
 
     // In production, only send email and return success
     if (process.env.NODE_ENV === 'production') {

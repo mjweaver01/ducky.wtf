@@ -415,7 +415,7 @@ Stored at `~/.ducky/config.json`:
 
 **Web Backend:**
 - `PORT` — API server port (default: 3002)
-- `WEB_URL` — Frontend URL for CORS (default: http://localhost:5173)
+- `WEB_URL` — Frontend URL for CORS (default: http://localhost:9179)
 - `JWT_SECRET` — JWT signing secret
 
 **Stripe Payments:**

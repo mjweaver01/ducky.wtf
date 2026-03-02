@@ -28,7 +28,7 @@ OPTIONS:
   --url <url>           Request a specific URL for the tunnel
   --config <path>       Path to config file
   --authtoken <token>   Authentication token (overrides config)
-  --server-url <url>    Tunnel server URL (default: ws://localhost:3000/_tunnel)
+  --server-url <url>    Tunnel server URL (default: wss://ducky.wtf/_tunnel)
 
 CONFIG COMMANDS:
   config auth <token>             Save authentication token
@@ -200,7 +200,7 @@ async function handleLogin(parsed: any) {
     }
 
     const anonymousToken = configManager.isAnonymous() ? configManager.getAuthToken() : undefined;
-    const apiUrl = process.env.API_URL || 'http://localhost:3002';
+    const apiUrl = process.env.API_URL || 'https://api.ducky.wtf';
 
     console.log('Requesting magic link...');
     const result = await requestMagicLink(apiUrl, email, anonymousToken);
@@ -260,7 +260,7 @@ async function handleHttp(parsed: any) {
   if (!authToken) {
     console.log('🦆 Welcome to ducky! Creating anonymous tunnel...\n');
     try {
-      const apiUrl = process.env.API_URL || 'http://localhost:3002';
+      const apiUrl = process.env.API_URL || 'https://api.ducky.wtf';
       authToken = await createAnonymousToken(apiUrl);
       configManager.setAnonymousToken(authToken);
       console.log('✅ Anonymous tunnel created! Run "ducky login" to keep your tunnels.\n');

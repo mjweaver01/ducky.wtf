@@ -24,7 +24,7 @@ try {
   process.exit(1);
 }
 
-const allowedOrigins = (process.env.WEB_URL || 'http://localhost:5173')
+const allowedOrigins = (process.env.WEB_URL || 'http://localhost:9179')
   .split(',')
   .map((url) => url.trim());
 

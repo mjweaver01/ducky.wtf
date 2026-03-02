@@ -24,14 +24,14 @@ npm run dev:web-frontend
 npm run build -w @ducky/web-frontend
 ```
 
-The frontend runs on http://localhost:5173 and connects to the backend API at http://localhost:3002.
+The frontend runs on http://localhost:9179 and connects to the backend API at http://localhost:3002.
 
 ## Environment Variables
 
 ```bash
 # Set in .env at project root
 VITE_API_URL=http://localhost:3002  # Backend API URL
-WEB_URL=http://localhost:5173       # Frontend URL (for redirects)
+WEB_URL=http://localhost:9179       # Frontend URL (for redirects)
 ```
 
 ## Tech Stack

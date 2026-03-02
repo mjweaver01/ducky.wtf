@@ -10,14 +10,14 @@ This starts:
 - PostgreSQL (Docker)
 - Tunnel Server (port 3000)
 - Web Backend API (port 3002)
-- Web Frontend (port 5173)
+- Web Frontend (port 9179)
 
 All output from the frontend is shown. Backend logs go to `logs/` directory.
 
 **Press Ctrl+C to stop everything.**
 
 ### Access
-- **Web UI**: http://localhost:5173
+- **Web UI**: http://localhost:9179
 - **API Health**: http://localhost:3002/health
 - **Server Metrics**: http://localhost:3000/metrics
 
@@ -60,7 +60,7 @@ npm run build:web          # Build web backend + frontend
 npm run dev:server         # Tunnel server (port 3000)
 npm run dev:cli            # CLI (for development)
 npm run dev:web-backend    # Web API (port 3002)
-npm run dev:web-frontend   # React frontend (port 5173)
+npm run dev:web-frontend   # React frontend (port 9179)
 ```
 
 ---
@@ -84,7 +84,7 @@ npm run dev
 ```
 
 ### 2. Create Account
-- Open http://localhost:5173
+- Open http://localhost:9179
 - Sign up with email/password
 - Login
 
@@ -119,7 +119,7 @@ docker compose -f docker-compose.dev.yml up -d
 ### Port already in use
 ```bash
 # Find and kill process
-lsof -ti:3000,3002,5173 | xargs kill -9
+lsof -ti:3000,3002,9179 | xargs kill -9
 
 # Or use stop command
 npm run stop

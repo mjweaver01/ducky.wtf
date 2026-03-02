@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { Config } from '@ducky/shared';
+import { Config } from '@ducky.wtf/shared';
 
 export class ConfigManager {
   private configPath: string;
@@ -83,7 +83,7 @@ export class ConfigManager {
   }
 
   getServerUrl(): string {
-    return this.config.serverUrl || 'ws://localhost:3000/_tunnel';
+    return this.config.serverUrl || 'wss://ducky.wtf/_tunnel';
   }
 
   getConfig(): Config {

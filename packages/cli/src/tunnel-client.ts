@@ -6,7 +6,7 @@ import {
   TunnelAssignment,
   HttpRequest,
   HttpResponse,
-} from '@ducky/shared';
+} from '@ducky.wtf/shared';
 
 export interface TunnelOptions {
   authToken: string;

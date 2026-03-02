@@ -195,7 +195,7 @@ stripe listen --forward-to localhost:3002/api/billing/webhook
 
 ### Step 8: Test the Payment Flow! 🎉
 
-1. **Open your app**: http://localhost:5173
+1. **Open your app**: http://localhost:9179
 2. **Sign up / Login** to your account
 3. **Go to Pricing page**: Click "Upgrade to Pro" or navigate to `/pricing`
 4. **Toggle billing interval**: Switch between Monthly and Yearly to see pricing
