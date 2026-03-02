@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Globe, Plus, Copy, Check, RefreshCw, Trash2, CheckCircle, Clock, Crown } from 'lucide-react';
 import { domainsAPI, userAPI, type CustomDomain, type User } from '../api';
 import QuackingDuck from './QuackingDuckIcon';
+import './DomainsTab.css';
 
 const DomainsTab: React.FC = () => {
   const [domains, setDomains] = useState<CustomDomain[]>([]);
@@ -126,21 +127,14 @@ const DomainsTab: React.FC = () => {
       </div>
 
       {user?.plan !== 'enterprise' && (
-        <div
-          className="card"
-          style={{
-            marginBottom: '24px',
-            borderColor: 'rgba(234, 179, 8, 0.5)',
-            background: 'rgba(234, 179, 8, 0.05)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-            <Crown size={24} style={{ color: 'rgb(234, 179, 8)', flexShrink: 0, marginTop: '2px' }} />
+        <div className="card domains-upgrade-banner">
+          <div className="domains-upgrade-content">
+            <Crown size={24} className="domains-upgrade-icon" />
             <div>
-              <h3 style={{ color: 'rgb(234, 179, 8)', marginBottom: '8px' }}>
+              <h3 className="domains-upgrade-title">
                 Upgrade to Enterprise for Custom Domains
               </h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+              <p className="domains-upgrade-text">
                 Custom domains are an Enterprise feature. Use your own branded domain (e.g., tunnel.yourcompany.com) instead of subdomains on ducky.wtf.
               </p>
               <button
@@ -155,8 +149,8 @@ const DomainsTab: React.FC = () => {
       )}
 
       {showAdd && user?.plan === 'enterprise' && (
-        <div className="card" style={{ marginBottom: '24px' }}>
-          <h3 style={{ marginBottom: '16px' }}>Add Custom Domain</h3>
+        <div className="card add-domain-card">
+          <h3 className="add-domain-title">Add Custom Domain</h3>
           <form onSubmit={handleAdd}>
             <div className="form-group">
               <label htmlFor="domainName">Domain Name</label>
@@ -172,7 +166,7 @@ const DomainsTab: React.FC = () => {
               />
               <small>Enter the subdomain or domain you want to use for tunnels.</small>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div className="add-domain-actions">
               <button type="submit" className="btn btn-primary" disabled={adding}>
                 <Globe size={15} />
                 {adding ? 'Adding...' : 'Add Domain'}
@@ -187,8 +181,8 @@ const DomainsTab: React.FC = () => {
 
       <div className="card">
         {domains.length === 0 ? (
-          <div className="empty-state">
-            <Globe size={48} style={{ color: 'var(--gray-dark)', marginBottom: '16px' }} />
+          <div className="domains-empty-state">
+            <Globe size={48} className="domains-empty-icon" />
             <h3>No custom domains</h3>
             <p>Add your own domain to use professional tunnel URLs.</p>
           </div>
@@ -200,39 +194,16 @@ const DomainsTab: React.FC = () => {
               const isLast = i === domains.length - 1;
 
               return (
-                <div
-                  key={domain.id}
-                  style={{
-                    padding: '20px 0',
-                    borderBottom: isLast ? 'none' : '1px solid var(--border)',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      gap: '16px',
-                    }}
-                  >
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          marginBottom: '6px',
-                        }}
-                      >
+                <div key={domain.id} className="domain-item">
+                  <div className="domain-item-row">
+                    <div className="domain-item-content">
+                      <div className="domain-item-header">
                         {domain.isVerified ? (
-                          <CheckCircle
-                            size={18}
-                            style={{ color: 'var(--success)', flexShrink: 0 }}
-                          />
+                          <CheckCircle size={18} className="domain-item-icon-verified" />
                         ) : (
-                          <Clock size={18} style={{ color: 'var(--warning)', flexShrink: 0 }} />
+                          <Clock size={18} className="domain-item-icon-pending" />
                         )}
-                        <span style={{ fontSize: '17px', fontWeight: 600 }}>{domain.domain}</span>
+                        <span className="domain-item-name">{domain.domain}</span>
                         <span
                           className={`badge badge-${domain.isVerified ? 'success' : 'warning'}`}
                         >
@@ -241,36 +212,17 @@ const DomainsTab: React.FC = () => {
                       </div>
 
                       {domain.isVerified && domain.verifiedAt && (
-                        <p
-                          style={{
-                            fontSize: '13px',
-                            color: 'var(--text-muted)',
-                            marginLeft: '28px',
-                          }}
-                        >
+                        <p className="domain-item-verified-text">
                           Verified on {new Date(domain.verifiedAt).toLocaleDateString()}
                         </p>
                       )}
 
                       {!domain.isVerified && (
-                        <div style={{ marginTop: '14px', marginLeft: '28px' }}>
-                          <p
-                            style={{
-                              fontSize: '13px',
-                              color: 'var(--text-muted)',
-                              marginBottom: '10px',
-                            }}
-                          >
+                        <div className="domain-verification">
+                          <p className="domain-verification-text">
                             Add this DNS TXT record to verify ownership of your domain:
                           </p>
-                          <div
-                            style={{
-                              background: 'var(--dark)',
-                              border: '1px solid var(--border)',
-                              borderRadius: '8px',
-                              padding: '14px 16px',
-                            }}
-                          >
+                          <div className="domain-dns-box">
                             <DnsRow
                               label="Type"
                               value="TXT"
@@ -294,27 +246,14 @@ const DomainsTab: React.FC = () => {
                               highlight
                             />
                           </div>
-                          <p
-                            style={{
-                              fontSize: '12px',
-                              color: 'var(--gray-dark)',
-                              marginTop: '8px',
-                            }}
-                          >
+                          <p className="domain-dns-note">
                             DNS changes can take up to 48 hours to propagate.
                           </p>
                         </div>
                       )}
                     </div>
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '8px',
-                        flexShrink: 0,
-                        alignItems: 'flex-start',
-                      }}
-                    >
+                    <div className="domain-actions">
                       {!domain.isVerified && (
                         <>
                           <button
@@ -362,35 +301,13 @@ interface DnsRowProps {
 }
 
 const DnsRow: React.FC<DnsRowProps> = ({ label, value, copyId, copiedId, onCopy, highlight }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '5px 0' }}>
-    <span
-      style={{
-        width: '48px',
-        fontSize: '11px',
-        fontWeight: 700,
-        color: 'var(--gray-dark)',
-        textTransform: 'uppercase',
-        flexShrink: 0,
-      }}
-    >
-      {label}
-    </span>
-    <span
-      style={{
-        flex: 1,
-        fontFamily: "'Monaco', 'Courier New', monospace",
-        fontSize: '12px',
-        wordBreak: 'break-all',
-        color: highlight ? 'var(--primary)' : 'var(--text)',
-      }}
-    >
-      {value}
-    </span>
+  <div className="domain-dns-row">
+    <span className="domain-dns-label">{label}</span>
+    <span className={`domain-dns-value ${highlight ? 'highlight' : ''}`}>{value}</span>
     {copyId && (
       <button
         onClick={() => onCopy(value, copyId)}
-        className="btn btn-secondary"
-        style={{ padding: '3px 8px', fontSize: '11px', flexShrink: 0 }}
+        className="btn btn-secondary domain-dns-copy"
         title={`Copy ${label}`}
       >
         {copiedId === copyId ? <Check size={11} /> : <Copy size={11} />}

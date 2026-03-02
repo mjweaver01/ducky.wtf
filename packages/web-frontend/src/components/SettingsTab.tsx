@@ -109,7 +109,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ user, onUpdate }) => {
     const isSuccess = msg.type === 'success';
     return (
       <div className={isSuccess ? 'message-success' : 'error'}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="settings-message-icon">
           {isSuccess ? <CheckCircle size={15} /> : <AlertCircle size={15} />}
           {msg.text}
         </div>

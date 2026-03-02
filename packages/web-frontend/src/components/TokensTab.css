@@ -124,3 +124,210 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Upgrade banner */
+.upgrade-banner {
+  margin-bottom: 24px;
+  border-color: rgba(234, 179, 8, 0.5);
+  background: rgba(234, 179, 8, 0.05);
+}
+
+.upgrade-banner-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.upgrade-banner-icon {
+  color: rgb(234, 179, 8);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.upgrade-banner-title {
+  color: rgb(234, 179, 8);
+  margin-bottom: 8px;
+}
+
+.upgrade-banner-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* Token created success banner */
+.token-created-banner {
+  margin-bottom: 24px;
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.token-created-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.token-created-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.token-created-icon {
+  color: var(--success);
+}
+
+.token-created-title {
+  color: var(--success);
+}
+
+.token-created-text {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.token-created-dismiss {
+  flex-shrink: 0;
+}
+
+.token-display {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.token-display-code {
+  flex: 1;
+  background: var(--dark);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  word-break: break-all;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.token-display-copy {
+  flex-shrink: 0;
+  min-width: 90px;
+}
+
+/* Create token form */
+.create-token-card {
+  margin-bottom: 24px;
+}
+
+.create-token-title {
+  margin-bottom: 16px;
+}
+
+.create-token-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Token table styles */
+.token-table-code {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.token-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.token-table-btn-sm {
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+.token-table-subdomain-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.token-subdomain-input {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  width: 140px;
+}
+
+.token-subdomain-suffix {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.token-subdomain-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.token-subdomain-error {
+  font-size: 11px;
+  color: var(--danger);
+  margin-top: 4px;
+}
+
+.token-subdomain-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.token-subdomain-url {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.token-subdomain-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.token-random-url {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.token-random-url-text {
+  color: var(--gray-dark);
+  font-size: 12px;
+}
+
+.token-random-url-icon {
+  color: rgb(234, 179, 8);
+}
+
+.token-table-date {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.token-table-date-value {
+  font-size: 13px;
+}
+
+.token-table-date-never {
+  color: var(--gray-dark);
+}
+
+.token-revoke-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+

@@ -440,7 +440,7 @@ const DocsShell: React.FC = () => {
       <aside className="docs-sidebar">
         <div className="docs-sidebar-logo">
           <DuckIcon size={20} className="logo-icon docs-logo-icon" />
-          <span style={{ fontWeight: 700 }}>Docs</span>
+          <span className="docs-sidebar-title">Docs</span>
         </div>
         {docsNavItems.map((group) => (
           <div key={group.group} className="docs-nav-group">
@@ -494,7 +494,7 @@ const DocsShell: React.FC = () => {
 /* ─── Exported wrapper ─── */
 const DocsPage: React.FC = () => (
   <MarketingLayout>
-    <div style={{ borderTop: '1px solid var(--border)' }}>
+    <div className="docs-page-divider">
       <DocsShell />
     </div>
   </MarketingLayout>

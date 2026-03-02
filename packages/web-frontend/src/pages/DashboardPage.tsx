@@ -204,8 +204,7 @@ const DashboardPage: React.FC = () => {
           {user?.plan === 'free' && (
             <Link
               to="/pricing"
-              className="btn btn-primary btn-sm"
-              style={{ width: '100%', marginBottom: '8px' }}
+              className="btn btn-primary btn-sm sidebar-footer-upgrade"
             >
               <Crown size={16} />
               Upgrade to Pro
@@ -213,8 +212,7 @@ const DashboardPage: React.FC = () => {
           )}
           <button
             onClick={handleLogout}
-            className="btn btn-secondary btn-sm"
-            style={{ width: '100%' }}
+            className="btn btn-secondary btn-sm sidebar-footer-logout"
           >
             <LogOut size={16} />
             Logout

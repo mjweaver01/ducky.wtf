@@ -86,7 +86,7 @@ const TunnelsTab: React.FC = () => {
             <div className="stat-icon stat-icon-primary">
               <Activity size={20} />
             </div>
-            <div className="stat-value" style={{ color: 'var(--primary)' }}>
+            <div className="stat-value stat-value-primary">
               {stats.activeTunnels}
             </div>
             <div className="stat-label">Active Tunnels</div>
@@ -95,7 +95,7 @@ const TunnelsTab: React.FC = () => {
             <div className="stat-icon stat-icon-success">
               <Wifi size={20} />
             </div>
-            <div className="stat-value" style={{ color: 'var(--success)' }}>
+            <div className="stat-value stat-value-success">
               {stats.totalTunnels}
             </div>
             <div className="stat-label">Total Tunnels</div>
@@ -104,7 +104,7 @@ const TunnelsTab: React.FC = () => {
             <div className="stat-icon stat-icon-secondary">
               <BarChart3 size={20} />
             </div>
-            <div className="stat-value" style={{ color: 'var(--secondary)' }}>
+            <div className="stat-value stat-value-secondary">
               {stats.totalRequests.toLocaleString()}
             </div>
             <div className="stat-label">Total Requests</div>
@@ -113,7 +113,7 @@ const TunnelsTab: React.FC = () => {
             <div className="stat-icon stat-icon-warning">
               <Database size={20} />
             </div>
-            <div className="stat-value" style={{ color: 'var(--warning)' }}>
+            <div className="stat-value stat-value-warning">
               {formatBytes(stats.totalBytes)}
             </div>
             <div className="stat-label">Data Transferred</div>
@@ -124,18 +124,10 @@ const TunnelsTab: React.FC = () => {
       <div className="card">
         {tunnels.length === 0 ? (
           <div className="empty-state">
-            <Activity size={48} style={{ color: 'var(--gray-dark)', marginBottom: '16px' }} />
+            <Activity size={48} className="tunnels-empty-activity-icon" />
             <h3>No tunnels yet</h3>
             <p>Start a tunnel using the CLI to expose your local server.</p>
-            <div
-              className="code-demo"
-              style={{
-                marginTop: '24px',
-                maxWidth: '520px',
-                margin: '24px auto 0',
-                textAlign: 'left',
-              }}
-            >
+            <div className="code-demo tunnels-code-demo">
               <div className="code-header">
                 <span className="code-dot"></span>
                 <span className="code-dot"></span>
@@ -174,25 +166,19 @@ const TunnelsTab: React.FC = () => {
                 return (
                   <tr key={tunnel.id}>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="tunnel-url-cell">
                         <a
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            color: 'var(--primary)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                          }}
+                          className="tunnel-url-link"
                         >
                           {url}
-                          <ExternalLink size={12} style={{ flexShrink: 0 }} />
+                          <ExternalLink size={12} className="tunnel-url-icon" />
                         </a>
                         <button
                           onClick={() => handleCopy(url, copyId)}
-                          className="btn btn-secondary"
-                          style={{ padding: '4px 8px', fontSize: '12px' }}
+                          className="btn btn-secondary tunnel-url-copy"
                           title="Copy URL"
                         >
                           {copiedId === copyId ? <Check size={12} /> : <Copy size={12} />}
@@ -209,15 +195,14 @@ const TunnelsTab: React.FC = () => {
                     </td>
                     <td>{tunnel.requestCount.toLocaleString()}</td>
                     <td>{formatBytes(tunnel.bytesTransferred)}</td>
-                    <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                    <td className="tunnel-date-cell">
                       {new Date(tunnel.connectedAt).toLocaleString()}
                     </td>
                     <td>
                       {tunnel.status === 'active' && (
                         <button
                           onClick={() => handleStop(tunnel.id)}
-                          className="btn btn-danger btn-sm"
-                          style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                          className="btn btn-danger btn-sm tunnel-stop-btn"
                         >
                           <Square size={12} />
                           Stop

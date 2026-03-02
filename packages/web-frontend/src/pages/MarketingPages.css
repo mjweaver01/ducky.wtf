@@ -472,10 +472,12 @@
 .docs-main {
   flex: 0 1 860px;
   max-width: 860px;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
   padding: 48px 64px;
   min-width: 0;
+  overflow-x: hidden;
 }
 
 .doc-content h1 {
@@ -547,6 +549,7 @@
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 20px;
+  max-width: 100%;
 }
 
 .doc-codeblock-header {
@@ -564,6 +567,9 @@
   margin: 0;
   padding: 16px;
   overflow-x: auto;
+  white-space: pre;
+  font-family: 'Monaco', 'Courier New', monospace;
+  max-width: 100%;
 }
 
 .doc-codeblock code {
@@ -572,6 +578,8 @@
   padding: 0;
   font-size: 13px;
   line-height: 1.7;
+  white-space: pre;
+  display: inline-block;
 }
 
 /* API endpoint blocks */
@@ -741,3 +749,68 @@
     padding: 24px 20px;
   }
 }
+
+/* Contact form specific styles */
+.contact-form-title {
+  margin-bottom: 24px;
+  font-size: 22px;
+}
+
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.contact-form-textarea {
+  resize: vertical;
+}
+
+/* About page section title */
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 48px;
+}
+
+.about-section {
+  background: var(--dark-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* CTA section */
+.cta-section {
+  padding: 80px 0;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(147, 51, 234, 0.05));
+  border-top: 1px solid var(--border);
+}
+
+.cta-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.cta-content p {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+/* Docs page specific styles */
+.docs-sidebar-title {
+  font-weight: 700;
+}
+
+.docs-page-divider {
+  border-top: 1px solid var(--border);
+}
+

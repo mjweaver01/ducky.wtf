@@ -88,9 +88,9 @@ const ContactPage: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  <h2 style={{ marginBottom: '24px', fontSize: '22px' }}>Send a message</h2>
+                  <h2 className="contact-form-title">Send a message</h2>
                   <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div className="contact-form-grid">
                       <div className="form-group">
                         <label htmlFor="contactName">Name</label>
                         <input
@@ -137,13 +137,12 @@ const ContactPage: React.FC = () => {
                       <label htmlFor="contactMessage">Message</label>
                       <textarea
                         id="contactMessage"
-                        className="input"
+                        className="input contact-form-textarea"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         required
                         placeholder="Tell us what's on your mind..."
                         rows={6}
-                        style={{ resize: 'vertical' }}
                       />
                     </div>
                     <button type="submit" className="btn btn-primary btn-block">

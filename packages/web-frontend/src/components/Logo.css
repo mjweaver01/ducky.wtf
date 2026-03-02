@@ -1,0 +1,26 @@
+/* Logo Component Styles */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-small {
+  font-size: 24px;
+}
+
+.logo-big {
+  font-size: 32px;
+}
+
+.logo-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-weight: 700;
+}

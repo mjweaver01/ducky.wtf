@@ -64,14 +64,7 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      <section
-        className="marketing-section"
-        style={{
-          background: 'var(--dark-card)',
-          borderTop: '1px solid var(--border)',
-          borderBottom: '1px solid var(--border)',
-        }}
-      >
+      <section className="marketing-section about-section">
         <div className="container">
           <h2 className="section-title">What we stand for</h2>
           <div className="values-grid">

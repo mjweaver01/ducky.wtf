@@ -81,3 +81,70 @@
     font-size: 20px;
   }
 }
+
+/* Stat cards - color variants */
+.stat-value.stat-value-primary {
+  color: var(--primary);
+}
+
+.stat-value.stat-value-success {
+  color: var(--success);
+}
+
+.stat-value.stat-value-secondary {
+  color: var(--secondary);
+}
+
+.stat-value.stat-value-warning {
+  color: var(--warning);
+}
+
+/* Empty state icon */
+.tunnels-empty-activity-icon {
+  color: var(--gray-dark);
+  margin-bottom: 16px;
+}
+
+/* Empty state code demo */
+.tunnels-code-demo {
+  margin-top: 24px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Tunnel table URL */
+.tunnel-url-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tunnel-url-link {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tunnel-url-icon {
+  flex-shrink: 0;
+}
+
+.tunnel-url-copy {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.tunnel-date-cell {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.tunnel-stop-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+

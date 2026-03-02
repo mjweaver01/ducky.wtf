@@ -72,3 +72,24 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Message/alert styles */
+.message-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  color: var(--success);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.settings-message-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+

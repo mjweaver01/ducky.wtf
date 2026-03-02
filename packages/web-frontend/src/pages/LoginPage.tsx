@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import DuckIcon from '../components/DuckIcon';
+import Logo from '../components/Logo';
 import { authAPI } from '../api';
 import { useMetadata } from '../hooks/useMetadata';
 import { pageMetadata } from '../metadata';
@@ -34,12 +34,9 @@ const LoginPage: React.FC = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
+        <Logo size="big" className="auth-logo-centered" />
         <div className="auth-card">
           <div className="auth-header">
-            <Link to="/" className="logo">
-              <DuckIcon size={40} className="logo-icon" />
-              <span className="logo-text">ducky</span>
-            </Link>
             <h1>Welcome back</h1>
             <p>Log in to your account to continue</p>
           </div>

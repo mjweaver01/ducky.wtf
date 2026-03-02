@@ -89,3 +89,16 @@
 .auth-footer a:hover {
   text-decoration: underline;
 }
+
+/* Auth logo size variant */
+.auth-header .logo.auth-logo-large {
+  font-size: 28px;
+}
+
+/* Auth page logo positioning */
+.auth-logo-centered {
+  margin-bottom: 32px;
+  justify-content: center;
+}
+
+

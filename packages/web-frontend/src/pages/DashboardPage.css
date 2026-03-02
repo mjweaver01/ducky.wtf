@@ -350,3 +350,14 @@
     padding-top: 16px;
   }
 }
+
+/* Dashboard sidebar footer button styles */
+.sidebar-footer-upgrade {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.sidebar-footer-logout {
+  width: 100%;
+}
+

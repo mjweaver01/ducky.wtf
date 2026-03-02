@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
 import DuckIcon from './DuckIcon';
+import Logo from './Logo';
 import { authAPI } from '../api';
 import { docsNavItems } from '../docsNav';
 import '../pages/LandingPage.css';
@@ -56,10 +57,7 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
       <nav className="navbar">
         <div className="container">
           <div className="nav-content">
-            <Link to="/" className="logo" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <DuckIcon size={28} className="logo-icon" />
-              <span className="logo-text">ducky</span>
-            </Link>
+            <Logo size="small" />
 
             {/* Desktop nav */}
             <div className="nav-links nav-desktop">
@@ -198,19 +196,7 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
         <div className="container">
           <div className="footer-content">
             <div className="footer-section">
-              <Link
-                to="/"
-                className="logo"
-                style={{
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  marginBottom: '12px',
-                  display: 'inline-flex',
-                }}
-              >
-                <DuckIcon size={24} className="logo-icon" />
-                <span className="logo-text">ducky</span>
-              </Link>
+              <Logo size="big" />
               <p>Secure tunnels to localhost</p>
             </div>
             <div className="footer-section">

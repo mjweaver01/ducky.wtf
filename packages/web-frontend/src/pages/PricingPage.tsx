@@ -5,6 +5,7 @@ import api from '../api/client';
 import MarketingLayout from '../components/MarketingLayout';
 import { useMetadata } from '../hooks/useMetadata';
 import { pageMetadata } from '../metadata';
+import './PricingPage.css';
 
 const PricingPage: React.FC = () => {
   useMetadata(pageMetadata.pricing);
@@ -98,176 +99,71 @@ const PricingPage: React.FC = () => {
 
   return (
     <MarketingLayout>
-      <div style={{ minHeight: '100vh', background: 'var(--dark)', padding: '60px 20px' }}>
+      <div className="pricing-page">
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <div className="pricing-header">
             <h1 className="hero-title">Simple, transparent pricing</h1>
-            <p style={{ fontSize: '20px', color: 'var(--text-muted)', marginBottom: '32px' }}>
-              Start free, upgrade when you need static URLs
-            </p>
+            <p className="pricing-subtitle">Start free, upgrade when you need static URLs</p>
 
-            {/* Billing interval toggle */}
-            <div
-              style={{
-                display: 'inline-flex',
-                background: 'var(--dark-lighter)',
-                border: '1px solid var(--border)',
-                borderRadius: '12px',
-                padding: '4px',
-              }}
-            >
+            <div className="billing-toggle">
               <button
                 onClick={() => setBillingInterval('month')}
-                style={{
-                  padding: '8px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: billingInterval === 'month' ? 'var(--primary)' : 'transparent',
-                  color: billingInterval === 'month' ? 'white' : 'var(--text-muted)',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
+                className={`billing-toggle-btn ${billingInterval === 'month' ? 'active' : ''}`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingInterval('year')}
-                style={{
-                  padding: '8px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: billingInterval === 'year' ? 'var(--primary)' : 'transparent',
-                  color: billingInterval === 'year' ? 'white' : 'var(--text-muted)',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  position: 'relative',
-                }}
+                className={`billing-toggle-btn ${billingInterval === 'year' ? 'active' : ''}`}
               >
                 Yearly
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '-8px',
-                    right: '-8px',
-                    background: 'var(--success)',
-                    color: 'white',
-                    fontSize: '10px',
-                    padding: '2px 6px',
-                    borderRadius: '6px',
-                    fontWeight: 700,
-                  }}
-                >
-                  -17%
-                </span>
+                <span className="billing-toggle-badge">-17%</span>
               </button>
             </div>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '32px',
-              marginBottom: '60px',
-            }}
-          >
+          <div className="pricing-grid">
             {plans.map((plan) => {
               const Icon = plan.icon;
               const pricing = getPrice(plan.name);
               return (
                 <div
                   key={plan.name}
-                  className="card"
-                  style={{
-                    position: 'relative',
-                    border: plan.popular ? '2px solid var(--primary)' : '1px solid var(--border)',
-                    background: plan.popular ? 'rgba(var(--primary-rgb), 0.03)' : 'var(--card-bg)',
-                  }}
+                  className={`card pricing-card ${plan.popular ? 'popular' : ''}`}
                 >
-                  {plan.popular && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '-12px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        background: 'var(--primary)',
-                        color: 'white',
-                        padding: '4px 16px',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                      }}
-                    >
-                      MOST POPULAR
-                    </div>
-                  )}
+                  {plan.popular && <div className="pricing-card-badge">MOST POPULAR</div>}
 
-                  <div style={{ marginBottom: '24px' }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      <Icon size={28} style={{ color: 'var(--primary)' }} />
-                      <h3 style={{ fontSize: '24px', fontWeight: 600 }}>{plan.name}</h3>
+                  <div className="pricing-card-header">
+                    <div className="pricing-card-title-row">
+                      <Icon size={28} className="pricing-card-icon" />
+                      <h3 className="pricing-card-title">{plan.name}</h3>
                     </div>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
-                      {plan.description}
-                    </p>
+                    <p className="pricing-card-description">{plan.description}</p>
                   </div>
 
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                      <span style={{ fontSize: '48px', fontWeight: 700, color: 'var(--text)' }}>
-                        {pricing.price}
-                      </span>
-                      <span style={{ fontSize: '16px', color: 'var(--text-muted)' }}>
-                        {pricing.period}
-                      </span>
+                  <div className="pricing-card-price">
+                    <div className="pricing-card-price-row">
+                      <span className="pricing-card-price-amount">{pricing.price}</span>
+                      <span className="pricing-card-price-period">{pricing.period}</span>
                     </div>
                     {pricing.savings && (
-                      <div
-                        style={{
-                          marginTop: '8px',
-                          fontSize: '13px',
-                          color: 'var(--success)',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {pricing.savings}
-                      </div>
+                      <div className="pricing-card-savings">{pricing.savings}</div>
                     )}
                   </div>
 
                   <button
                     onClick={plan.onClick}
                     disabled={loading === plan.name.toLowerCase()}
-                    className={`btn ${plan.popular ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ width: '100%', marginBottom: '24px' }}
+                    className={`btn ${plan.popular ? 'btn-primary' : 'btn-secondary'} pricing-card-cta`}
                   >
                     {loading === plan.name.toLowerCase() ? 'Loading...' : plan.cta}
                   </button>
 
-                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  <div className="pricing-card-features">
+                    <ul>
                       {plan.features.map((feature) => (
-                        <li
-                          key={feature}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px',
-                            marginBottom: '12px',
-                            fontSize: '14px',
-                          }}
-                        >
-                          <Check size={16} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                        <li key={feature} className="pricing-card-feature-item">
+                          <Check size={16} className="pricing-card-feature-icon" />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -278,22 +174,12 @@ const PricingPage: React.FC = () => {
             })}
           </div>
 
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '40px',
-              background: 'var(--card-bg)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-            }}
-          >
-            <h3 style={{ fontSize: '24px', marginBottom: '16px' }}>
-              Questions? We're here to help
-            </h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
+          <div className="pricing-help-section">
+            <h3 className="pricing-help-title hero-title">Questions? We're here to help</h3>
+            <p className="pricing-help-text">
               Contact us at support@ducky.wtf or visit our documentation
             </p>
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <div className="pricing-help-actions">
               <button onClick={() => navigate('/contact')} className="btn btn-secondary">
                 Contact Sales
               </button>

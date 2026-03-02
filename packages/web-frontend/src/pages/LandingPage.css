@@ -60,7 +60,9 @@
   padding: 8px;
   border-radius: 8px;
   line-height: 0;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .nav-hamburger:hover {
@@ -95,7 +97,9 @@
   font-weight: 500;
   text-decoration: none;
   border-radius: 8px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .nav-drawer-item:hover {
@@ -226,7 +230,6 @@
   filter: drop-shadow(0 0 40px rgba(251, 191, 36, 0.3));
 }
 
-
 .hero-title {
   font-size: 56px;
   font-weight: 800;
@@ -263,7 +266,9 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(251, 191, 36, 0.1);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(251, 191, 36, 0.1);
   text-align: left;
   max-width: 600px;
   margin: 0 auto;
@@ -283,9 +288,15 @@
   border-radius: 50%;
 }
 
-.code-dot:nth-child(1) { background: #ef4444; }
-.code-dot:nth-child(2) { background: var(--primary); }
-.code-dot:nth-child(3) { background: #10b981; }
+.code-dot:nth-child(1) {
+  background: #ef4444;
+}
+.code-dot:nth-child(2) {
+  background: var(--primary);
+}
+.code-dot:nth-child(3) {
+  background: #10b981;
+}
 
 .code-content {
   padding: 24px;
@@ -442,17 +453,37 @@
   .hero-title {
     font-size: 36px;
   }
-  
+
   .hero-subtitle {
     font-size: 16px;
   }
-  
+
   .features-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .footer-content {
     grid-template-columns: 1fr;
     gap: 32px;
   }
+}
+
+/* Marketing layout logo link styles */
+.logo.logo-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.footer .logo.logo-link {
+  margin-bottom: 12px;
+  display: inline-flex;
+  font-size: 24px;
+}
+
+.footer .logo-icon.footer-logo-icon {
+  /* inherits from parent */
+}
+
+.footer .logo-text.footer-logo-text {
+  /* inherits from parent */
 }

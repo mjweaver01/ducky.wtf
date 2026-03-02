@@ -153,21 +153,14 @@ const TokensTab: React.FC = () => {
       </div>
 
       {user?.plan === 'free' && (
-        <div
-          className="card"
-          style={{
-            marginBottom: '24px',
-            borderColor: 'rgba(234, 179, 8, 0.5)',
-            background: 'rgba(234, 179, 8, 0.05)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-            <Crown size={24} style={{ color: 'rgb(234, 179, 8)', flexShrink: 0, marginTop: '2px' }} />
+        <div className="card upgrade-banner">
+          <div className="upgrade-banner-content">
+            <Crown size={24} className="upgrade-banner-icon" />
             <div>
-              <h3 style={{ color: 'rgb(234, 179, 8)', marginBottom: '8px' }}>
+              <h3 className="upgrade-banner-title">
                 Upgrade to Pro for Static URLs
               </h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+              <p className="upgrade-banner-text">
                 Free accounts get a new random URL each time you start the CLI. Upgrade to Pro or Enterprise to get a permanent static URL that never changes.
               </p>
               <button
@@ -182,62 +175,31 @@ const TokensTab: React.FC = () => {
       )}
 
       {createdToken && (
-        <div
-          className="card"
-          style={{
-            marginBottom: '24px',
-            borderColor: 'rgba(16, 185, 129, 0.5)',
-            background: 'rgba(16, 185, 129, 0.05)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: '12px',
-            }}
-          >
+        <div className="card token-created-banner">
+          <div className="token-created-header">
             <div>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}
-              >
-                <Check size={18} style={{ color: 'var(--success)' }} />
-                <h3 style={{ color: 'var(--success)' }}>Token created: {createdToken.name}</h3>
+              <div className="token-created-title-row">
+                <Check size={18} className="token-created-icon" />
+                <h3 className="token-created-title">Token created: {createdToken.name}</h3>
               </div>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+              <p className="token-created-text">
                 Copy your token now — it won't be shown again after you dismiss this.
               </p>
             </div>
             <button
               onClick={() => setCreatedToken(null)}
-              className="btn btn-secondary btn-sm"
-              style={{ flexShrink: 0 }}
+              className="btn btn-secondary btn-sm token-created-dismiss"
             >
               Dismiss
             </button>
           </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <div
-              style={{
-                flex: 1,
-                background: 'var(--dark)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                padding: '12px 16px',
-                fontFamily: "'Monaco', 'Courier New', monospace",
-                fontSize: '13px',
-                wordBreak: 'break-all',
-                color: 'var(--text)',
-                lineHeight: 1.5,
-              }}
-            >
+          <div className="token-display">
+            <div className="token-display-code">
               {createdToken.token}
             </div>
             <button
               onClick={() => handleCopy(createdToken.token, 'created')}
-              className={`btn ${copiedId === 'created' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flexShrink: 0, minWidth: '90px' }}
+              className={`btn ${copiedId === 'created' ? 'btn-primary' : 'btn-secondary'} token-display-copy`}
             >
               {copiedId === 'created' ? (
                 <>
@@ -254,8 +216,8 @@ const TokensTab: React.FC = () => {
       )}
 
       {showCreate && (
-        <div className="card" style={{ marginBottom: '24px' }}>
-          <h3 style={{ marginBottom: '16px' }}>Create New Token</h3>
+        <div className="card create-token-card">
+          <h3 className="create-token-title">Create New Token</h3>
           <form onSubmit={handleCreate}>
             <div className="form-group">
               <label htmlFor="tokenName">Token Name</label>
@@ -271,7 +233,7 @@ const TokensTab: React.FC = () => {
               />
               <small>Give it a recognizable name so you know where it's used.</small>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div className="create-token-actions">
               <button type="submit" className="btn btn-primary" disabled={creating}>
                 <Key size={15} />
                 {creating ? 'Creating...' : 'Create Token'}
@@ -291,7 +253,7 @@ const TokensTab: React.FC = () => {
       <div className="card">
         {tokens.length === 0 ? (
           <div className="empty-state">
-            <Key size={48} style={{ color: 'var(--gray-dark)', marginBottom: '16px' }} />
+            <Key size={48} className="tokens-empty-icon" />
             <h3>No tokens yet</h3>
             <p>Create an auth token to authenticate the ducky CLI.</p>
           </div>
@@ -314,20 +276,13 @@ const TokensTab: React.FC = () => {
                     <strong>{token.name}</strong>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span
-                        style={{
-                          fontFamily: "'Monaco', 'Courier New', monospace",
-                          fontSize: '12px',
-                          color: 'var(--text-muted)',
-                        }}
-                      >
+                    <div className="token-table-actions">
+                      <span className="token-table-code">
                         {token.token.slice(0, 24)}…
                       </span>
                       <button
                         onClick={() => handleCopy(token.token, token.id)}
-                        className="btn btn-secondary"
-                        style={{ padding: '3px 8px', fontSize: '12px' }}
+                        className="btn btn-secondary token-table-btn-sm"
                         title="Copy full token"
                       >
                         {copiedId === token.id ? <Check size={12} /> : <Copy size={12} />}
@@ -339,62 +294,47 @@ const TokensTab: React.FC = () => {
                       <div>
                         {editingSubdomainId === token.id ? (
                           <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                            <div className="token-table-subdomain-row">
                               <input
                                 type="text"
-                                className="input"
+                                className="input token-subdomain-input"
                                 value={customSubdomain}
                                 onChange={(e) => setCustomSubdomain(e.target.value.toLowerCase())}
                                 placeholder="myapp"
-                                style={{ 
-                                  fontFamily: "'Monaco', 'Courier New', monospace",
-                                  fontSize: '12px',
-                                  padding: '4px 8px',
-                                  width: '140px'
-                                }}
                                 autoFocus
                               />
-                              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              <span className="token-subdomain-suffix">
                                 .ducky.wtf
                               </span>
                               <button
                                 onClick={() => handleSaveSubdomain(token.id)}
-                                className="btn btn-primary"
-                                style={{ padding: '4px 8px', fontSize: '12px' }}
+                                className="btn btn-primary token-subdomain-btn"
                               >
                                 <Check size={12} />
                               </button>
                               <button
                                 onClick={handleCancelEditSubdomain}
-                                className="btn btn-secondary"
-                                style={{ padding: '4px 8px', fontSize: '12px' }}
+                                className="btn btn-secondary token-subdomain-btn"
                               >
                                 <X size={12} />
                               </button>
                             </div>
                             {subdomainError && (
-                              <p style={{ fontSize: '11px', color: 'var(--danger)', marginTop: '4px' }}>
+                              <p className="token-subdomain-error">
                                 {subdomainError}
                               </p>
                             )}
                           </div>
                         ) : (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span
-                              style={{
-                                fontFamily: "'Monaco', 'Courier New', monospace",
-                                fontSize: '12px',
-                                color: 'var(--text)',
-                              }}
-                            >
+                          <div className="token-subdomain-display">
+                            <span className="token-subdomain-url">
                               https://{token.subdomain}.ducky.wtf
                             </span>
                             <button
                               onClick={() =>
                                 handleCopy(`https://${token.subdomain}.ducky.wtf`, `url-${token.id}`)
                               }
-                              className="btn btn-secondary"
-                              style={{ padding: '3px 8px', fontSize: '12px' }}
+                              className="btn btn-secondary token-table-btn-sm"
                               title="Copy URL"
                             >
                               {copiedId === `url-${token.id}` ? (
@@ -405,16 +345,14 @@ const TokensTab: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleEditSubdomain(token)}
-                              className="btn btn-secondary"
-                              style={{ padding: '3px 8px', fontSize: '12px' }}
+                              className="btn btn-secondary token-table-btn-sm"
                               title="Customize subdomain"
                             >
                               <Edit2 size={12} />
                             </button>
                             <button
                               onClick={() => handleRegenerateSubdomain(token.id)}
-                              className="btn btn-secondary"
-                              style={{ padding: '3px 8px', fontSize: '12px' }}
+                              className="btn btn-secondary token-table-btn-sm"
                               title="Regenerate subdomain"
                             >
                               <RefreshCw size={12} />
@@ -423,33 +361,32 @@ const TokensTab: React.FC = () => {
                         )}
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ color: 'var(--gray-dark)', fontSize: '12px' }}>
+                      <div className="token-random-url">
+                        <span className="token-random-url-text">
                           Random URL each time
                         </span>
                         <Crown
                           size={14}
-                          style={{ color: 'rgb(234, 179, 8)' }}
+                          className="token-random-url-icon"
                           aria-label="Upgrade to Pro for static URLs"
                         />
                       </div>
                     )}
                   </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                  <td className="token-table-date">
                     {new Date(token.createdAt).toLocaleDateString()}
                   </td>
-                  <td style={{ fontSize: '13px' }}>
+                  <td className="token-table-date-value">
                     {token.lastUsedAt ? (
                       new Date(token.lastUsedAt).toLocaleDateString()
                     ) : (
-                      <span style={{ color: 'var(--gray-dark)' }}>Never</span>
+                      <span className="token-table-date-never">Never</span>
                     )}
                   </td>
                   <td>
                     <button
                       onClick={() => handleRevoke(token.id)}
-                      className="btn btn-danger btn-sm"
-                      style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                      className="btn btn-danger btn-sm token-revoke-btn"
                     >
                       <Trash2 size={13} />
                       Revoke

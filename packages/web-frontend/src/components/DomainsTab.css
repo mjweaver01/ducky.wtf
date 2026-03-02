@@ -1,0 +1,180 @@
+/* Domains Tab Styles */
+
+/* Upgrade banner - shared styles */
+.domains-upgrade-banner {
+  margin-bottom: 24px;
+  border-color: rgba(234, 179, 8, 0.5);
+  background: rgba(234, 179, 8, 0.05);
+}
+
+.domains-upgrade-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.domains-upgrade-icon {
+  color: rgb(234, 179, 8);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.domains-upgrade-title {
+  color: rgb(234, 179, 8);
+  margin-bottom: 8px;
+}
+
+.domains-upgrade-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* Add domain form */
+.add-domain-card {
+  margin-bottom: 24px;
+}
+
+.add-domain-title {
+  margin-bottom: 16px;
+}
+
+.add-domain-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Domain list item */
+.domain-item {
+  padding: 20px 0;
+}
+
+.domain-item:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.domain-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.domain-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.domain-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.domain-item-icon-verified {
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.domain-item-icon-pending {
+  color: var(--warning);
+  flex-shrink: 0;
+}
+
+.domain-item-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.domain-item-verified-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-left: 28px;
+}
+
+/* DNS verification section */
+.domain-verification {
+  margin-top: 14px;
+  margin-left: 28px;
+}
+
+.domain-verification-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.domain-dns-box {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.domain-dns-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 0;
+}
+
+.domain-dns-label {
+  width: 48px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-dark);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.domain-dns-value {
+  flex: 1;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--text);
+}
+
+.domain-dns-value.highlight {
+  color: var(--primary);
+}
+
+.domain-dns-copy {
+  padding: 3px 8px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.domain-dns-note {
+  font-size: 12px;
+  color: var(--gray-dark);
+  margin-top: 8px;
+}
+
+/* Domain actions */
+.domain-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  align-items: flex-start;
+}
+
+/* Empty state */
+.domains-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.domains-empty-icon {
+  color: var(--gray-dark);
+  margin-bottom: 16px;
+}
+
+/* Empty state icon styles */
+.tokens-empty-icon {
+  color: var(--gray-dark);
+  margin-bottom: 16px;
+}
+
+
