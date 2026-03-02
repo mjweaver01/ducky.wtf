@@ -477,7 +477,6 @@
   margin-right: auto;
   padding: 48px 64px;
   min-width: 0;
-  overflow-x: hidden;
 }
 
 .doc-content h1 {
@@ -618,10 +617,22 @@
   flex-shrink: 0;
 }
 
-.api-get    { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-.api-post   { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-.api-delete { background: rgba(239, 68, 68, 0.15);  color: var(--danger); }
-.api-patch  { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.api-get {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+.api-post {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+.api-delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+.api-patch {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
 
 /* Intro doc cards */
 .doc-cards {
@@ -694,10 +705,26 @@
   font-size: 12px;
 }
 
-.diagram-internet { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-.diagram-edge     { background: rgba(251, 191, 36, 0.15); color: var(--primary); border: 1px solid rgba(251, 191, 36, 0.3); }
-.diagram-cli      { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-.diagram-local    { background: var(--dark); color: var(--text-muted); border: 1px solid var(--border); }
+.diagram-internet {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.diagram-edge {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+.diagram-cli {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.diagram-local {
+  background: var(--dark);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
 
 .diagram-arrow {
   color: var(--gray-dark);
@@ -733,6 +760,10 @@
 
   .contact-layout {
     grid-template-columns: 1fr;
+  }
+
+  .contact-form-grid {
+    grid-template-columns: 1fr !important;
   }
 
   .docs-layout {
@@ -817,4 +848,3 @@
 .docs-page-divider {
   border-top: 1px solid var(--border);
 }
-
