@@ -123,203 +123,211 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ user, onUpdate }) => {
         <p className="page-subtitle">Manage your account details and security</p>
       </div>
 
-      <div className="card" style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'rgba(251, 191, 36, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--primary)',
-              flexShrink: 0,
-            }}
-          >
-            <User size={20} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Profile</h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Update your name and email address
-            </p>
-          </div>
-        </div>
-
-        {renderMessage(profileMessage)}
-
-        <form onSubmit={handleUpdateProfile}>
-          <div className="form-group">
-            <label htmlFor="fullName">Full Name</label>
-            <input
-              id="fullName"
-              type="text"
-              className="input"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Your full name"
-              autoComplete="name"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              id="email"
-              type="email"
-              className="input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-          </div>
-          <button type="submit" className="btn btn-primary" disabled={profileLoading}>
-            {profileLoading ? 'Saving…' : 'Save Changes'}
-          </button>
-        </form>
-      </div>
-
-      <div className="card" style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'rgba(251, 191, 36, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--primary)',
-              flexShrink: 0,
-            }}
-          >
-            <CreditCard size={20} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Subscription</h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Manage your plan and billing
-            </p>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '16px',
-            background: 'rgba(251, 191, 36, 0.05)',
-            border: '1px solid rgba(251, 191, 36, 0.2)',
-            borderRadius: '8px',
-            marginBottom: '16px',
-          }}
-        >
-          {React.createElement(getPlanIcon(user?.plan || 'free'), {
-            size: 24,
-            style: { color: getPlanColor(user?.plan || 'free') },
-          })}
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, marginBottom: '2px' }}>
-              {getPlanDisplay(user?.plan || 'free')}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: '24px',
+        }}
+      >
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                background: 'rgba(251, 191, 36, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--primary)',
+                flexShrink: 0,
+              }}
+            >
+              <User size={20} />
             </div>
+            <div>
+              <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Profile</h2>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                Update your name and email address
+              </p>
+            </div>
+          </div>
+
+          {renderMessage(profileMessage)}
+
+          <form onSubmit={handleUpdateProfile}>
+            <div className="form-group">
+              <label htmlFor="fullName">Full Name</label>
+              <input
+                id="fullName"
+                type="text"
+                className="input"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                id="email"
+                type="email"
+                className="input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={profileLoading}>
+              {profileLoading ? 'Saving…' : 'Save Changes'}
+            </button>
+          </form>
+        </div>
+
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                background: 'rgba(251, 191, 36, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--primary)',
+                flexShrink: 0,
+              }}
+            >
+              <CreditCard size={20} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Subscription</h2>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                Manage your plan and billing
+              </p>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '16px',
+              background: 'rgba(251, 191, 36, 0.05)',
+              border: '1px solid rgba(251, 191, 36, 0.2)',
+              borderRadius: '8px',
+              marginBottom: '16px',
+            }}
+          >
+            {React.createElement(getPlanIcon(user?.plan || 'free'), {
+              size: 24,
+              style: { color: getPlanColor(user?.plan || 'free') },
+            })}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 600, marginBottom: '2px' }}>
+                {getPlanDisplay(user?.plan || 'free')}
+              </div>
+              {user?.plan === 'free' ? (
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                  Upgrade to unlock static URLs and custom domains
+                </div>
+              ) : (
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                  {user?.planExpiresAt &&
+                    `Renews on ${new Date(user.planExpiresAt).toLocaleDateString()}`}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px' }}>
             {user?.plan === 'free' ? (
-              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                Upgrade to unlock static URLs and custom domains
-              </div>
+              <Link to="/pricing" className="btn btn-primary">
+                <Crown size={16} />
+                Upgrade Plan
+              </Link>
             ) : (
-              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                {user?.planExpiresAt &&
-                  `Renews on ${new Date(user.planExpiresAt).toLocaleDateString()}`}
-              </div>
+              <button
+                onClick={handleManageBilling}
+                className="btn btn-secondary"
+                disabled={billingLoading}
+              >
+                {billingLoading ? 'Loading…' : 'Manage Billing'}
+              </button>
+            )}
+            {user?.plan !== 'free' && (
+              <Link to="/pricing" className="btn btn-secondary">
+                View Plans
+              </Link>
             )}
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
-          {user?.plan === 'free' ? (
-            <Link to="/pricing" className="btn btn-primary">
-              <Crown size={16} />
-              Upgrade Plan
-            </Link>
-          ) : (
-            <button
-              onClick={handleManageBilling}
-              className="btn btn-secondary"
-              disabled={billingLoading}
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                background: 'rgba(251, 191, 36, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--primary)',
+                flexShrink: 0,
+              }}
             >
-              {billingLoading ? 'Loading…' : 'Manage Billing'}
+              <Lock size={20} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Change Password</h2>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                Keep your account secure with a strong password
+              </p>
+            </div>
+          </div>
+
+          {renderMessage(passwordMessage)}
+
+          <form onSubmit={handleChangePassword}>
+            <div className="form-group">
+              <label htmlFor="currentPassword">Current Password</label>
+              <input
+                id="currentPassword"
+                type="password"
+                className="input"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newPassword">New Password</label>
+              <input
+                id="newPassword"
+                type="password"
+                className="input"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
+              <small>At least 8 characters</small>
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={passwordLoading}>
+              {passwordLoading ? 'Changing…' : 'Change Password'}
             </button>
-          )}
-          {user?.plan !== 'free' && (
-            <Link to="/pricing" className="btn btn-secondary">
-              View Plans
-            </Link>
-          )}
+          </form>
         </div>
-      </div>
-
-      <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'rgba(251, 191, 36, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--primary)',
-              flexShrink: 0,
-            }}
-          >
-            <Lock size={20} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Change Password</h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Keep your account secure with a strong password
-            </p>
-          </div>
-        </div>
-
-        {renderMessage(passwordMessage)}
-
-        <form onSubmit={handleChangePassword}>
-          <div className="form-group">
-            <label htmlFor="currentPassword">Current Password</label>
-            <input
-              id="currentPassword"
-              type="password"
-              className="input"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password</label>
-            <input
-              id="newPassword"
-              type="password"
-              className="input"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              minLength={8}
-              autoComplete="new-password"
-            />
-            <small>At least 8 characters</small>
-          </div>
-          <button type="submit" className="btn btn-primary" disabled={passwordLoading}>
-            {passwordLoading ? 'Changing…' : 'Change Password'}
-          </button>
-        </form>
       </div>
     </div>
   );
