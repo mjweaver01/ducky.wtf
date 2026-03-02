@@ -23,6 +23,10 @@ const SignupPage: React.FC = () => {
 
     try {
       const response = await authAPI.register(email, password, fullName);
+      if (!response?.token) {
+        setError('Invalid response from server');
+        return;
+      }
       authAPI.setToken(response.token);
       navigate('/dashboard');
     } catch (err: any) {
@@ -44,7 +48,7 @@ const SignupPage: React.FC = () => {
 
           {error && <div className="error">{error}</div>}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} action="#" method="post">
             <div className="form-group">
               <label htmlFor="fullName">Full Name</label>
               <input

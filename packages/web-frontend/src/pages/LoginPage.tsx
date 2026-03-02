@@ -22,6 +22,10 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await authAPI.login(email, password);
+      if (!response?.token) {
+        setError('Invalid response from server');
+        return;
+      }
       authAPI.setToken(response.token);
       navigate('/dashboard');
     } catch (err: any) {
@@ -43,7 +47,7 @@ const LoginPage: React.FC = () => {
 
           {error && <div className="error">{error}</div>}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} action="#" method="post">
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
