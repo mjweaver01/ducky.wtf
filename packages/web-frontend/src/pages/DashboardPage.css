@@ -97,7 +97,7 @@
   height: 40px;
   border-radius: 50%;
   background: var(--primary);
-  color: white;
+  color: var(--dark-lighter);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -172,10 +172,22 @@
   margin-bottom: 4px;
 }
 
-.stat-icon-primary { background: rgba(251, 191, 36, 0.15); color: var(--primary); }
-.stat-icon-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-.stat-icon-secondary { background: rgba(252, 211, 77, 0.15); color: var(--secondary); }
-.stat-icon-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.stat-icon-primary {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--primary);
+}
+.stat-icon-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+.stat-icon-secondary {
+  background: rgba(252, 211, 77, 0.15);
+  color: var(--secondary);
+}
+.stat-icon-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
 
 .stat-value {
   font-size: 28px;
@@ -250,7 +262,10 @@
   padding: 8px;
   border-radius: 8px;
   line-height: 0;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .dashboard-hamburger:hover {
@@ -360,4 +375,3 @@
 .sidebar-footer-logout {
   width: 100%;
 }
-
