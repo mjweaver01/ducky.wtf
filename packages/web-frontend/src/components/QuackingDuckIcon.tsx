@@ -25,47 +25,49 @@ const QuackingDuck: React.FC<QuackingDuckProps> = ({
   const isQuackingRef = useRef(false);
   const pendingQuackRef = useRef(false);
 
-  const triggerQuack = useCallback(() => {
-    if (isQuackingRef.current || pendingQuackRef.current) return;
+  // wobble + autoQuack uses a pure CSS sequence animation — no JS timers needed.
+  const isSequenceMode = wobble && autoQuack;
 
+  const fireQuack = useCallback(() => {
+    isQuackingRef.current = true;
+    setIsQuacking(true);
+    setTimeout(() => {
+      setIsQuacking(false);
+      isQuackingRef.current = false;
+    }, quackDuration);
+  }, [quackDuration]);
+
+  const triggerQuack = useCallback(() => {
+    if (isSequenceMode) return;
+    if (isQuackingRef.current || pendingQuackRef.current) return;
     if (wobble) {
       pendingQuackRef.current = true;
     } else {
-      isQuackingRef.current = true;
-      setIsQuacking(true);
-      setTimeout(() => {
-        setIsQuacking(false);
-        isQuackingRef.current = false;
-      }, quackDuration);
+      fireQuack();
     }
-  }, [wobble, quackDuration]);
+  }, [isSequenceMode, wobble, fireQuack]);
 
   const handleAnimationIteration = useCallback(() => {
-    if (pendingQuackRef.current) {
-      pendingQuackRef.current = false;
-      isQuackingRef.current = true;
-      setIsQuacking(true);
-      setTimeout(() => {
-        setIsQuacking(false);
-        isQuackingRef.current = false;
-      }, quackDuration);
-    }
-  }, [quackDuration]);
+    if (!pendingQuackRef.current) return;
+    pendingQuackRef.current = false;
+    fireQuack();
+  }, [fireQuack]);
 
   useEffect(() => {
-    if (!autoQuack) return;
+    if (!autoQuack || wobble) return;
     const initial = setTimeout(triggerQuack, initialDelay);
     const timer = setInterval(triggerQuack, interval);
     return () => {
       clearTimeout(initial);
       clearInterval(timer);
     };
-  }, [autoQuack, initialDelay, interval, triggerQuack]);
+  }, [autoQuack, wobble, initialDelay, interval, triggerQuack]);
 
   const containerClass = [
     'quacking-duck',
-    wobble ? 'quacking-duck--wobble' : '',
-    isQuacking ? 'quacking-duck--quacking' : '',
+    isSequenceMode ? 'quacking-duck--sequence' : '',
+    !isSequenceMode && wobble ? 'quacking-duck--wobble' : '',
+    !isSequenceMode && isQuacking ? 'quacking-duck--quacking' : '',
     className,
   ]
     .filter(Boolean)

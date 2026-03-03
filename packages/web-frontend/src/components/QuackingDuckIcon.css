@@ -8,6 +8,7 @@
   display: block;
 }
 
+/* ── Manual wobble (no autoQuack) ── */
 .quacking-duck--wobble {
   transform-origin: center bottom;
   animation: quacking-duck-waddle 0.75s ease-in-out infinite;
@@ -18,9 +19,9 @@
 }
 
 @keyframes quacking-duck-waddle {
-  0%, 100% { transform: rotate(-5deg) translateY(0px); }
+  0%, 100% { transform: rotate(-5deg) translateY(0); }
   25%       { transform: rotate(0deg)  translateY(-3px); }
-  50%       { transform: rotate(5deg)  translateY(0px); }
+  50%       { transform: rotate(5deg)  translateY(0); }
   75%       { transform: rotate(0deg)  translateY(-3px); }
 }
 
@@ -44,4 +45,57 @@
   transform-box: fill-box;
   transform-origin: right top;
   animation: quacking-duck-lower 0.28s ease-in-out 2;
+}
+
+/* ── Auto-quack sequence ──────────────────────────────────────────────────
+   Total cycle: 2000ms = 2 bounces (0–75% = 1500ms) + 1 quack (75–100% = 500ms)
+   All three animations share the same 2s period so they can never drift.
+   ──────────────────────────────────────────────────────────────────────── */
+.quacking-duck--sequence {
+  cursor: default;
+  transform-origin: center bottom;
+  animation: duck-sequence-body 2s linear infinite;
+}
+
+.quacking-duck--sequence .upper-jaw {
+  transform-box: fill-box;
+  transform-origin: right bottom;
+  animation: duck-sequence-upper 2s ease-in-out infinite;
+}
+
+.quacking-duck--sequence .lower-jaw {
+  transform-box: fill-box;
+  transform-origin: right top;
+  animation: duck-sequence-lower 2s ease-in-out infinite;
+}
+
+/* Body: 2 waddle cycles (each 37.5% = 750ms), then hold for quack */
+@keyframes duck-sequence-body {
+  0%      { transform: rotate(-5deg) translateY(0);   animation-timing-function: ease-in-out; }
+  9.375%  { transform: rotate(0deg)  translateY(-3px); animation-timing-function: ease-in-out; }
+  18.75%  { transform: rotate(5deg)  translateY(0);   animation-timing-function: ease-in-out; }
+  28.125% { transform: rotate(0deg)  translateY(-3px); animation-timing-function: ease-in-out; }
+  37.5%   { transform: rotate(-5deg) translateY(0);   animation-timing-function: ease-in-out; }
+  46.875% { transform: rotate(0deg)  translateY(-3px); animation-timing-function: ease-in-out; }
+  56.25%  { transform: rotate(5deg)  translateY(0);   animation-timing-function: ease-in-out; }
+  65.625% { transform: rotate(0deg)  translateY(-3px); animation-timing-function: ease-in-out; }
+  /* hold at natural resting tilt through quack, loops back to 0% seamlessly */
+  75%, 100% { transform: rotate(-5deg) translateY(0); }
+}
+
+/* Upper jaw: still during bounces, two open/close cycles during quack */
+@keyframes duck-sequence-upper {
+  0%, 75% { transform: rotate(0deg); }
+  81.25%  { transform: rotate(22deg); }
+  87.5%   { transform: rotate(0deg); }
+  93.75%  { transform: rotate(22deg); }
+  100%    { transform: rotate(0deg); }
+}
+
+@keyframes duck-sequence-lower {
+  0%, 75% { transform: rotate(0deg); }
+  81.25%  { transform: rotate(-22deg); }
+  87.5%   { transform: rotate(0deg); }
+  93.75%  { transform: rotate(-22deg); }
+  100%    { transform: rotate(0deg); }
 }
