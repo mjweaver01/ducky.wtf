@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check, Zap, Crown, Building2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api/client';
 import MarketingLayout from '../components/MarketingLayout';
 import { useMetadata } from '../hooks/useMetadata';
@@ -11,6 +11,8 @@ const PricingPage: React.FC = () => {
   useMetadata(pageMetadata.pricing);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const highlightEnterprise = searchParams.get('highlight') === 'enterprise';
   const [loading, setLoading] = useState<string | null>(null);
   const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
 
@@ -126,12 +128,21 @@ const PricingPage: React.FC = () => {
             {plans.map((plan) => {
               const Icon = plan.icon;
               const pricing = getPrice(plan.name);
+              const isProminent =
+                (plan.name === 'Enterprise' && highlightEnterprise) ||
+                (plan.name === 'Pro' && !highlightEnterprise);
+              const badgeLabel =
+                plan.name === 'Enterprise' && highlightEnterprise
+                  ? 'RECOMMENDED'
+                  : plan.name === 'Pro' && !highlightEnterprise
+                    ? 'MOST POPULAR'
+                    : null;
               return (
                 <div
                   key={plan.name}
-                  className={`card pricing-card ${plan.popular ? 'popular' : ''}`}
+                  className={`card pricing-card ${isProminent ? 'popular' : ''}`}
                 >
-                  {plan.popular && <div className="pricing-card-badge">MOST POPULAR</div>}
+                  {badgeLabel && <div className="pricing-card-badge">{badgeLabel}</div>}
 
                   <div className="pricing-card-header">
                     <div className="pricing-card-title-row">
@@ -154,7 +165,7 @@ const PricingPage: React.FC = () => {
                   <button
                     onClick={plan.onClick}
                     disabled={loading === plan.name.toLowerCase()}
-                    className={`btn ${plan.popular ? 'btn-primary' : 'btn-secondary'} pricing-card-cta`}
+                    className={`btn ${isProminent ? 'btn-primary' : 'btn-secondary'} pricing-card-cta`}
                   >
                     {loading === plan.name.toLowerCase() ? 'Loading...' : plan.cta}
                   </button>

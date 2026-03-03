@@ -145,7 +145,7 @@ const DomainsTab: React.FC = () => {
               </p>
               <button
                 className="btn btn-primary btn-sm"
-                onClick={() => (window.location.href = '/pricing')}
+                onClick={() => (window.location.href = '/pricing?highlight=enterprise')}
               >
                 View Enterprise Plan
               </button>
