@@ -251,6 +251,17 @@ const TokensTab: React.FC = () => {
             <Key size={48} className="tokens-empty-icon" />
             <h3>No tokens yet</h3>
             <p>Create an auth token to authenticate the ducky CLI.</p>
+            <button
+              onClick={() => {
+                setShowCreate(true);
+                setCreatedToken(null);
+              }}
+              className="btn btn-primary"
+              style={{ marginTop: '1rem' }}
+            >
+              <Plus size={16} />
+              Create Token
+            </button>
           </div>
         ) : (
           <table className="table">

@@ -191,6 +191,16 @@ const DomainsTab: React.FC = () => {
             <Globe size={48} className="domains-empty-icon" />
             <h3>No custom domains</h3>
             <p>Add your own domain to use professional tunnel URLs.</p>
+            {user?.plan === 'enterprise' && (
+              <button
+                onClick={() => setShowAdd(true)}
+                className="btn btn-primary"
+                style={{ marginTop: '1rem' }}
+              >
+                <Plus size={16} />
+                Add Domain
+              </button>
+            )}
           </div>
         ) : (
           <div>
