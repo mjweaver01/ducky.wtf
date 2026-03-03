@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Gauge, BarChart3, Globe, Wrench, LayoutDashboard } from 'lucide-react';
+import { ArrowRight, Shield, Gauge, BarChart3, Globe, Wrench } from 'lucide-react';
 import DuckIcon from '../components/DuckIcon';
 import QuackingDuck from '../components/QuackingDuckIcon';
 import MarketingLayout from '../components/MarketingLayout';
