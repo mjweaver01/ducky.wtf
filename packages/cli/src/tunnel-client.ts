@@ -7,7 +7,6 @@ import {
   HttpRequest,
   HttpResponse,
   WsOpen,
-  WsMessage,
   WsClose,
 } from '@ducky.wtf/shared';
 
@@ -15,8 +14,19 @@ const HOP_BY_HOP_HEADERS = new Set([
   'upgrade', 'connection', 'host',
   'sec-websocket-key', 'sec-websocket-version',
   'sec-websocket-extensions', 'sec-websocket-accept',
-  'sec-websocket-protocol',
+  // Note: sec-websocket-protocol is NOT stripped — it is passed as the protocols argument
 ]);
+
+/**
+ * Build a compact binary frame for the control channel.
+ * Layout: [8 bytes wsId (binary)] [1 byte flags: bit0=isBinary] [payload]
+ */
+function buildWsDataFrame(wsId: string, data: Buffer, isBinary: boolean): Buffer {
+  const header = Buffer.allocUnsafe(9);
+  Buffer.from(wsId, 'hex').copy(header);
+  header[8] = isBinary ? 1 : 0;
+  return Buffer.concat([header, data]);
+}
 
 /** Normalize tunnel URL to https for real domains; leave localhost as-is so local dev works. */
 export function toPublicUrl(url: string): string {
@@ -85,7 +95,19 @@ export class TunnelClient {
         this.ws!.send(JSON.stringify(message));
       });
 
-      this.ws.on('message', (data: Buffer) => {
+      this.ws.on('message', (data: Buffer, isBinary: boolean) => {
+        // Binary frame = raw WS data to relay to a local WebSocket
+        if (isBinary) {
+          const wsId = data.subarray(0, 8).toString('hex');
+          const frameBinary = (data[8] & 1) === 1;
+          const payload = data.subarray(9);
+          const localWs = this.wsConnections.get(wsId);
+          if (localWs?.readyState === WebSocket.OPEN) {
+            localWs.send(payload, { binary: frameBinary });
+          }
+          return;
+        }
+
         try {
           const message: TunnelMessage = JSON.parse(data.toString());
 
@@ -106,10 +128,6 @@ export class TunnelClient {
 
             case 'ws-open':
               this.handleWsOpen(message.payload as WsOpen);
-              break;
-
-            case 'ws-message':
-              this.forwardWsMessageToLocal(message.payload as WsMessage);
               break;
 
             case 'ws-close':
@@ -313,24 +331,47 @@ export class TunnelClient {
     });
   }
 
-  private handleWsOpen(payload: WsOpen): void {
-    const [host, portStr] = this.options.backendAddress.split(':');
-    const port = parseInt(portStr || '80', 10);
-    const hostname = host === 'localhost' ? (this.resolvedLocalhostHostname ?? '127.0.0.1') : host;
-
-    const headers: Record<string, string> = {};
-    for (const [key, value] of Object.entries(payload.headers)) {
-      if (!HOP_BY_HOP_HEADERS.has(key.toLowerCase())) {
-        headers[key] = Array.isArray(value) ? value.join(', ') : value;
-      }
-    }
-
+  private openLocalWs(
+    payload: WsOpen,
+    hostname: string,
+    port: number,
+    headers: Record<string, string>,
+    fallbackHostname: string | null,
+  ): void {
     const wsUrl = `ws://${hostname}:${port}${payload.url}`;
-    const localWs = new WebSocket(wsUrl, { headers });
+    const localWs = new WebSocket(
+      wsUrl,
+      payload.protocols?.length ? payload.protocols : undefined,
+      { headers },
+    );
 
-    this.wsConnections.set(payload.id, localWs);
+    const sendClose = (code: number, reason: string) => {
+      if (!this.wsConnections.has(payload.id)) return; // already cleaned up
+      this.wsConnections.delete(payload.id);
+      const message: TunnelMessage = {
+        type: 'ws-close',
+        payload: { id: payload.id, code, reason },
+      };
+      this.ws?.send(JSON.stringify(message));
+    };
+
+    localWs.on('error', (err: NodeJS.ErrnoException) => {
+      if (err.code === 'ECONNREFUSED' && fallbackHostname) {
+        // Primary address refused — retry with IPv6 fallback
+        localWs.terminate();
+        this.wsConnections.delete(payload.id);
+        this.openLocalWs(payload, fallbackHostname, port, headers, null);
+        return;
+      }
+      console.error(`WS proxy error (${payload.url}):`, err.message);
+      sendClose(1011, 'Local server error');
+    });
 
     localWs.on('open', () => {
+      // Cache the working hostname for future connections (same as HTTP side)
+      if (hostname !== this.resolvedLocalhostHostname && this.options.backendAddress.startsWith('localhost:')) {
+        this.resolvedLocalhostHostname = hostname;
+      }
       console.log(`WS proxy: ${payload.url} connected`);
     });
 
@@ -340,34 +381,30 @@ export class TunnelClient {
         : data instanceof ArrayBuffer
           ? Buffer.from(data)
           : Buffer.concat(data as Buffer[]);
-      const message: TunnelMessage = {
-        type: 'ws-message',
-        payload: { id: payload.id, data: buf.toString('base64'), binary: isBinary },
-      };
-      this.ws?.send(JSON.stringify(message));
+      // Send as raw binary frame — no JSON encoding
+      this.ws?.send(buildWsDataFrame(payload.id, buf, isBinary));
     });
-
-    const sendClose = (code: number, reason: string) => {
-      this.wsConnections.delete(payload.id);
-      const message: TunnelMessage = {
-        type: 'ws-close',
-        payload: { id: payload.id, code, reason },
-      };
-      this.ws?.send(JSON.stringify(message));
-    };
 
     localWs.on('close', (code, reason) => sendClose(code, reason.toString()));
-    localWs.on('error', (err) => {
-      console.error(`WS proxy error (${payload.url}):`, err.message);
-      sendClose(1011, 'Local server error');
-    });
+
+    this.wsConnections.set(payload.id, localWs);
   }
 
-  private forwardWsMessageToLocal(payload: WsMessage): void {
-    const localWs = this.wsConnections.get(payload.id);
-    if (!localWs || localWs.readyState !== WebSocket.OPEN) return;
-    const data = Buffer.from(payload.data, 'base64');
-    localWs.send(payload.binary ? data : data.toString());
+  private handleWsOpen(payload: WsOpen): void {
+    const [host, portStr] = this.options.backendAddress.split(':');
+    const port = parseInt(portStr || '80', 10);
+    const isLocalhost = host === 'localhost';
+    const primaryHostname = isLocalhost ? (this.resolvedLocalhostHostname ?? '127.0.0.1') : host;
+    const fallbackHostname = isLocalhost && !this.resolvedLocalhostHostname ? '::1' : null;
+
+    const headers: Record<string, string> = {};
+    for (const [key, value] of Object.entries(payload.headers)) {
+      if (!HOP_BY_HOP_HEADERS.has(key.toLowerCase())) {
+        headers[key] = Array.isArray(value) ? value.join(', ') : String(value);
+      }
+    }
+
+    this.openLocalWs(payload, primaryHostname, port, headers, fallbackHostname);
   }
 
   private closeLocalWs(payload: WsClose): void {

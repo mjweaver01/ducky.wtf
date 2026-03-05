@@ -30,19 +30,18 @@ export interface HttpResponse {
   body?: string;
 }
 
-/** Sent server→CLI when a browser opens a WebSocket connection to the tunnel URL */
+/**
+ * Sent server→CLI when a browser opens a WebSocket connection to the tunnel URL.
+ * WS data frames are NOT sent as JSON — they travel as raw binary frames on the
+ * control channel (text = JSON control message, binary = WS data frame).
+ * Binary frame layout: [8 bytes wsId] [1 byte flags: bit0=isBinary] [payload...]
+ */
 export interface WsOpen {
   id: string;
   url: string;
   headers: Record<string, string | string[]>;
-}
-
-/** Relays a WebSocket frame in either direction (server↔CLI) */
-export interface WsMessage {
-  id: string;
-  /** base64-encoded frame data */
-  data: string;
-  binary: boolean;
+  /** WebSocket subprotocols requested by the browser */
+  protocols?: string[];
 }
 
 /** Notifies the other side that a WebSocket connection has closed */
@@ -53,8 +52,8 @@ export interface WsClose {
 }
 
 export interface TunnelMessage {
-  type: 'register' | 'assignment' | 'request' | 'response' | 'error' | 'ws-open' | 'ws-message' | 'ws-close';
-  payload: TunnelRegistration | TunnelAssignment | HttpRequest | HttpResponse | { message: string } | WsOpen | WsMessage | WsClose;
+  type: 'register' | 'assignment' | 'request' | 'response' | 'error' | 'ws-open' | 'ws-close';
+  payload: TunnelRegistration | TunnelAssignment | HttpRequest | HttpResponse | { message: string } | WsOpen | WsClose;
 }
 
 export interface Config {

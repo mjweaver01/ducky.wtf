@@ -74,7 +74,13 @@ export class TunnelServer {
         }
       }
 
-      this.tunnelManager.sendWsOpen(tunnel.id, wsId, req.url || '/', headers);
+      // Extract requested subprotocols so the CLI can negotiate them with the local server
+      const protocolHeader = req.headers['sec-websocket-protocol'];
+      const protocols = protocolHeader
+        ? String(protocolHeader).split(',').map((p) => p.trim())
+        : undefined;
+
+      this.tunnelManager.sendWsOpen(tunnel.id, wsId, req.url || '/', headers, protocols);
 
       browserWs.on('message', (data, isBinary) => {
         this.tunnelManager.sendWsMessage(tunnel.id, wsId, data as Buffer, isBinary);

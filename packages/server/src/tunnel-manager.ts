@@ -7,9 +7,27 @@ import {
   HttpRequest,
   HttpResponse,
   WsOpen,
-  WsMessage,
   WsClose,
 } from '@ducky.wtf/shared';
+
+/**
+ * Build a compact binary frame for relaying a WebSocket data frame over the
+ * control channel.  Layout: [8 bytes wsId (binary)] [1 byte flags: bit0=isBinary] [payload]
+ */
+function buildWsDataFrame(wsId: string, data: Buffer, isBinary: boolean): Buffer {
+  const header = Buffer.allocUnsafe(9);
+  Buffer.from(wsId, 'hex').copy(header);
+  header[8] = isBinary ? 1 : 0;
+  return Buffer.concat([header, data]);
+}
+
+/** Parse a binary control-channel frame back into its components. */
+function parseWsDataFrame(frame: Buffer): { wsId: string; isBinary: boolean; data: Buffer } {
+  const wsId = frame.subarray(0, 8).toString('hex');
+  const isBinary = (frame[8] & 1) === 1;
+  const data = frame.subarray(9);
+  return { wsId, isBinary, data };
+}
 
 interface Tunnel {
   id: string;
@@ -132,15 +150,22 @@ export class TunnelManager {
       this.removeTunnel(tunnelId);
     });
 
-    ws.on('message', (data: Buffer) => {
+    ws.on('message', (data: Buffer, isBinary: boolean) => {
       try {
-        const message: TunnelMessage = JSON.parse(data.toString());
-        if (message.type === 'response') {
-          this.handleResponse(tunnelId, message.payload as HttpResponse);
-        } else if (message.type === 'ws-message') {
-          this.relayWsMessageToBrowser(tunnelId, message.payload as WsMessage);
-        } else if (message.type === 'ws-close') {
-          this.relayWsCloseToBrowser(tunnelId, message.payload as WsClose);
+        if (isBinary) {
+          // Raw WS data frame from the CLI — relay directly to the browser WebSocket
+          const { wsId, isBinary: frameBinary, data: payload } = parseWsDataFrame(data);
+          const browserWs = tunnel.wsConnections.get(wsId);
+          if (browserWs?.readyState === WebSocket.OPEN) {
+            browserWs.send(payload, { binary: frameBinary });
+          }
+        } else {
+          const message: TunnelMessage = JSON.parse(data.toString());
+          if (message.type === 'response') {
+            this.handleResponse(tunnelId, message.payload as HttpResponse);
+          } else if (message.type === 'ws-close') {
+            this.relayWsCloseToBrowser(tunnelId, message.payload as WsClose);
+          }
         }
       } catch (error) {
         console.error('Error processing tunnel message:', error);
@@ -193,12 +218,18 @@ export class TunnelManager {
     }
   }
 
-  sendWsOpen(tunnelId: string, wsId: string, url: string, headers: Record<string, string | string[]>): void {
+  sendWsOpen(
+    tunnelId: string,
+    wsId: string,
+    url: string,
+    headers: Record<string, string | string[]>,
+    protocols?: string[],
+  ): void {
     const tunnel = this.tunnels.get(tunnelId);
     if (!tunnel || tunnel.ws.readyState !== WebSocket.OPEN) return;
     const message: TunnelMessage = {
       type: 'ws-open',
-      payload: { id: wsId, url, headers } as WsOpen,
+      payload: { id: wsId, url, headers, protocols } as WsOpen,
     };
     tunnel.ws.send(JSON.stringify(message));
   }
@@ -207,11 +238,7 @@ export class TunnelManager {
     const tunnel = this.tunnels.get(tunnelId);
     if (!tunnel || tunnel.ws.readyState !== WebSocket.OPEN) return;
     const buf = Buffer.isBuffer(data) ? data : Buffer.from(data as string);
-    const message: TunnelMessage = {
-      type: 'ws-message',
-      payload: { id: wsId, data: buf.toString('base64'), binary } as WsMessage,
-    };
-    tunnel.ws.send(JSON.stringify(message));
+    tunnel.ws.send(buildWsDataFrame(wsId, buf, binary));
   }
 
   sendWsClose(tunnelId: string, wsId: string, code?: number, reason?: string): void {
@@ -223,15 +250,6 @@ export class TunnelManager {
     };
     tunnel.ws.send(JSON.stringify(message));
     tunnel.wsConnections.delete(wsId);
-  }
-
-  private relayWsMessageToBrowser(tunnelId: string, payload: WsMessage): void {
-    const tunnel = this.tunnels.get(tunnelId);
-    if (!tunnel) return;
-    const browserWs = tunnel.wsConnections.get(payload.id);
-    if (!browserWs || browserWs.readyState !== WebSocket.OPEN) return;
-    const data = Buffer.from(payload.data, 'base64');
-    browserWs.send(payload.binary ? data : data.toString());
   }
 
   private relayWsCloseToBrowser(tunnelId: string, payload: WsClose): void {
