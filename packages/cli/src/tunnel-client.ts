@@ -338,7 +338,8 @@ export class TunnelClient {
     headers: Record<string, string>,
     fallbackHostname: string | null,
   ): void {
-    const wsUrl = `ws://${hostname}:${port}${payload.url}`;
+    const host = hostname.includes(':') ? `[${hostname}]` : hostname;
+    const wsUrl = `ws://${host}:${port}${payload.url}`;
     const localWs = new WebSocket(
       wsUrl,
       payload.protocols?.length ? payload.protocols : undefined,
