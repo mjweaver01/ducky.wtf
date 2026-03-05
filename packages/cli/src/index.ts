@@ -18,6 +18,7 @@ USAGE:
 COMMANDS:
   http <port|address:port>  Start an HTTP tunnel
   login                     Login with magic link (associates anonymous tunnels)
+  logout                    Clear saved credentials
   status                    Show current login status
   version                   Show CLI version
   update                    Update CLI to the latest version
@@ -211,6 +212,11 @@ async function main() {
     return;
   }
 
+  if (parsed.command === 'logout') {
+    handleLogout(parsed);
+    return;
+  }
+
   if (parsed.command === 'status') {
     await handleStatus(parsed);
     return;
@@ -290,6 +296,13 @@ async function handleLogin(parsed: any) {
   } finally {
     readline.close();
   }
+}
+
+function handleLogout(parsed: any) {
+  const configManager = new ConfigManager(parsed.config);
+  configManager.logout();
+  console.log('✅ Logged out. Your saved token and credentials have been cleared.');
+  console.log('💡 Run "ducky http 3000" to start a new anonymous tunnel, or "ducky login" to log back in.');
 }
 
 async function handleStatus(parsed: any) {

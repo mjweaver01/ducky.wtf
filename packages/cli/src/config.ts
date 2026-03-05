@@ -53,6 +53,13 @@ export class ConfigManager {
     console.log(`✅ Authtoken saved to ${this.configPath}`);
   }
 
+  logout(): void {
+    delete this.config.authToken;
+    delete this.config.isAnonymous;
+    delete this.config.email;
+    this.saveConfig();
+  }
+
   setAnonymousToken(token: string): void {
     this.config.authToken = token;
     this.config.isAnonymous = true;

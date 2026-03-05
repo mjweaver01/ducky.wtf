@@ -217,6 +217,21 @@ Flags:
         to get a new random one at any time.
       </p>
 
+      <h2 id="logout">ducky logout</h2>
+      <p>
+        Clear your saved auth token and credentials from <code>~/.ducky/config.json</code>. After
+        logging out, running <code>ducky http</code> will create a new anonymous tunnel.
+      </p>
+      <div className="doc-codeblock">
+        <div className="doc-codeblock-header">Usage</div>
+        <pre>
+          <code>
+            <span className="code-primary">ducky</span>
+            {' logout'}
+          </code>
+        </pre>
+      </div>
+
       <h2 id="config-commands">Config commands</h2>
       <p>
         Settings are stored in <code>~/.ducky/config.json</code>. Use the <code>config</code>{' '}
