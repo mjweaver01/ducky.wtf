@@ -95,7 +95,19 @@ export class TunnelRepository {
        SET request_count = request_count + $1, 
            bytes_transferred = bytes_transferred + $2
        WHERE id = $3`,
-      [requestCount, bytesTransferred]
+      [requestCount, bytesTransferred, tunnelId]
+    );
+  }
+
+  async setStats(
+    tunnelId: string,
+    requestCount: number,
+    bytesTransferred: number
+  ): Promise<void> {
+    const db = getDatabase();
+    await db.query(
+      'UPDATE tunnels SET request_count = $1, bytes_transferred = $2 WHERE id = $3',
+      [requestCount, bytesTransferred, tunnelId]
     );
   }
 

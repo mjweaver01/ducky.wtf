@@ -23,6 +23,7 @@ interface Tunnel {
     }
   >;
   requestCount: number;
+  bytesTransferred: number;
   lastRequestTime: number;
 }
 
@@ -106,6 +107,7 @@ export class TunnelManager {
       authToken: registration.authToken,
       pendingRequests: new Map(),
       requestCount: 0,
+      bytesTransferred: 0,
       lastRequestTime: Date.now(),
     };
 
@@ -119,7 +121,7 @@ export class TunnelManager {
 
     ws.on('close', () => {
       if (onClose) {
-        onClose({ requestCount: tunnel.requestCount, bytesTransferred: 0 });
+        onClose({ requestCount: tunnel.requestCount, bytesTransferred: tunnel.bytesTransferred });
       }
       this.removeTunnel(tunnelId);
     });
@@ -250,6 +252,9 @@ export class TunnelManager {
     if (pending) {
       clearTimeout(pending.timeout);
       tunnel.pendingRequests.delete(response.id);
+      if (response.body) {
+        tunnel.bytesTransferred += Buffer.byteLength(response.body, 'utf8');
+      }
       pending.resolve(response);
     }
   }
@@ -259,6 +264,14 @@ export class TunnelManager {
       id: t.id,
       url: t.assignedUrl,
       backendAddress: t.backendAddress,
+    }));
+  }
+
+  getActiveTunnelStats(): Array<{ tunnelId: string; requestCount: number; bytesTransferred: number }> {
+    return Array.from(this.tunnels.values()).map((t) => ({
+      tunnelId: t.id,
+      requestCount: t.requestCount,
+      bytesTransferred: t.bytesTransferred,
     }));
   }
 

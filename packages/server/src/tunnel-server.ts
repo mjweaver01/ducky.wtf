@@ -13,6 +13,9 @@ export class TunnelServer {
   private authService: AuthService;
   private tunnelRepo: TunnelRepository;
   private useDatabasePersistence: boolean;
+  private assignmentToDbTunnelId: Map<string, string> = new Map();
+  private statsInterval: NodeJS.Timeout | null = null;
+  private readonly STATS_SYNC_INTERVAL_MS = 30_000;
 
   constructor(tunnelManager: TunnelManager, authService: AuthService, server: http.Server) {
     this.tunnelManager = tunnelManager;
@@ -94,16 +97,15 @@ export class TunnelServer {
         metrics.recordTunnelClosed(registration.authToken);
 
         if (dbTunnelId) {
+          this.assignmentToDbTunnelId.delete(assignment.tunnelId);
           this.tunnelRepo.updateStatus(dbTunnelId, 'disconnected').catch((err) => {
             logger.error('Failed to update tunnel status', { error: err.message });
           });
-          if (stats.requestCount > 0) {
-            this.tunnelRepo
-              .incrementStats(dbTunnelId, stats.requestCount, stats.bytesTransferred)
-              .catch((err) => {
-                logger.error('Failed to update tunnel stats', { error: err.message });
-              });
-          }
+          this.tunnelRepo
+            .setStats(dbTunnelId, stats.requestCount, stats.bytesTransferred)
+            .catch((err: Error) => {
+              logger.error('Failed to flush tunnel stats on close', { error: err.message });
+            });
         }
       };
 
@@ -144,6 +146,7 @@ export class TunnelServer {
             result.tokenId
           );
           dbTunnelId = dbTunnel.id;
+          this.assignmentToDbTunnelId.set(assignment.tunnelId, dbTunnelId);
         } catch (err: any) {
           logger.error('Failed to record tunnel in database', { error: err.message });
         }
@@ -167,11 +170,30 @@ export class TunnelServer {
   }
 
   start(): void {
+    if (this.useDatabasePersistence) {
+      this.statsInterval = setInterval(() => {
+        if (this.assignmentToDbTunnelId.size === 0) return;
+        const activeStats = this.tunnelManager.getActiveTunnelStats();
+        for (const stats of activeStats) {
+          const dbTunnelId = this.assignmentToDbTunnelId.get(stats.tunnelId);
+          if (dbTunnelId) {
+            this.tunnelRepo.setStats(dbTunnelId, stats.requestCount, stats.bytesTransferred).catch((err: Error) => {
+              logger.error('Failed to sync tunnel stats', { error: err.message });
+            });
+          }
+        }
+      }, this.STATS_SYNC_INTERVAL_MS);
+    }
+
     logger.info('Tunnel WebSocket handler attached');
     console.log('🔌 Tunnel WebSocket handler ready on /_tunnel');
   }
 
   stop(): Promise<void> {
+    if (this.statsInterval) {
+      clearInterval(this.statsInterval);
+      this.statsInterval = null;
+    }
     return new Promise((resolve) => {
       this.wss.close(() => {
         logger.info('Tunnel server stopped');
