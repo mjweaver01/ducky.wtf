@@ -1,4 +1,5 @@
 import * as https from 'https';
+import * as path from 'path';
 import { execSync } from 'child_process';
 
 interface PackageInfo {
@@ -61,14 +62,26 @@ export function compareVersions(v1: string, v2: string): number {
 }
 
 /**
+ * Returns the npm binary that belongs to the same Node.js installation
+ * that is currently running this process. Using a PATH-resolved `npm`
+ * would install into whichever nvm version the shell has active, which
+ * may differ from where this binary is actually installed.
+ */
+function getNpmPath(): string {
+  const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  return path.join(path.dirname(process.execPath), npmBin);
+}
+
+/**
  * Updates the CLI to the latest version
  */
 export function updateCli(): void {
   console.log('📦 Updating ducky CLI...\n');
 
+  const npmPath = getNpmPath();
+
   try {
-    // Run npm install globally
-    execSync('npm install -g @ducky.wtf/cli@latest', {
+    execSync(`"${npmPath}" install -g @ducky.wtf/cli@latest`, {
       stdio: 'inherit',
     });
 
