@@ -106,12 +106,13 @@ CREATE INDEX idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX idx_sessions_token ON sessions(token);
 CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
 
--- Magic links table (for passwordless authentication)
+-- Magic links table (for passwordless authentication and password reset)
 CREATE TABLE magic_links (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) NOT NULL,
     token VARCHAR(255) UNIQUE NOT NULL,
     anonymous_token VARCHAR(255),
+    purpose VARCHAR(50) NOT NULL DEFAULT 'login',
     expires_at TIMESTAMP NOT NULL,
     used_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -120,6 +121,7 @@ CREATE TABLE magic_links (
 CREATE INDEX idx_magic_links_token ON magic_links(token);
 CREATE INDEX idx_magic_links_email ON magic_links(email);
 CREATE INDEX idx_magic_links_expires_at ON magic_links(expires_at);
+CREATE INDEX idx_magic_links_purpose ON magic_links(purpose);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -160,5 +162,6 @@ COMMENT ON TABLE tunnels IS 'Active and historical tunnel connections';
 COMMENT ON TABLE custom_domains IS 'Custom domains configured by users';
 COMMENT ON TABLE usage_stats IS 'Daily usage statistics per user/tunnel';
 COMMENT ON TABLE sessions IS 'Web session tokens for authenticated users';
-COMMENT ON TABLE magic_links IS 'Temporary tokens for passwordless magic link login';
+COMMENT ON TABLE magic_links IS 'Temporary tokens for passwordless magic link login and password reset';
 COMMENT ON COLUMN magic_links.anonymous_token IS 'If set, associates this login with an existing anonymous token';
+COMMENT ON COLUMN magic_links.purpose IS 'Purpose of the magic link: login, password_reset';

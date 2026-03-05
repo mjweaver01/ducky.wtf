@@ -76,4 +76,12 @@ export const pageMetadata = {
     title: 'Dashboard • ducky',
     description: 'Manage your tunnels, tokens, and settings from the ducky dashboard.',
   },
+  forgotPassword: {
+    title: 'Forgot Password • Ducky.wtf',
+    description: 'Reset your Ducky.wtf account password',
+  },
+  resetPassword: {
+    title: 'Reset Password • Ducky.wtf',
+    description: 'Create a new password for your Ducky.wtf account',
+  },
 } as const;

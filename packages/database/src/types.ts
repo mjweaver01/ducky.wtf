@@ -31,6 +31,7 @@ export interface MagicLink {
   email: string;
   token: string;
   anonymous_token?: string;
+  purpose: 'login' | 'password_reset';
   expires_at: Date;
   used_at?: Date;
   created_at: Date;

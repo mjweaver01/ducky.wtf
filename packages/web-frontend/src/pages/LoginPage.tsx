@@ -75,6 +75,11 @@ const LoginPage: React.FC = () => {
                 required
                 autoComplete="current-password"
               />
+              <div style={{ textAlign: 'right', marginTop: '8px' }}>
+                <Link to="/forgot-password" style={{ fontSize: '14px', color: 'var(--text-muted)', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             <button type="submit" className="btn btn-primary btn-block" disabled={loading}>

@@ -68,6 +68,28 @@ class EmailService {
     }
   }
 
+  async sendPasswordResetEmail(to: string, resetUrl: string): Promise<void> {
+    if (!this.transporter) {
+      throw new Error('Email service not configured');
+    }
+
+    const mailOptions = {
+      from: `"Ducky.wtf" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: 'Reset your password',
+      text: this.formatPasswordResetPlainText(resetUrl),
+      html: this.formatPasswordResetHtml(resetUrl),
+    };
+
+    try {
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log('✓ Password reset email sent:', info.messageId);
+    } catch (error) {
+      console.error('✗ Failed to send password reset email:', error);
+      throw new Error('Failed to send email');
+    }
+  }
+
   private getTopicLabel(topic: string): string {
     const topics: Record<string, string> = {
       general: 'General question',
@@ -151,6 +173,65 @@ Reply to this email to respond to ${data.name}
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+
+  private formatPasswordResetPlainText(resetUrl: string): string {
+    return `
+Password Reset Request
+======================
+
+You requested to reset your password for your Ducky.wtf account.
+
+Click the link below to reset your password (expires in 15 minutes):
+${resetUrl}
+
+If you didn't request this, you can safely ignore this email.
+
+---
+The Ducky.wtf Team
+    `.trim();
+  }
+
+  private formatPasswordResetHtml(resetUrl: string): string {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+    .message { background: white; padding: 20px; border-radius: 4px; border-left: 3px solid #667eea; margin: 20px 0; }
+    .button { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; margin: 20px 0; font-weight: 600; }
+    .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 14px; color: #666; text-align: center; }
+    .warning { color: #666; font-size: 14px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔐 Password Reset Request</h1>
+    </div>
+    <div class="content">
+      <div class="message">
+        <p>You requested to reset your password for your Ducky.wtf account.</p>
+        <p>Click the button below to create a new password:</p>
+        <div style="text-align: center;">
+          <a href="${this.escapeHtml(resetUrl)}" class="button">Reset Password</a>
+        </div>
+        <p class="warning">⏱ This link will expire in 15 minutes.</p>
+      </div>
+      <div class="footer">
+        <p>If you didn't request this password reset, you can safely ignore this email.</p>
+        <p>The Ducky.wtf Team</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
   }
 }
 

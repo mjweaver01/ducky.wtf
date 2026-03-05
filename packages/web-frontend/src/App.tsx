@@ -4,6 +4,8 @@ import { ProtectedRoute, GuestOnlyRoute } from './protectedRoutes';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import PricingPage from './pages/PricingPage';
 import AboutPage from './pages/AboutPage';
@@ -33,6 +35,8 @@ const App: React.FC = () => {
         {/* Auth — redirect to dashboard if already logged in */}
         <Route path="/login" element={<GuestOnlyRoute element={<LoginPage />} />} />
         <Route path="/signup" element={<GuestOnlyRoute element={<SignupPage />} />} />
+        <Route path="/forgot-password" element={<GuestOnlyRoute element={<ForgotPasswordPage />} />} />
+        <Route path="/reset-password" element={<GuestOnlyRoute element={<ResetPasswordPage />} />} />
 
         {/* App — protected routes: auth logic lives inside ProtectedRoute */}
         <Route path="/dashboard/*" element={<ProtectedRoute element={<DashboardPage />} />} />

@@ -7,29 +7,33 @@ export class MagicLinkRepository {
     return crypto.randomBytes(32).toString('hex');
   }
 
-  async create(email: string, anonymousToken?: string): Promise<MagicLink> {
+  async create(email: string, anonymousToken?: string, purpose: 'login' | 'password_reset' = 'login'): Promise<MagicLink> {
     const db = getDatabase();
     const token = this.generateToken();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
     
     const result = await db.query<MagicLink>(
-      `INSERT INTO magic_links (email, token, anonymous_token, expires_at)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO magic_links (email, token, anonymous_token, purpose, expires_at)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [email, token, anonymousToken || null, expiresAt]
+      [email, token, anonymousToken || null, purpose, expiresAt]
     );
     
     return result.rows[0];
   }
 
-  async findByToken(token: string): Promise<MagicLink | null> {
+  async findByToken(token: string, purpose?: 'login' | 'password_reset'): Promise<MagicLink | null> {
     const db = getDatabase();
+    const purposeCondition = purpose ? 'AND purpose = $2' : '';
+    const params = purpose ? [token, purpose] : [token];
+    
     const result = await db.query<MagicLink>(
       `SELECT * FROM magic_links 
        WHERE token = $1 
        AND expires_at > NOW() 
-       AND used_at IS NULL`,
-      [token]
+       AND used_at IS NULL
+       ${purposeCondition}`,
+      params
     );
     return result.rows[0] || null;
   }
