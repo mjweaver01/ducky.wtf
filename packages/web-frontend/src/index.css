@@ -20,6 +20,18 @@
   --border: #262626;
   --text: #ffffff;
   --text-muted: #a3a3a3;
+
+  /* Code block (Darcula) */
+  --code-bg: #2b2b2b;
+  --code-header-bg: #3c3f41;
+  --code-border: #4e5254;
+  --code-text: #a9b7c6;
+  --code-muted: #808080;
+  --code-primary: #ffc66d;
+  --code-keyword: #cc7832;
+  --code-string: #6a8759;
+  --code-number: #6897bb;
+  --code-key: #9876aa;
 }
 
 body {

@@ -12,6 +12,8 @@ import {
   Crown,
   Zap,
   Building2,
+  Github,
+  Mail,
 } from 'lucide-react';
 import { authAPI, userAPI, billingAPI, type User } from '../api';
 import DuckIcon from '../components/DuckIcon';
@@ -22,6 +24,7 @@ import DomainsTab from '../components/DomainsTab';
 import SettingsTab from '../components/SettingsTab';
 import { useMetadata } from '../hooks/useMetadata';
 import { pageMetadata } from '../metadata';
+import { links } from '../links';
 import './DashboardPage.css';
 
 const DashboardPage: React.FC = () => {
@@ -205,10 +208,24 @@ const DashboardPage: React.FC = () => {
           </NavLink>
 
           <div className="nav-divider" />
+          <div className="nav-section-label">Support</div>
 
-          <Link to="/docs" className="nav-item">
-            <BookOpen size={20} className="nav-icon" />
+          <Link to="/docs" className="nav-item nav-item-secondary">
+            <BookOpen size={16} className="nav-icon" />
             Docs
+          </Link>
+          <a
+            href={links.githubIssues}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-item nav-item-secondary"
+          >
+            <Github size={16} className="nav-icon" />
+            GitHub Issues
+          </a>
+          <Link to="/contact" className="nav-item nav-item-secondary">
+            <Mail size={16} className="nav-icon" />
+            Contact
           </Link>
         </nav>
 
