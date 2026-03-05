@@ -32,6 +32,7 @@ export interface TunnelOptions {
 
 /** Agent for backend requests so many concurrent requests don't get serialized by default connection limits */
 const BACKEND_AGENT = new http.Agent({ keepAlive: true, maxSockets: 50 });
+const BACKEND_AGENT_V6 = new http.Agent({ keepAlive: true, maxSockets: 50, family: 6 });
 
 export class TunnelClient {
   private ws: WebSocket | null = null;
@@ -39,6 +40,8 @@ export class TunnelClient {
   private assignment: TunnelAssignment | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
+  /** Cached resolved hostname for localhost backends (set after first successful connection) */
+  private resolvedLocalhostHostname: string | null = null;
 
   constructor(options: TunnelOptions) {
     this.options = options;
@@ -152,12 +155,56 @@ export class TunnelClient {
     try {
       const [host, portStr] = this.options.backendAddress.split(':');
       const port = parseInt(portStr || '80', 10);
-      // Use 127.0.0.1 when backend is localhost to avoid IPv6 (::1) connection issues
-      const hostname = host === 'localhost' ? '127.0.0.1' : host;
+      const isLocalhost = host === 'localhost';
+
+      // For localhost backends, try to use a cached resolved hostname first.
+      // On macOS, servers often bind to ::1 (IPv6) rather than 127.0.0.1 (IPv4)
+      // because macOS defaults IPV6_V6ONLY=1. We try 127.0.0.1 first and fall back
+      // to ::1 on ECONNREFUSED, then cache whichever works.
+      const primaryHostname = isLocalhost
+        ? (this.resolvedLocalhostHostname ?? '127.0.0.1')
+        : host;
+      const fallbackHostname = isLocalhost && !this.resolvedLocalhostHostname ? '::1' : null;
 
       const headers = { ...request.headers };
       // Rewrite Host so the local server sees the backend address it expects (many dev servers require this)
       headers.host = `${host}:${port}`;
+
+      const forwarded = await this.tryForwardRequest(
+        request,
+        primaryHostname,
+        port,
+        headers,
+        fallbackHostname,
+      );
+
+      if (forwarded && isLocalhost && !this.resolvedLocalhostHostname) {
+        this.resolvedLocalhostHostname = forwarded;
+      }
+    } catch (error) {
+      console.error('Error handling request:', error);
+      this.sendErrorResponse(
+        request.id,
+        502,
+        `Bad Gateway: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  /**
+   * Attempt to proxy the request to `hostname:port`. If the connection is
+   * refused and `fallbackHostname` is provided, retries with the fallback.
+   * Returns the hostname that succeeded, or null if an error response was sent.
+   */
+  private tryForwardRequest(
+    request: HttpRequest,
+    hostname: string,
+    port: number,
+    headers: Record<string, string | string[]>,
+    fallbackHostname: string | null,
+  ): Promise<string | null> {
+    return new Promise((resolve) => {
+      const agent = hostname === '::1' ? BACKEND_AGENT_V6 : BACKEND_AGENT;
 
       const requestOptions: http.RequestOptions = {
         hostname,
@@ -165,7 +212,7 @@ export class TunnelClient {
         path: request.url,
         method: request.method,
         headers,
-        agent: BACKEND_AGENT,
+        agent,
       };
 
       const BACKEND_TIMEOUT_MS = 15000;
@@ -174,6 +221,7 @@ export class TunnelClient {
         if (responseSent) return;
         responseSent = true;
         this.sendErrorResponse(request.id, statusCode, body);
+        resolve(null);
       };
 
       const proxyReq = http.request(requestOptions, (proxyRes) => {
@@ -187,17 +235,17 @@ export class TunnelClient {
           if (responseSent) return;
           responseSent = true;
 
-          const headers: Record<string, string | string[]> = {};
+          const responseHeaders: Record<string, string | string[]> = {};
           for (const [key, value] of Object.entries(proxyRes.headers)) {
             if (value !== undefined) {
-              headers[key] = value;
+              responseHeaders[key] = value;
             }
           }
 
           const response: HttpResponse = {
             id: request.id,
             statusCode: proxyRes.statusCode || 200,
-            headers,
+            headers: responseHeaders,
             body: body || undefined,
           };
 
@@ -207,12 +255,19 @@ export class TunnelClient {
           };
 
           this.ws?.send(JSON.stringify(message));
-
           console.log(`${request.method} ${request.url} → ${proxyRes.statusCode}`);
+          resolve(hostname);
         });
       });
 
-      proxyReq.on('error', (error) => {
+      proxyReq.on('error', (error: NodeJS.ErrnoException) => {
+        if (error.code === 'ECONNREFUSED' && fallbackHostname) {
+          // Primary address refused the connection — retry with the fallback
+          proxyReq.destroy();
+          this.tryForwardRequest(request, fallbackHostname, port, headers, null)
+            .then(resolve);
+          return;
+        }
         console.error(`Error forwarding request to ${this.options.backendAddress}:`, error.message);
         sendOnce(502, 'Bad Gateway: Could not connect to local service');
       });
@@ -229,14 +284,7 @@ export class TunnelClient {
       }
 
       proxyReq.end();
-    } catch (error) {
-      console.error('Error handling request:', error);
-      this.sendErrorResponse(
-        request.id,
-        502,
-        `Bad Gateway: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
+    });
   }
 
   disconnect(): void {
