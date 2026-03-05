@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, Github, Package } from 'lucide-react';
 import Logo from './Logo';
 import { authAPI } from '../api';
 import { docsNavItems } from '../docsNav';
+import { links } from '../links';
 import '../pages/LandingPage.css';
 
 interface MarketingLayoutProps {
@@ -66,6 +67,15 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
               <Link to="/docs" className="nav-text-link">
                 Docs
               </Link>
+              <a
+                href={links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-icon-link"
+                aria-label="GitHub"
+              >
+                <Github size={18} />
+              </a>
               {isLoggedIn ? (
                 <>
                   <button onClick={handleLogout} className="btn btn-secondary">
@@ -214,12 +224,13 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
               <h4>Developers</h4>
               <Link to="/docs/api">API Reference</Link>
               <Link to="/docs/cli">CLI Docs</Link>
-              <a
-                href="https://github.com/mjweaver01/ducky"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={links.github} target="_blank" rel="noopener noreferrer">
+                <Github size={14} className="footer-link-icon" />
                 GitHub
+              </a>
+              <a href={links.npm} target="_blank" rel="noopener noreferrer">
+                <Package size={14} className="footer-link-icon" />
+                npm
               </a>
             </div>
           </div>

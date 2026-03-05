@@ -50,6 +50,24 @@
   color: var(--text);
 }
 
+.nav-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: 8px;
+  transition:
+    color 0.2s,
+    background 0.2s;
+  line-height: 0;
+}
+
+.nav-icon-link:hover {
+  color: var(--text);
+  background: var(--dark-lighter);
+}
+
 /* ── Mobile hamburger ── */
 .nav-hamburger {
   display: none;
@@ -427,11 +445,18 @@
 }
 
 .footer-section a {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--text-muted);
   text-decoration: none;
   margin-bottom: 8px;
   transition: color 0.2s;
+}
+
+.footer-link-icon {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .footer-section a:hover {
