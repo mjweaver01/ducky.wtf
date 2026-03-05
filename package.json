@@ -1,7 +1,7 @@
 {
   "name": "ducky",
   "version": "1.0.0",
-  "description": "A minimal ngrok-like tunneling system",
+  "description": "A minimal, blazing fast tunneling system",
   "private": true,
   "workspaces": [
     "packages/*"
