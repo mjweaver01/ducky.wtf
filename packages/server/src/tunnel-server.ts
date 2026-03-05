@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as crypto from 'crypto';
 import { WebSocketServer, WebSocket } from 'ws';
-import { TunnelManager } from './tunnel-manager';
+import { TunnelManager, TunnelStats } from './tunnel-manager';
 import { AuthService } from './auth';
 import { TunnelMessage, TunnelRegistration } from '@ducky.wtf/shared';
 import { TunnelRepository } from '@ducky.wtf/database';
@@ -157,9 +157,9 @@ export class TunnelServer {
     try {
       let dbTunnelId: string | null = null;
       let closedBeforeDbRecord = false;
-      let closeStats: { requestCount: number; bytesTransferred: number } | null = null;
+      let closeStats: TunnelStats | null = null;
 
-      const onClose = (stats: { requestCount: number; bytesTransferred: number }) => {
+      const onClose = (stats: TunnelStats) => {
         logger.info('Tunnel closed', {
           tunnelId: assignment.tunnelId,
           url: assignment.assignedUrl,
@@ -228,9 +228,10 @@ export class TunnelServer {
             this.tunnelRepo.updateStatus(dbTunnelId, 'disconnected').catch((err) => {
               logger.error('Failed to update tunnel status after late close', { error: err.message });
             });
-            if (closeStats) {
+            const stats = closeStats as TunnelStats | null;
+            if (stats) {
               this.tunnelRepo
-                .setStats(dbTunnelId, closeStats.requestCount, closeStats.bytesTransferred)
+                .setStats(dbTunnelId, stats.requestCount, stats.bytesTransferred)
                 .catch((err: Error) => {
                   logger.error('Failed to flush tunnel stats after late close', { error: err.message });
                 });

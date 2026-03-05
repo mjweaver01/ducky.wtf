@@ -29,6 +29,11 @@ function parseWsDataFrame(frame: Buffer): { wsId: string; isBinary: boolean; dat
   return { wsId, isBinary, data };
 }
 
+export interface TunnelStats {
+  requestCount: number;
+  bytesTransferred: number;
+}
+
 interface Tunnel {
   id: string;
   ws: WebSocket;
@@ -87,7 +92,7 @@ export class TunnelManager {
     ws: WebSocket,
     registration: TunnelRegistration,
     tokenSubdomain?: string,
-    onClose?: (stats: { requestCount: number; bytesTransferred: number }) => void
+    onClose?: (stats: TunnelStats) => void
   ): TunnelAssignment {
     const tokenTunnels = this.tokenToTunnelIds.get(registration.authToken);
     const currentCount = tokenTunnels ? tokenTunnels.size : 0;
@@ -361,7 +366,7 @@ export class TunnelManager {
     }));
   }
 
-  getActiveTunnelStats(): Array<{ tunnelId: string; requestCount: number; bytesTransferred: number }> {
+  getActiveTunnelStats(): Array<{ tunnelId: string } & TunnelStats> {
     return Array.from(this.tunnels.values()).map((t) => ({
       tunnelId: t.id,
       requestCount: t.requestCount,
