@@ -156,6 +156,8 @@ export class TunnelServer {
 
     try {
       let dbTunnelId: string | null = null;
+      let closedBeforeDbRecord = false;
+      let closeStats: { requestCount: number; bytesTransferred: number } | null = null;
 
       const onClose = (stats: { requestCount: number; bytesTransferred: number }) => {
         logger.info('Tunnel closed', {
@@ -174,6 +176,10 @@ export class TunnelServer {
             .catch((err: Error) => {
               logger.error('Failed to flush tunnel stats on close', { error: err.message });
             });
+        } else {
+          // DB record not created yet — save state so we can update immediately after insert
+          closedBeforeDbRecord = true;
+          closeStats = stats;
         }
       };
 
@@ -215,6 +221,21 @@ export class TunnelServer {
           );
           dbTunnelId = dbTunnel.id;
           this.assignmentToDbTunnelId.set(assignment.tunnelId, dbTunnelId);
+
+          // If the tunnel closed while we were awaiting the DB insert, update status now
+          if (closedBeforeDbRecord) {
+            this.assignmentToDbTunnelId.delete(assignment.tunnelId);
+            this.tunnelRepo.updateStatus(dbTunnelId, 'disconnected').catch((err) => {
+              logger.error('Failed to update tunnel status after late close', { error: err.message });
+            });
+            if (closeStats) {
+              this.tunnelRepo
+                .setStats(dbTunnelId, closeStats.requestCount, closeStats.bytesTransferred)
+                .catch((err: Error) => {
+                  logger.error('Failed to flush tunnel stats after late close', { error: err.message });
+                });
+            }
+          }
         } catch (err: any) {
           logger.error('Failed to record tunnel in database', { error: err.message });
         }

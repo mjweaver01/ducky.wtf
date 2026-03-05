@@ -6,7 +6,7 @@ import { TunnelServer } from './tunnel-server';
 import { HttpServer } from './http-server';
 import { logger } from './logger';
 import { metrics } from './metrics';
-import { initDatabase, getDatabaseConfigFromEnv } from '@ducky.wtf/database';
+import { initDatabase, closeDatabase, getDatabaseConfigFromEnv } from '@ducky.wtf/database';
 
 async function main() {
   const httpPort = parseInt(process.env.PORT || '3000', 10);
@@ -77,6 +77,11 @@ async function main() {
 
     await httpServer.stop();
     await tunnelServer.stop();
+
+    if (process.env.DATABASE_HOST || process.env.DATABASE_URL) {
+      await closeDatabase();
+    }
+
     logger.close();
 
     logger.info('Server shut down successfully');

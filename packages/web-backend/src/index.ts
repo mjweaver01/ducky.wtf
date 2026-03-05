@@ -2,7 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import { initDatabase, getDatabaseConfigFromEnv } from '@ducky.wtf/database';
+import { initDatabase, closeDatabase, getDatabaseConfigFromEnv } from '@ducky.wtf/database';
 
 import authRoutes from './routes/auth';
 import magicLinkRoutes from './routes/magic-link';
@@ -109,9 +109,11 @@ app.listen(PORT, '0.0.0.0', () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, shutting down gracefully...');
-  const { closeDatabase } = await import('@ducky.wtf/database');
+const shutdown = async (signal: string) => {
+  console.log(`${signal} received, shutting down gracefully...`);
   await closeDatabase();
   process.exit(0);
-});
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
