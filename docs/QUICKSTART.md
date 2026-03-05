@@ -186,9 +186,10 @@ npm run dev
 ```
 
 ### Tunnel doesn't show in dashboard
-- Make sure you're using a token created in the dashboard
-- Check that `DATABASE_URL` or `DATABASE_HOST` is set for the server
-- View server logs: `npm run logs:server`
+The tunnel server writes tunnel records to the database when a connection is established. If the Tunnels tab is empty:
+- Make sure you're using a token created in the dashboard (not `VALID_TOKENS` env auth)
+- The tunnel server **must** have `DATABASE_HOST` or `DATABASE_URL` configured — `npm run dev` sets this automatically, but individual `npm run dev:server` does not inherit it unless you source `.env` first
+- View server logs: `npm run logs:server` — look for `✓ Database connected` at startup; if absent, DB env vars are missing
 
 ---
 

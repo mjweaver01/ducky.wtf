@@ -22,6 +22,7 @@ export const docsNavItems: DocsNavGroup[] = [
     items: [
       { label: 'Overview', to: '/docs/cli' },
       { label: 'ducky http', to: '/docs/cli#http' },
+      { label: 'Static URLs', to: '/docs/cli#static-urls' },
       { label: 'Config commands', to: '/docs/cli#config-commands' },
     ],
   },

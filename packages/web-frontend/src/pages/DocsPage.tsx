@@ -167,7 +167,7 @@ Flags:
   --authtoken <token>   Auth token (overrides saved config)
   --url       <url>     Request a specific tunnel URL
   --config    <path>    Path to a custom config file
-  --server-url <url>    Tunnel server WebSocket URL (default: ws://localhost:3000/_tunnel)`}</code>
+  --server-url <url>    Tunnel server WebSocket URL (default: wss://ducky.wtf/_tunnel)`}</code>
         </pre>
       </div>
       <div className="doc-codeblock">
@@ -187,6 +187,35 @@ Flags:
           </code>
         </pre>
       </div>
+
+      <h2 id="static-urls">Static URLs (Pro &amp; Enterprise)</h2>
+      <p>
+        On Pro and Enterprise plans, each auth token is assigned a permanent subdomain. Your tunnel
+        URL stays the same every time you connect — no more updating webhook configurations after a
+        restart.
+      </p>
+      <div className="doc-codeblock">
+        <div className="doc-codeblock-header">Same URL every time</div>
+        <pre>
+          <code>
+            {'# First run\n'}
+            <span className="code-primary">ducky</span>
+            {' http 3000\n✓ Tunnel established: https://myapp.'}
+            <span className="code-primary">ducky.wtf</span>
+            {' → localhost:3000\n\n# Next run — same URL\n'}
+            <span className="code-primary">ducky</span>
+            {' http 3000\n✓ Tunnel established: https://myapp.'}
+            <span className="code-primary">ducky.wtf</span>
+            {' → localhost:3000'}
+          </code>
+        </pre>
+      </div>
+      <p>
+        You can customize your subdomain in the{' '}
+        <a href="/dashboard/tokens">Auth Tokens</a> dashboard — click the edit icon next to your
+        static URL. Subdomains must be 3–20 lowercase letters and numbers. You can also regenerate
+        to get a new random one at any time.
+      </p>
 
       <h2 id="config-commands">Config commands</h2>
       <p>
@@ -349,6 +378,28 @@ const ApiDoc: React.FC = () => {
         <pre>
           <code>{`{ "name": "New Name" }`}</code>
         </pre>
+      </div>
+
+      <div className="api-endpoint">
+        <span className="api-method api-patch">PATCH</span>
+        <code>/api/tokens/{'{id}'}/subdomain</code>
+        <span className="api-desc">Set a custom subdomain — Pro &amp; Enterprise only</span>
+      </div>
+      <div className="doc-codeblock">
+        <div className="doc-codeblock-header">Request body</div>
+        <pre>
+          <code>{`{ "subdomain": "myapp" }  // results in myapp.ducky.wtf`}</code>
+        </pre>
+      </div>
+      <p style={{ fontSize: '0.875rem', margin: '0 0 1.5rem' }}>
+        Subdomain must be 3–20 lowercase letters and numbers. Returns <code>409</code> if already
+        taken.
+      </p>
+
+      <div className="api-endpoint">
+        <span className="api-method api-post">POST</span>
+        <code>/api/tokens/{'{id}'}/regenerate-subdomain</code>
+        <span className="api-desc">Assign a new random subdomain — Pro &amp; Enterprise only</span>
       </div>
 
       <div className="api-endpoint">

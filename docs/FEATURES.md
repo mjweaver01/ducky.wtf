@@ -26,11 +26,13 @@ ducky provides secure HTTP tunneling with a modern web dashboard for managing tu
 - User account management
 
 ### 📊 Dashboard & Monitoring
-- Real-time tunnel status
-- Request count and byte transfer statistics
-- Tunnel history
+- Real-time tunnel status (polls every 5 seconds)
+- Request count and bytes-transferred statistics — synced to the database every 30 seconds while a tunnel is active, with a final flush on disconnect
+- Tunnel history (all past connections with timestamps and stats)
 - Token management
 - User profile and settings
+
+> **Requires DB access on the tunnel server.** Tunnel records are written by the tunnel server itself. The server must have `DATABASE_HOST` / `DATABASE_URL` configured — if it runs without DB access, tunnels won't appear in the dashboard.
 
 ---
 
@@ -308,15 +310,29 @@ When a Pro/Enterprise user creates an auth token:
 4. The same URL is used for every connection with that token
 
 **Subdomain Customization:**
-- Pro/Enterprise users can edit their subdomain in the dashboard
+- Pro/Enterprise users can edit their subdomain in the dashboard (Auth Tokens tab)
 - Validation: 3-20 characters, lowercase alphanumeric only
 - Availability check prevents duplicates
-- Can regenerate to get a new random subdomain
+- Can regenerate to get a new random subdomain anytime
 
 Free users:
 1. Tokens are created without a subdomain (`subdomain = null`)
 2. Server generates a random 8-character subdomain on each connection
 3. URL changes every time
+
+### Tunnel Persistence & Stats
+
+When a tunnel connects, the tunnel server writes a record to the `tunnels` table:
+
+| Event | Action |
+|---|---|
+| Connect | `INSERT` row with `status = active`, subdomain, local port, connected timestamp |
+| Every 30s | `UPDATE` request count and bytes transferred (overwrite with current totals) |
+| Disconnect | `UPDATE` status to `disconnected`, set `disconnected_at`, flush final stats |
+
+**Bytes transferred** is measured from response body sizes (UTF-8 byte length of each proxied response).
+
+**Requirements:** The tunnel server must have `DATABASE_HOST` or `DATABASE_URL` set. Without database access, tunnels still work but are not recorded — the dashboard Tunnels tab will show empty.
 
 ### Database Schema
 

@@ -73,6 +73,8 @@ PORT=3000
 
 `DATABASE_URL` is auto-injected when you link the Postgres service — click the service → **Variables** → **+ Add Reference** → select `DATABASE_URL` from the Postgres plugin.
 
+> **`DATABASE_URL` is required** for tunnel history and statistics. Without it the tunnel server still proxies traffic (falling back to `VALID_TOKENS` auth), but no tunnel records are written to the database and the dashboard Tunnels tab will always be empty.
+
 ### 3b. web-backend (@ducky.wtf/web-backend)
 
 | Setting | Value |
