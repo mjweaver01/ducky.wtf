@@ -1,10 +1,11 @@
+import * as crypto from 'crypto';
 import { Router } from 'express';
 import { MagicLinkRepository, UserRepository, TokenRepository } from '@ducky.wtf/database';
-import { asyncHandler } from '../utils/handlers';
 import { generateToken } from '../middleware/auth';
+import { asyncHandler } from '../utils/handlers';
 import { serializeUser } from '../utils/serializers';
 import { emailService } from '../lib/email';
-import * as crypto from 'crypto';
+import { WWW_WEB_URL } from '../lib/webUrl';
 
 const router = Router();
 const magicLinkRepo = new MagicLinkRepository();
@@ -26,7 +27,7 @@ router.post(
 
     // TODO: Send email with magic link
     // For now, return the link in dev mode
-    const magicUrl = `${process.env.WEB_URL || 'http://localhost:9179'}/auth/magic?token=${magicLink.token}`;
+    const magicUrl = `${WWW_WEB_URL}/auth/magic?token=${magicLink.token}`;
 
     // In production, only send email and return success
     if (process.env.NODE_ENV === 'production') {
@@ -109,7 +110,7 @@ router.post(
     if (user) {
       // Create password reset magic link
       const magicLink = await magicLinkRepo.create(email, undefined, 'password_reset');
-      const resetUrl = `${process.env.WEB_URL || 'http://localhost:9179'}/reset-password?token=${magicLink.token}`;
+      const resetUrl = `${WWW_WEB_URL}/reset-password?token=${magicLink.token}`;
 
       // Send password reset email
       try {

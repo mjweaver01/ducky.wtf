@@ -1,13 +1,13 @@
+import Stripe from 'stripe';
 import { Router } from 'express';
 import { UserRepository } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
 import { asyncHandler } from '../utils/handlers';
 import stripe, { getPriceId, PRICE_TO_PLAN, isStripeConfigured } from '../lib/stripe';
-import Stripe from 'stripe';
+import { WWW_WEB_URL } from '../lib/webUrl';
 
 const router = Router();
 const userRepo = new UserRepository();
-
 // Create checkout session
 router.post(
   '/create-checkout-session',
@@ -61,8 +61,8 @@ router.post(
           quantity: 1,
         },
       ],
-      success_url: `${process.env.WEB_URL}/dashboard/settings?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.WEB_URL}/pricing?canceled=true`,
+      success_url: `${WWW_WEB_URL}/dashboard/settings?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${WWW_WEB_URL}/pricing?canceled=true`,
       metadata: {
         userId: user.id,
         plan,
@@ -90,7 +90,7 @@ router.post(
 
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripe_customer_id,
-      return_url: `${process.env.WEB_URL}/dashboard/settings`,
+      return_url: `${WWW_WEB_URL}/dashboard/settings`,
     });
 
     res.json({ url: session.url });
