@@ -29,14 +29,12 @@ try {
   process.exit(1);
 }
 
-const allowedOrigins = (process.env.WEB_URL || 'http://localhost:9179')
-  .split(',')
-  .map((url) => url.trim());
+const allowedOrigin = process.env.WEB_URL || 'http://localhost:9179';
 
 // CORS: set headers ourselves so the response origin can never be wrong
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin && origin === allowedOrigin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Credentials', 'true');
