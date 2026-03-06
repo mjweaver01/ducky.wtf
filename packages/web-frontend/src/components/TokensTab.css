@@ -17,6 +17,12 @@
   overflow-y: auto;
 }
 
+.tokens-table-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .tokens-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
