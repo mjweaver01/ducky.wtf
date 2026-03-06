@@ -1,10 +1,18 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import sitemap from 'vite-plugin-sitemap';
+import { sitemapRoutes } from './src/routes';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    sitemap({
+      hostname: 'https://ducky.wtf',
+      dynamicRoutes: sitemapRoutes,
+    }),
+  ],
   envDir: path.resolve(__dirname, '../..'),
   server: {
     port: 9179,

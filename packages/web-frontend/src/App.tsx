@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute, GuestOnlyRoute } from './protectedRoutes';
+import { routes } from './routes';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -23,25 +24,25 @@ const App: React.FC = () => {
     >
       <Routes>
         {/* Marketing */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/terms" element={<TermsPage />} />
+        <Route path={routes.home} element={<LandingPage />} />
+        <Route path={routes.pricing} element={<PricingPage />} />
+        <Route path={routes.about} element={<AboutPage />} />
+        <Route path={routes.contact} element={<ContactPage />} />
+        <Route path={routes.terms} element={<TermsPage />} />
 
         {/* Docs — wildcard so nested routes work */}
-        <Route path="/docs/*" element={<DocsPage />} />
+        <Route path={`${routes.docs}/*`} element={<DocsPage />} />
 
         {/* Auth — redirect to dashboard if already logged in */}
-        <Route path="/login" element={<GuestOnlyRoute element={<LoginPage />} />} />
-        <Route path="/signup" element={<GuestOnlyRoute element={<SignupPage />} />} />
-        <Route path="/forgot-password" element={<GuestOnlyRoute element={<ForgotPasswordPage />} />} />
-        <Route path="/reset-password" element={<GuestOnlyRoute element={<ResetPasswordPage />} />} />
+        <Route path={routes.login} element={<GuestOnlyRoute element={<LoginPage />} />} />
+        <Route path={routes.signup} element={<GuestOnlyRoute element={<SignupPage />} />} />
+        <Route path={routes.forgotPassword} element={<GuestOnlyRoute element={<ForgotPasswordPage />} />} />
+        <Route path={routes.resetPassword} element={<GuestOnlyRoute element={<ResetPasswordPage />} />} />
 
         {/* App — protected routes: auth logic lives inside ProtectedRoute */}
-        <Route path="/dashboard/*" element={<ProtectedRoute element={<DashboardPage />} />} />
+        <Route path={`${routes.dashboard}/*`} element={<ProtectedRoute element={<DashboardPage />} />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to={routes.home} replace />} />
       </Routes>
     </BrowserRouter>
   );
