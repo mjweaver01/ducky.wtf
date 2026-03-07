@@ -25,55 +25,55 @@ export function updateMetadata({ title, description }: MetadataOptions): void {
 
 export const pageMetadata = {
   home: {
-    title: 'Secure Tunnels to Localhost • ducky',
+    title: 'Secure Tunnels to Localhost • ducky.wtf',
     description:
       'Expose your local server to the internet with secure tunnels. Perfect for webhooks, demos, and development.',
   },
   pricing: {
-    title: 'Pricing • ducky',
+    title: 'Pricing • ducky.wtf',
     description: 'Simple, transparent pricing for developers. Choose the plan that works for you.',
   },
   about: {
-    title: 'About • ducky',
+    title: 'About • ducky.wtf',
     description: 'Learn about ducky and our mission to make localhost accessible to the internet.',
   },
   contact: {
-    title: 'Contact • ducky',
-    description: "Get in touch with the ducky team. We'd love to hear from you.",
+    title: 'Contact • ducky.wtf',
+    description: "Get in touch with the ducky.wtf team. We'd love to hear from you.",
   },
   terms: {
-    title: 'Terms of Service • ducky',
+    title: 'Terms of Service • ducky.wtf',
     description: 'Terms of service and usage policy for ducky tunnels.',
   },
   docs: {
-    title: 'Documentation • ducky',
+    title: 'Documentation • ducky.wtf',
     description: 'Complete documentation for the ducky CLI, API, and tunnel features.',
   },
   docsIntro: {
-    title: 'Introduction • ducky Docs',
+    title: 'Introduction • ducky.wtf Docs',
     description:
       'Get started with ducky tunnels. Learn how to expose your local server to the internet.',
   },
   docsCli: {
-    title: 'CLI Reference • ducky Docs',
+    title: 'CLI Reference • ducky.wtf Docs',
     description:
       'Complete CLI reference for ducky. All commands, flags, and configuration options.',
   },
   docsApi: {
-    title: 'API Reference • ducky Docs',
+    title: 'API Reference • ducky.wtf Docs',
     description:
       'REST API documentation for ducky. Manage tunnels, tokens, and domains programmatically.',
   },
   login: {
-    title: 'Log In • ducky',
+    title: 'Log In • ducky.wtf',
     description: 'Log in to your ducky account to manage tunnels and settings.',
   },
   signup: {
-    title: 'Sign Up • ducky',
+    title: 'Sign Up • ducky.wtf',
     description: 'Create your free ducky account and start tunneling in minutes.',
   },
   dashboard: {
-    title: 'Dashboard • ducky',
+    title: 'Dashboard • ducky.wtf',
     description: 'Manage your tunnels, tokens, and settings from the ducky dashboard.',
   },
   forgotPassword: {

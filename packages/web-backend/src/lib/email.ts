@@ -188,7 +188,7 @@ ${resetUrl}
 If you didn't request this, you can safely ignore this email.
 
 ---
-The Ducky Team
+The Ducky.wtf Team.
     `.trim();
   }
 
@@ -226,7 +226,7 @@ The Ducky Team
       </div>
       <div class="footer">
         <p>If you didn't request this password reset, you can safely ignore this email.</p>
-        <p>The Ducky Team</p>
+        <p>The Ducky.wtf Team.</p>
       </div>
     </div>
   </div>
@@ -282,7 +282,7 @@ ${inviteUrl}
 If you don't have a Ducky.wtf account yet, you'll be prompted to create one first.
 
 ---
-The Ducky Team
+The Ducky.wtf Team.
     `.trim();
   }
 
@@ -325,7 +325,7 @@ The Ducky Team
       </div>
       <div class="footer">
         <p>If you don't have a Ducky.wtf account yet, you'll be able to create one when you accept.</p>
-        <p>The Ducky Team</p>
+        <p>The Ducky.wtf Team.</p>
       </div>
     </div>
   </div>
