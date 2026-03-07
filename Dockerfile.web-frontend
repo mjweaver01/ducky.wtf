@@ -1,18 +1,18 @@
-FROM oven/bun:1 AS builder
+FROM node:25 AS builder
 WORKDIR /app
 
-# Copy full monorepo so bun workspaces resolve
-COPY package.json bun.lock tsconfig.json ./
+# Copy full monorepo so npm workspaces resolve
+COPY package.json package-lock.json tsconfig.json ./
 COPY packages/ ./packages/
-RUN bun install --frozen-lockfile
+RUN npm ci
 
 # Build shared package first
-RUN bun run build -w @ducky.wtf/shared
+RUN npm run build -w @ducky.wtf/shared
 
 # Build frontend with API URL
 ARG VITE_API_URL=http://localhost:3002
 ENV VITE_API_URL=${VITE_API_URL}
-RUN bun run build -w @ducky.wtf/web-frontend
+RUN npm run build -w @ducky.wtf/web-frontend
 
 FROM node:25-alpine
 
