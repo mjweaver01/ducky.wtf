@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import { DomainRepository, UserRepository } from '@ducky.wtf/database';
+import { DomainRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
 import { asyncHandler, assertOwned } from '../utils/handlers';
 import { serializeDomain } from '../utils/serializers';
 
 const router = Router();
 const domainRepo = new DomainRepository();
-const userRepo = new UserRepository();
 
 // List user's domains
 router.get(
@@ -28,16 +27,12 @@ router.post(
       return res.status(400).json({ error: 'Domain is required' });
     }
 
-    // Check user's plan - custom domains require Enterprise
-    const user = await userRepo.findById(req.user!.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    if (!['enterprise'].includes(user.plan)) {
+    // Check user's effective plan - custom domains require Enterprise
+    const effectivePlan = await getEffectivePlan(req.user!.id);
+    if (effectivePlan !== 'enterprise') {
       return res.status(403).json({
         error: 'Custom domains require Enterprise plan',
-        plan: user.plan,
+        plan: effectivePlan,
       });
     }
 

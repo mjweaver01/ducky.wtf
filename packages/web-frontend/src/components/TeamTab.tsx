@@ -203,7 +203,7 @@ const TeamTab: React.FC = () => {
     );
   }
 
-  if (user?.plan !== 'enterprise') {
+  if (user?.effectivePlan !== 'enterprise') {
     return (
       <div>
         <div className="page-header">

@@ -202,7 +202,7 @@ const DashboardPage: React.FC = () => {
             <Globe size={20} className="nav-icon" />
             Custom Domains
           </NavLink>
-          {user?.plan === 'enterprise' && (
+          {user?.effectivePlan === 'enterprise' && (
             <NavLink
               to="/dashboard/team"
               className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}

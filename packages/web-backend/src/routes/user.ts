@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UserRepository } from '@ducky.wtf/database';
+import { UserRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
 import { asyncHandler } from '../utils/handlers';
 import { serializeUser } from '../utils/serializers';
@@ -16,7 +16,9 @@ router.get(
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json({ user: serializeUser(user) });
+    
+    const effectivePlan = await getEffectivePlan(req.user!.id);
+    res.json({ user: { ...serializeUser(user), effectivePlan } });
   })
 );
 
@@ -38,7 +40,8 @@ router.patch(
     }
 
     const user = await userRepo.update(req.user!.id, updates);
-    res.json({ user: serializeUser(user) });
+    const effectivePlan = await getEffectivePlan(req.user!.id);
+    res.json({ user: { ...serializeUser(user), effectivePlan } });
   })
 );
 

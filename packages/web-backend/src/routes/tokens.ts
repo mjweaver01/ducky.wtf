@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { TokenRepository, UserRepository } from '@ducky.wtf/database';
+import { TokenRepository, UserRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
 import { asyncHandler, assertOwned } from '../utils/handlers';
 import { serializeToken } from '../utils/serializers';
@@ -37,13 +37,10 @@ router.post(
       return res.status(400).json({ error: 'Token name is required' });
     }
 
-    // Get user's plan to determine if they get a static subdomain
-    const user = await userRepo.findById(req.user!.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    // Get effective plan (includes team membership)
+    const effectivePlan = await getEffectivePlan(req.user!.id);
 
-    const token = await tokenRepo.create(req.user!.id, name, user.plan);
+    const token = await tokenRepo.create(req.user!.id, name, effectivePlan);
     res.status(201).json({ token: serializeToken(token) });
   })
 );
@@ -84,9 +81,9 @@ router.patch(
     const existing = await tokenRepo.findById(req.params.id);
     if (!assertOwned(existing, req.user!.id, res, 'Token')) return;
 
-    // Check user's plan
-    const user = await userRepo.findById(req.user!.id);
-    if (!user || !['pro', 'enterprise'].includes(user.plan)) {
+    // Check user's effective plan (includes team membership)
+    const effectivePlan = await getEffectivePlan(req.user!.id);
+    if (!['pro', 'enterprise'].includes(effectivePlan)) {
       return res.status(403).json({ error: 'Custom subdomains require Pro or Enterprise plan' });
     }
 
@@ -109,9 +106,9 @@ router.post(
     const existing = await tokenRepo.findById(req.params.id);
     if (!assertOwned(existing, req.user!.id, res, 'Token')) return;
 
-    // Check user's plan
-    const user = await userRepo.findById(req.user!.id);
-    if (!user || !['pro', 'enterprise'].includes(user.plan)) {
+    // Check user's effective plan (includes team membership)
+    const effectivePlan = await getEffectivePlan(req.user!.id);
+    if (!['pro', 'enterprise'].includes(effectivePlan)) {
       return res.status(403).json({ error: 'Static subdomains require Pro or Enterprise plan' });
     }
 

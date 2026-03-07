@@ -76,6 +76,7 @@ export interface User {
   email: string;
   fullName?: string;
   plan: 'free' | 'pro' | 'enterprise';
+  effectivePlan?: 'free' | 'pro' | 'enterprise'; // Plan including team inheritance
   planExpiresAt?: string;
   createdAt: string;
   lastLoginAt?: string;

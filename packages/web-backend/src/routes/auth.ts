@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UserRepository } from '@ducky.wtf/database';
+import { UserRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { generateToken } from '../middleware/auth';
 import { asyncHandler } from '../utils/handlers';
 import { serializeUser } from '../utils/serializers';
@@ -23,8 +23,9 @@ router.post(
 
     const user = await userRepo.create(email, password, fullName);
     const token = generateToken(user.id, user.email);
+    const effectivePlan = await getEffectivePlan(user.id);
 
-    res.status(201).json({ user: serializeUser(user), token });
+    res.status(201).json({ user: { ...serializeUser(user), effectivePlan }, token });
   })
 );
 
@@ -49,8 +50,9 @@ router.post(
 
     await userRepo.updateLastLogin(user.id);
     const token = generateToken(user.id, user.email);
+    const effectivePlan = await getEffectivePlan(user.id);
 
-    res.json({ user: serializeUser(user), token });
+    res.json({ user: { ...serializeUser(user), effectivePlan }, token });
   })
 );
 

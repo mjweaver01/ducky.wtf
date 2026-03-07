@@ -125,8 +125,8 @@ const DomainsTab: React.FC = () => {
           <button
             onClick={() => setShowAdd(true)}
             className="btn btn-primary"
-            disabled={user?.plan !== 'enterprise'}
-            title={user?.plan !== 'enterprise' ? 'Requires Enterprise plan' : ''}
+            disabled={user?.effectivePlan !== 'enterprise'}
+            title={user?.effectivePlan !== 'enterprise' ? 'Requires Enterprise plan' : ''}
           >
             <Plus size={16} />
             Add Domain
@@ -134,7 +134,7 @@ const DomainsTab: React.FC = () => {
         </div>
       </div>
 
-      {user?.plan !== 'enterprise' && (
+      {user?.effectivePlan !== 'enterprise' && (
         <div className="card domains-upgrade-banner">
           <div className="domains-upgrade-content">
             <Crown size={24} className="domains-upgrade-icon" />
@@ -155,7 +155,7 @@ const DomainsTab: React.FC = () => {
         </div>
       )}
 
-      {showAdd && user?.plan === 'enterprise' && (
+      {showAdd && user?.effectivePlan === 'enterprise' && (
         <div className="card add-domain-card">
           <h3 className="add-domain-title">Add Custom Domain</h3>
           <form onSubmit={handleAdd}>
@@ -192,7 +192,7 @@ const DomainsTab: React.FC = () => {
             <Globe size={48} className="domains-empty-icon" />
             <h3>No custom domains</h3>
             <p>Add your own domain to use professional tunnel URLs.</p>
-            {user?.plan === 'enterprise' && (
+            {user?.effectivePlan === 'enterprise' && (
               <button
                 onClick={() => setShowAdd(true)}
                 className="btn btn-primary"

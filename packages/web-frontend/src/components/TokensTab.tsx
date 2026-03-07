@@ -160,7 +160,7 @@ const TokensTab: React.FC = () => {
         </div>
       </div>
 
-      {user?.plan === 'free' && (
+      {user?.effectivePlan === 'free' && (
         <div className="card upgrade-banner">
           <div className="upgrade-banner-content">
             <Crown size={24} className="upgrade-banner-icon" />
@@ -391,7 +391,7 @@ const TokensTab: React.FC = () => {
                               </div>
                             )}
                           </div>
-                        ) : user?.plan !== 'free' ? (
+                        ) : user?.effectivePlan !== 'free' ? (
                           <div className="token-random-url">
                             <span className="token-random-url-text">No static URL yet</span>
                             <button
