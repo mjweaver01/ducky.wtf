@@ -194,7 +194,7 @@ const PricingPage: React.FC = () => {
             </p>
             <div className="pricing-help-actions">
               <button onClick={() => navigate('/contact')} className="btn btn-secondary">
-                Contact Sales
+                Contact Us
               </button>
               <button onClick={() => navigate('/docs')} className="btn btn-secondary">
                 View Documentation

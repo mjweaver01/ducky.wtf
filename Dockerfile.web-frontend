@@ -1,24 +1,25 @@
+FROM node:25-alpine AS builder
+WORKDIR /app
+
+# Copy full monorepo so npm workspaces resolve
+COPY package.json package-lock.json tsconfig.json ./
+COPY packages/ ./packages/
+RUN npm ci
+
+# Build shared package first
+RUN npm run build -w @ducky.wtf/shared
+
+# Build frontend with API URL
+ARG VITE_API_URL=http://localhost:3002
+ENV VITE_API_URL=${VITE_API_URL}
+RUN npm run build -w @ducky.wtf/web-frontend
+
 FROM node:25-alpine
 
 WORKDIR /app
 
-# Copy shared package first
-COPY packages/shared/ ./packages/shared/
-WORKDIR /app/packages/shared
-RUN npm install && npm run build
-
-# Copy and build frontend
-WORKDIR /app
-COPY packages/web-frontend/ ./packages/web-frontend/
-WORKDIR /app/packages/web-frontend
-
-# Link the shared package
-RUN npm install
-
-ARG VITE_API_URL=http://localhost:3002
-ENV VITE_API_URL=${VITE_API_URL}
-
-RUN npm run build
+# Copy built frontend
+COPY --from=builder /app/packages/web-frontend/dist ./dist
 
 EXPOSE 3000
 
