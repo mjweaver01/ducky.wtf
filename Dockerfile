@@ -1,10 +1,10 @@
-FROM node:25-alpine AS builder
+FROM node:25 AS builder
 WORKDIR /app
 
 # Copy full monorepo so npm workspaces resolve (avoids "No workspaces found" when Railway context differs)
-COPY package.json package-lock.json tsconfig.json ./
+COPY package.json tsconfig.json ./
 COPY packages/ ./packages/
-RUN npm ci
+RUN npm install
 
 RUN npm run build -w @ducky.wtf/shared && npm run build -w @ducky.wtf/database && npm run build -w @ducky.wtf/server
 
