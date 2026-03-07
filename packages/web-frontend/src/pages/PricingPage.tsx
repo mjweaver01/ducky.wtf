@@ -40,13 +40,13 @@ const PricingPage: React.FC = () => {
     if (planName === 'Free') return { price: '$0', period: 'forever' };
     if (planName === 'Pro') {
       return billingInterval === 'month'
-        ? { price: '$9', period: '/month' }
-        : { price: '$90', period: '/year', savings: 'Save $18' };
+        ? { price: '$7', period: '/month' }
+        : { price: '$70', period: '/year', savings: 'Save $14' };
     }
     if (planName === 'Enterprise') {
       return billingInterval === 'month'
-        ? { price: '$49', period: '/month' }
-        : { price: '$490', period: '/year', savings: 'Save $98' };
+        ? { price: '$19', period: '/month' }
+        : { price: '$190', period: '/year', savings: 'Save $38' };
     }
     return { price: '$0', period: '' };
   };

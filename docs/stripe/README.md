@@ -24,8 +24,8 @@ See [PRODUCTION.md](PRODUCTION.md) for Railway/Vercel setup.
 
 ## 💳 Plans & Pricing
 
-- **Pro**: $9/month or $90/year (save 17%)
-- **Enterprise**: $49/month or $490/year (save 17%)
+- **Pro**: $7/month or $70/year (save 17%)
+- **Enterprise**: $19/month or $190/year (save 17%)
 
 ## 📋 Environment Variables
 
