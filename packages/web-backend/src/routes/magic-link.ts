@@ -117,10 +117,15 @@ router.post(
         await emailService.sendPasswordResetEmail(email, resetUrl);
       } catch (error) {
         console.error('Failed to send password reset email:', error);
-        // In production, still return success to avoid email enumeration
+        // In development without email config, still allow reset by returning URL
         if (process.env.NODE_ENV !== 'production') {
-          return res.status(500).json({ error: 'Failed to send email' });
+          return res.json({
+            message: 'Password reset link generated (email not sent - configure EMAIL_USER/EMAIL_PASSWORD)',
+            resetUrl,
+            expiresIn: '15 minutes',
+          });
         }
+        // In production, still return success to avoid email enumeration
       }
 
       // In development, return the reset URL for easy testing
