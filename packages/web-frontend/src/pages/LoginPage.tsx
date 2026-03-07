@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../components/Logo';
+import PasswordInput from '../components/PasswordInput';
 import { authAPI } from '../api';
 import { useMetadata } from '../hooks/useMetadata';
 import { pageMetadata } from '../metadata';
@@ -65,11 +66,9 @@ const LoginPage: React.FC = () => {
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 id="password"
                 name="password"
-                className="input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
