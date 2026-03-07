@@ -380,6 +380,19 @@ const TokensTab: React.FC = () => {
                               </div>
                             )}
                           </div>
+                        ) : user?.plan !== 'free' ? (
+                          <div className="token-random-url">
+                            <span className="token-random-url-text">No static URL yet</span>
+                            <button
+                              onClick={() => handleRegenerateSubdomain(token.id)}
+                              className="btn btn-primary btn-sm"
+                              style={{ marginLeft: '8px' }}
+                              title="Add static URL to this token"
+                            >
+                              <Plus size={12} />
+                              Add Static URL
+                            </button>
+                          </div>
                         ) : (
                           <div className="token-random-url">
                             <span className="token-random-url-text">Random URL each time</span>
