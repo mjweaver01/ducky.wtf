@@ -312,6 +312,12 @@ const TeamTab: React.FC = () => {
               style={{ maxWidth: '300px', marginBottom: 0 }}
               value={newTeamName}
               onChange={(e) => setNewTeamName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setEditingTeamName(false);
+                  setNewTeamName('');
+                }
+              }}
               placeholder="Team name"
               autoFocus
             />
@@ -359,7 +365,7 @@ const TeamTab: React.FC = () => {
         )}
         {canInvite && (
           <div className="page-actions">
-            <button onClick={() => setShowInviteForm(true)} className="btn btn-primary">
+            <button onClick={() => setShowInviteForm(!showInviteForm)} className="btn btn-primary">
               <Mail size={16} />
               Invite Member
             </button>

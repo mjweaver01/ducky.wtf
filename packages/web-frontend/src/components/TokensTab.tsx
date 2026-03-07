@@ -149,7 +149,7 @@ const TokensTab: React.FC = () => {
         <div className="page-actions">
           <button
             onClick={() => {
-              setShowCreate(true);
+              setShowCreate(!showCreate);
               setCreatedToken(null);
             }}
             className="btn btn-primary"

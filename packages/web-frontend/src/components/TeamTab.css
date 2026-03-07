@@ -162,7 +162,7 @@
 /* Team name hover actions */
 .team-name-container {
   position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
 }

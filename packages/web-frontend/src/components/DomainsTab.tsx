@@ -123,7 +123,7 @@ const DomainsTab: React.FC = () => {
         <p className="page-subtitle">Use your own domain for tunnel URLs</p>
         <div className="page-actions">
           <button
-            onClick={() => setShowAdd(true)}
+            onClick={() => setShowAdd(!showAdd)}
             className="btn btn-primary"
             disabled={user?.effectivePlan !== 'enterprise'}
             title={user?.effectivePlan !== 'enterprise' ? 'Requires Enterprise plan' : ''}
