@@ -6,8 +6,7 @@
   gap: 24px;
 }
 
-.team-cards-container .table {
-  display: block;
+.team-table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }

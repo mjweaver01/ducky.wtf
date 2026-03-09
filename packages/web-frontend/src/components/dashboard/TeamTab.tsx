@@ -440,67 +440,73 @@ const TeamTab: React.FC = () => {
             </h3>
           </div>
 
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Member</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Joined</th>
-                {(canInvite || canManage) && <th>Actions</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((member) => (
-                <tr key={member.id}>
-                  <td>
-                    <div className="member-info">
-                      <div className="member-avatar">{member.email[0].toUpperCase()}</div>
-                      <strong>{member.fullName || 'Unknown'}</strong>
-                    </div>
-                  </td>
-                  <td>{member.email}</td>
-                  <td>{getRoleBadge(member.role)}</td>
-                  <td>{new Date(member.joinedAt).toLocaleDateString()}</td>
-                  {(canInvite || canManage) && (
-                    <td>
-                      {member.role !== 'owner' && (
-                        <div className="table-actions">
-                          {canManage && (
-                            <button
-                              onClick={() =>
-                                handleChangeRole(
-                                  member.userId,
-                                  member.role,
-                                  member.fullName || member.email
-                                )
-                              }
-                              className="btn btn-secondary btn-sm"
-                              title={`Change to ${member.role === 'admin' ? 'member' : 'admin'}`}
-                            >
-                              <Shield size={13} />
-                            </button>
-                          )}
-                          {(canManage ||
-                            (currentUserMember?.role === 'admin' && member.role === 'member')) && (
-                            <button
-                              onClick={() =>
-                                handleRemoveMember(member.userId, member.fullName || member.email)
-                              }
-                              className="btn btn-danger btn-sm"
-                              title="Remove member"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                  )}
+          <div className="team-table-wrapper">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Joined</th>
+                  {(canInvite || canManage) && <th>Actions</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member.id}>
+                    <td>
+                      <div className="member-info">
+                        <div className="member-avatar">{member.email[0].toUpperCase()}</div>
+                        <strong>{member.fullName || 'Unknown'}</strong>
+                      </div>
+                    </td>
+                    <td>{member.email}</td>
+                    <td>{getRoleBadge(member.role)}</td>
+                    <td>{new Date(member.joinedAt).toLocaleDateString()}</td>
+                    {(canInvite || canManage) && (
+                      <td>
+                        {member.role !== 'owner' && (
+                          <div className="table-actions">
+                            {canManage && (
+                              <button
+                                onClick={() =>
+                                  handleChangeRole(
+                                    member.userId,
+                                    member.role,
+                                    member.fullName || member.email
+                                  )
+                                }
+                                className="btn btn-secondary btn-sm"
+                                title={`Change to ${member.role === 'admin' ? 'member' : 'admin'}`}
+                              >
+                                <Shield size={13} />
+                              </button>
+                            )}
+                            {(canManage ||
+                              (currentUserMember?.role === 'admin' &&
+                                member.role === 'member')) && (
+                              <button
+                                onClick={() =>
+                                  handleRemoveMember(
+                                    member.userId,
+                                    member.fullName || member.email
+                                  )
+                                }
+                                className="btn btn-danger btn-sm"
+                                title="Remove member"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {invitations.length > 0 && canInvite && (
@@ -508,36 +514,38 @@ const TeamTab: React.FC = () => {
             <div className="team-info">
               <h3>Pending Invitations ({invitations.length})</h3>
             </div>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Invited</th>
-                  <th>Expires</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invitations.map((invitation) => (
-                  <tr key={invitation.id}>
-                    <td>{invitation.email}</td>
-                    <td>{getRoleBadge(invitation.role)}</td>
-                    <td>{new Date(invitation.createdAt).toLocaleDateString()}</td>
-                    <td>{new Date(invitation.expiresAt).toLocaleDateString()}</td>
-                    <td>
-                      <button
-                        onClick={() => handleRevokeInvitation(invitation.id, invitation.email)}
-                        className="btn btn-danger btn-sm"
-                      >
-                        <X size={13} />
-                        Revoke
-                      </button>
-                    </td>
+            <div className="team-table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Invited</th>
+                    <th>Expires</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {invitations.map((invitation) => (
+                    <tr key={invitation.id}>
+                      <td>{invitation.email}</td>
+                      <td>{getRoleBadge(invitation.role)}</td>
+                      <td>{new Date(invitation.createdAt).toLocaleDateString()}</td>
+                      <td>{new Date(invitation.expiresAt).toLocaleDateString()}</td>
+                      <td>
+                        <button
+                          onClick={() => handleRevokeInvitation(invitation.id, invitation.email)}
+                          className="btn btn-danger btn-sm"
+                        >
+                          <X size={13} />
+                          Revoke
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
