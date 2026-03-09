@@ -2,6 +2,8 @@ import { Router, Request } from 'express';
 import { AuthRequest } from '@ducky.wtf/shared';
 import { TeamRepository, UserRepository } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
+import { validateBody } from '../middleware/validate';
+import { createTeamSchema, inviteMemberSchema, updateMemberRoleSchema, acceptInvitationSchema } from '../validation/schemas';
 import { asyncHandler } from '../utils/handlers';
 import { serializeTeam, serializeTeamMember, serializeTeamInvitation } from '../utils/serializers';
 import { sendTeamInvitationEmail } from '../lib/email';
@@ -13,11 +15,9 @@ const userRepo = new UserRepository();
 router.post(
   '/',
   authenticateToken,
+  validateBody(createTeamSchema),
   asyncHandler(async (req, res) => {
     const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({ error: 'Team name is required' });
-    }
 
     const user = await userRepo.findById(req.user!.id);
     if (!user || user.plan !== 'enterprise') {
@@ -63,16 +63,9 @@ router.get(
 router.post(
   '/:id/invitations',
   authenticateToken,
+  validateBody(inviteMemberSchema),
   asyncHandler(async (req, res) => {
     const { email, role } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-    }
-
-    if (!role || !['admin', 'member'].includes(role)) {
-      return res.status(400).json({ error: 'Valid role (admin or member) is required' });
-    }
 
     const member = await teamRepo.getMemberByUserId(req.params.id, req.user!.id);
     if (!member || !['owner', 'admin'].includes(member.role)) {
@@ -118,12 +111,9 @@ router.post(
 router.post(
   '/accept-invitation',
   authenticateToken,
+  validateBody(acceptInvitationSchema),
   asyncHandler(async (req: Request & AuthRequest, res) => {
     const { token } = req.body;
-
-    if (!token) {
-      return res.status(400).json({ error: 'Token is required' });
-    }
 
     try {
       await teamRepo.acceptInvitation(token, req.user!.id);
@@ -192,12 +182,9 @@ router.delete(
 router.patch(
   '/:id/members/:userId',
   authenticateToken,
+  validateBody(updateMemberRoleSchema),
   asyncHandler(async (req, res) => {
     const { role } = req.body;
-
-    if (!role || !['admin', 'member'].includes(role)) {
-      return res.status(400).json({ error: 'Valid role (admin or member) is required' });
-    }
 
     const member = await teamRepo.getMemberByUserId(req.params.id, req.user!.id);
     if (!member || member.role !== 'owner') {

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { UserRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
+import { validateBody } from '../middleware/validate';
+import { updateProfileSchema, changePasswordSchema } from '../validation/schemas';
 import { asyncHandler } from '../utils/handlers';
 import { serializeUser } from '../utils/serializers';
 
@@ -26,17 +28,16 @@ router.get(
 router.patch(
   '/me',
   authenticateToken,
+  validateBody(updateProfileSchema),
   asyncHandler(async (req, res) => {
-    const { fullName, email } = req.body;
     const updates: Record<string, any> = {};
-
-    if (fullName !== undefined) updates.full_name = fullName;
-    if (email !== undefined) {
-      const existing = await userRepo.findByEmail(email);
+    if (req.body.fullName !== undefined) updates.full_name = req.body.fullName;
+    if (req.body.email !== undefined) {
+      const existing = await userRepo.findByEmail(req.body.email);
       if (existing && existing.id !== req.user!.id) {
         return res.status(409).json({ error: 'Email already in use' });
       }
-      updates.email = email;
+      updates.email = req.body.email;
     }
 
     const user = await userRepo.update(req.user!.id, updates);
@@ -49,11 +50,9 @@ router.patch(
 router.post(
   '/me/change-password',
   authenticateToken,
+  validateBody(changePasswordSchema),
   asyncHandler(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: 'Current and new passwords are required' });
-    }
 
     const user = await userRepo.findById(req.user!.id);
     if (!user) {

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { DomainRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
+import { validateBody, validateQuery } from '../middleware/validate';
+import { createDomainSchema, paginationSchema } from '../validation/schemas';
 import { asyncHandler, assertOwned } from '../utils/handlers';
 import { serializeDomain } from '../utils/serializers';
 
@@ -11,14 +13,13 @@ const domainRepo = new DomainRepository();
 router.get(
   '/',
   authenticateToken,
+  validateQuery(paginationSchema),
   asyncHandler(async (req, res) => {
-    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
-    const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
-    
-    const domains = await domainRepo.listByUser(req.user!.id, limit, offset);
+    const validated = paginationSchema.parse(req.query);
+    const domains = await domainRepo.listByUser(req.user!.id, validated.limit, validated.offset);
     res.json({ 
       domains: domains.map(serializeDomain),
-      pagination: { limit, offset, hasMore: domains.length === limit }
+      pagination: { limit: validated.limit, offset: validated.offset, hasMore: domains.length === validated.limit }
     });
   })
 );
@@ -27,11 +28,9 @@ router.get(
 router.post(
   '/',
   authenticateToken,
+  validateBody(createDomainSchema),
   asyncHandler(async (req, res) => {
     const { domain } = req.body;
-    if (!domain) {
-      return res.status(400).json({ error: 'Domain is required' });
-    }
 
     // Check user's effective plan - custom domains require Enterprise
     const effectivePlan = await getEffectivePlan(req.user!.id);

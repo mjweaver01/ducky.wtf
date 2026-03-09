@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { TunnelRepository } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
+import { validateQuery } from '../middleware/validate';
+import { paginationSchema, tunnelStatusSchema } from '../validation/schemas';
 import { asyncHandler, assertOwned } from '../utils/handlers';
 import { serializeTunnel, serializeTunnelStats } from '../utils/serializers';
 
@@ -11,19 +13,18 @@ const tunnelRepo = new TunnelRepository();
 router.get(
   '/',
   authenticateToken,
+  validateQuery(paginationSchema.extend({ status: tunnelStatusSchema })),
   asyncHandler(async (req, res) => {
-    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
-    const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
-    
+    const validated = paginationSchema.extend({ status: tunnelStatusSchema }).parse(req.query);
     const tunnels = await tunnelRepo.listByUser(
       req.user!.id,
-      req.query.status as string | undefined,
-      limit,
-      offset
+      validated.status,
+      validated.limit,
+      validated.offset
     );
-    res.json({ 
+    res.json({
       tunnels: tunnels.map(serializeTunnel),
-      pagination: { limit, offset, hasMore: tunnels.length === limit }
+      pagination: { limit: validated.limit, offset: validated.offset, hasMore: tunnels.length === validated.limit }
     });
   })
 );

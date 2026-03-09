@@ -2,6 +2,8 @@ import Stripe from 'stripe';
 import { Router } from 'express';
 import { UserRepository } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
+import { validateBody } from '../middleware/validate';
+import { createCheckoutSessionSchema } from '../validation/schemas';
 import { asyncHandler } from '../utils/handlers';
 import stripe, { getPriceId, PRICE_TO_PLAN, isStripeConfigured } from '../lib/stripe';
 import { WWW_WEB_URL } from '../lib/webUrl';
@@ -12,22 +14,15 @@ const userRepo = new UserRepository();
 router.post(
   '/create-checkout-session',
   authenticateToken,
+  validateBody(createCheckoutSessionSchema),
   asyncHandler(async (req, res) => {
     if (!isStripeConfigured) {
       return res.status(503).json({ error: 'Payment system not configured' });
     }
 
-    const { plan, interval = 'month' } = req.body;
+    const { plan, interval } = req.body;
 
-    if (!plan || !['pro', 'enterprise'].includes(plan)) {
-      return res.status(400).json({ error: 'Invalid plan' });
-    }
-
-    if (!interval || !['month', 'year'].includes(interval)) {
-      return res.status(400).json({ error: 'Invalid interval' });
-    }
-
-    const priceId = getPriceId(plan as 'pro' | 'enterprise', interval as 'month' | 'year');
+    const priceId = getPriceId(plan, interval);
     if (!priceId || priceId === '') {
       return res.status(400).json({ error: 'Price not configured for this plan and interval' });
     }

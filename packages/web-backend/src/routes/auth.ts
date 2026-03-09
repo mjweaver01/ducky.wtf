@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { UserRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { generateToken } from '../middleware/auth';
+import { validateBody } from '../middleware/validate';
+import { registerSchema, loginSchema } from '../validation/schemas';
 import { asyncHandler } from '../utils/handlers';
 import { serializeUser } from '../utils/serializers';
 
@@ -10,11 +12,9 @@ const userRepo = new UserRepository();
 // Register
 router.post(
   '/register',
+  validateBody(registerSchema),
   asyncHandler(async (req, res) => {
     const { email, password, fullName } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
 
     const existing = await userRepo.findByEmail(email);
     if (existing) {
@@ -32,11 +32,9 @@ router.post(
 // Login
 router.post(
   '/login',
+  validateBody(loginSchema),
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
 
     const user = await userRepo.findByEmail(email);
     if (!user) {

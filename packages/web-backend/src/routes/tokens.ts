@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { TokenRepository, UserRepository, getEffectivePlan } from '@ducky.wtf/database';
 import { authenticateToken } from '../middleware/auth';
+import { validateBody, validateQuery } from '../middleware/validate';
+import { createTokenSchema, updateTokenSchema, updateSubdomainSchema, paginationSchema } from '../validation/schemas';
 import { asyncHandler, assertOwned } from '../utils/handlers';
 import { serializeToken } from '../utils/serializers';
 
@@ -21,14 +23,13 @@ router.post(
 router.get(
   '/',
   authenticateToken,
+  validateQuery(paginationSchema),
   asyncHandler(async (req, res) => {
-    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
-    const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
-    
-    const tokens = await tokenRepo.listByUser(req.user!.id, limit, offset);
+    const validated = paginationSchema.parse(req.query);
+    const tokens = await tokenRepo.listByUser(req.user!.id, validated.limit, validated.offset);
     res.json({ 
       tokens: tokens.map(serializeToken),
-      pagination: { limit, offset, hasMore: tokens.length === limit }
+      pagination: { limit: validated.limit, offset: validated.offset, hasMore: tokens.length === validated.limit }
     });
   })
 );
@@ -37,11 +38,9 @@ router.get(
 router.post(
   '/',
   authenticateToken,
+  validateBody(createTokenSchema),
   asyncHandler(async (req, res) => {
     const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({ error: 'Token name is required' });
-    }
 
     // Get effective plan (includes team membership)
     const effectivePlan = await getEffectivePlan(req.user!.id);
@@ -55,11 +54,9 @@ router.post(
 router.patch(
   '/:id',
   authenticateToken,
+  validateBody(updateTokenSchema),
   asyncHandler(async (req, res) => {
     const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({ error: 'Token name is required' });
-    }
     const existing = await tokenRepo.findById(req.params.id);
     if (!assertOwned(existing, req.user!.id, res, 'Token')) return;
     const token = await tokenRepo.update(req.params.id, name);
@@ -71,18 +68,9 @@ router.patch(
 router.patch(
   '/:id/subdomain',
   authenticateToken,
+  validateBody(updateSubdomainSchema),
   asyncHandler(async (req, res) => {
     const { subdomain } = req.body;
-    if (!subdomain) {
-      return res.status(400).json({ error: 'Subdomain is required' });
-    }
-
-    // Validate subdomain format (alphanumeric, 3-20 chars)
-    if (!/^[a-z0-9]{3,20}$/.test(subdomain)) {
-      return res.status(400).json({
-        error: 'Subdomain must be 3-20 characters (lowercase letters and numbers only)',
-      });
-    }
 
     const existing = await tokenRepo.findById(req.params.id);
     if (!assertOwned(existing, req.user!.id, res, 'Token')) return;
