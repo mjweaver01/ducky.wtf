@@ -50,30 +50,30 @@ const IntroductionDoc: React.FC = () => {
       </p>
 
       <div className="doc-cards">
-        <a href="/docs/install" className="doc-card">
+        <Link to="/docs/install" className="doc-card">
           <Zap size={20} className="doc-card-icon" />
           <div>
             <strong>Quick Start</strong>
             <p>Get a tunnel running in under a minute.</p>
           </div>
           <ArrowRight size={16} className="doc-card-arrow" />
-        </a>
-        <a href="/docs/cli" className="doc-card">
+        </Link>
+        <Link to="/docs/cli" className="doc-card">
           <Terminal size={20} className="doc-card-icon" />
           <div>
             <strong>CLI Reference</strong>
             <p>All commands, flags, and configuration options.</p>
           </div>
           <ArrowRight size={16} className="doc-card-arrow" />
-        </a>
-        <a href="/docs/api" className="doc-card">
+        </Link>
+        <Link to="/docs/api" className="doc-card">
           <Code2 size={20} className="doc-card-icon" />
           <div>
             <strong>API Reference</strong>
             <p>Integrate ducky programmatically via REST.</p>
           </div>
           <ArrowRight size={16} className="doc-card-arrow" />
-        </a>
+        </Link>
       </div>
 
       <h2>How it works</h2>
