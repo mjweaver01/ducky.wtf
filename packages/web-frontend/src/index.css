@@ -300,6 +300,82 @@ code {
   margin-bottom: 16px;
 }
 
+/* ──────────────────────────────
+   Logo component styles
+────────────────────────────── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.logo-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
 .logo-text {
+  color: var(--primary);
+}
+
+/* ──────────────────────────────
+   Code block styles (used globally)
+────────────────────────────── */
+.code-demo {
+  background: var(--dark-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 60px var(--shadow-darker),
+    0 0 40px var(--primary-bg);
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.code-header {
+  background: var(--dark);
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.code-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.code-dot:nth-child(1) {
+  background: var(--danger);
+}
+.code-dot:nth-child(2) {
+  background: var(--primary);
+}
+.code-dot:nth-child(3) {
+  background: var(--success);
+}
+
+.code-content {
+  padding: 24px;
+  margin: 0;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: var(--text);
+}
+
+.code-content code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+}
+
+.code-content .code-primary {
   color: var(--primary);
 }
