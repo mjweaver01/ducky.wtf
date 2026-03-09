@@ -116,15 +116,16 @@ router.post(
 
 router.post(
   '/accept-invitation',
-  asyncHandler(async (req, res) => {
-    const { token, userId } = req.body;
+  authenticateToken,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { token } = req.body;
 
-    if (!token || !userId) {
-      return res.status(400).json({ error: 'Token and userId are required' });
+    if (!token) {
+      return res.status(400).json({ error: 'Token is required' });
     }
 
     try {
-      await teamRepo.acceptInvitation(token, userId);
+      await teamRepo.acceptInvitation(token, req.user!.id);
       res.json({ message: 'Invitation accepted successfully' });
     } catch (error: any) {
       res.status(400).json({ error: error.message || 'Failed to accept invitation' });
