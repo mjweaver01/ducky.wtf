@@ -77,9 +77,11 @@ export const userAPI = {
 };
 
 export const tokensAPI = {
-  async list(): Promise<Token[]> {
-    const response = await api.get<{ tokens: Token[] }>('/tokens');
-    return response.data.tokens;
+  async list(limit: number = 50, offset: number = 0): Promise<{ tokens: Token[]; hasMore: boolean }> {
+    const response = await api.get<{ tokens: Token[]; pagination: { limit: number; offset: number; hasMore: boolean } }>('/tokens', {
+      params: { limit, offset },
+    });
+    return { tokens: response.data.tokens, hasMore: response.data.pagination.hasMore };
   },
 
   async create(name: string): Promise<Token> {
@@ -108,11 +110,11 @@ export const tokensAPI = {
 };
 
 export const tunnelsAPI = {
-  async list(status?: string): Promise<Tunnel[]> {
-    const response = await api.get<{ tunnels: Tunnel[] }>('/tunnels', {
-      params: { status },
+  async list(status?: string, limit: number = 50, offset: number = 0): Promise<{ tunnels: Tunnel[]; hasMore: boolean }> {
+    const response = await api.get<{ tunnels: Tunnel[]; pagination: { limit: number; offset: number; hasMore: boolean } }>('/tunnels', {
+      params: { status, limit, offset },
     });
-    return response.data.tunnels;
+    return { tunnels: response.data.tunnels, hasMore: response.data.pagination.hasMore };
   },
 
   async get(id: string): Promise<Tunnel> {
@@ -137,9 +139,11 @@ export const billingAPI = {
 };
 
 export const domainsAPI = {
-  async list(): Promise<CustomDomain[]> {
-    const response = await api.get<{ domains: CustomDomain[] }>('/domains');
-    return response.data.domains;
+  async list(limit: number = 50, offset: number = 0): Promise<{ domains: CustomDomain[]; hasMore: boolean }> {
+    const response = await api.get<{ domains: CustomDomain[]; pagination: { limit: number; offset: number; hasMore: boolean } }>('/domains', {
+      params: { limit, offset },
+    });
+    return { domains: response.data.domains, hasMore: response.data.pagination.hasMore };
   },
 
   async create(domain: string): Promise<CustomDomain> {

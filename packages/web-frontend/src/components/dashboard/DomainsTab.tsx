@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Globe,
   Plus,
@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { CustomDomain, User } from '@ducky.wtf/shared';
 import { domainsAPI, userAPI } from '../../api';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import QuackingDuck from '../QuackingDuckIcon';
 import './DomainsTab.css';
 
@@ -19,11 +20,14 @@ const DomainsTab: React.FC = () => {
   const [domains, setDomains] = useState<CustomDomain[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [newDomain, setNewDomain] = useState('');
   const [adding, setAdding] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const domainsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadData();
@@ -32,7 +36,8 @@ const DomainsTab: React.FC = () => {
   const loadData = async () => {
     try {
       const [domainsData, userData] = await Promise.all([domainsAPI.list(), userAPI.getProfile()]);
-      setDomains(domainsData);
+      setDomains(domainsData.domains);
+      setHasMore(domainsData.hasMore);
       setUser(userData);
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -44,11 +49,33 @@ const DomainsTab: React.FC = () => {
   const loadDomains = async () => {
     try {
       const data = await domainsAPI.list();
-      setDomains(data);
+      setDomains(data.domains);
+      setHasMore(data.hasMore);
     } catch (error) {
       console.error('Failed to load domains:', error);
     }
   };
+
+  const loadMoreDomains = async () => {
+    setLoadingMore(true);
+    try {
+      const data = await domainsAPI.list(50, domains.length);
+      setDomains([...domains, ...data.domains]);
+      setHasMore(data.hasMore);
+    } catch (error) {
+      console.error('Failed to load more domains:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Infinite scroll
+  useInfiniteScroll({
+    containerRef: domainsContainerRef,
+    hasMore,
+    loading: loadingMore || loading,
+    onLoadMore: loadMoreDomains,
+  });
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,7 +231,7 @@ const DomainsTab: React.FC = () => {
             )}
           </div>
         ) : (
-          <div>
+          <div ref={domainsContainerRef} style={{ maxHeight: '600px', overflowY: 'auto' }}>
             {domains.map((domain) => {
               const txtName = `_ducky-challenge.${domain.domain}`;
               const txtValue = domain.verificationToken;
@@ -300,6 +327,11 @@ const DomainsTab: React.FC = () => {
                 </div>
               );
             })}
+            {loadingMore && (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <QuackingDuck size={40} wobble />
+              </div>
+            )}
           </div>
         )}
       </div>

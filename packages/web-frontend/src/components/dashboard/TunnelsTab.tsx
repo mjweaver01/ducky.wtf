@@ -12,6 +12,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Tunnel, TunnelStats } from '@ducky.wtf/shared';
 import { tunnelsAPI } from '../../api';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import QuackingDuck from '../QuackingDuckIcon';
 import './TunnelsTab.css';
 
@@ -31,6 +32,8 @@ const TunnelsTab: React.FC = () => {
   const [tunnels, setTunnels] = useState<Tunnel[]>([]);
   const [stats, setStats] = useState<TunnelStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +56,8 @@ const TunnelsTab: React.FC = () => {
         tunnelsAPI.list(),
         tunnelsAPI.getStats(),
       ]);
-      setTunnels(tunnelsData);
+      setTunnels(tunnelsData.tunnels);
+      setHasMore(tunnelsData.hasMore);
       setStats(statsData);
     } catch (error) {
       console.error('Failed to load tunnels:', error);
@@ -61,6 +65,27 @@ const TunnelsTab: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const loadMoreTunnels = async () => {
+    setLoadingMore(true);
+    try {
+      const data = await tunnelsAPI.list(undefined, 50, tunnels.length);
+      setTunnels([...tunnels, ...data.tunnels]);
+      setHasMore(data.hasMore);
+    } catch (error) {
+      console.error('Failed to load more tunnels:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Infinite scroll
+  useInfiniteScroll({
+    containerRef: tableContainerRef,
+    hasMore,
+    loading: loadingMore || loading,
+    onLoadMore: loadMoreTunnels,
+  });
 
   const handleStop = async (id: string) => {
     try {

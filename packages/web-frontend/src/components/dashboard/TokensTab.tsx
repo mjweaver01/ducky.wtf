@@ -3,6 +3,7 @@ import { Key, Copy, Check, Plus, Trash2, Crown, RefreshCw, Edit2, X } from 'luci
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Token, User } from '@ducky.wtf/shared';
 import { tokensAPI, userAPI } from '../../api';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import QuackingDuck from '../QuackingDuckIcon';
 import './TokensTab.css';
 
@@ -10,6 +11,8 @@ const TokensTab: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [newTokenName, setNewTokenName] = useState('');
   const [creating, setCreating] = useState(false);
@@ -34,7 +37,8 @@ const TokensTab: React.FC = () => {
   const loadData = async () => {
     try {
       const [tokensData, userData] = await Promise.all([tokensAPI.list(), userAPI.getProfile()]);
-      setTokens(tokensData);
+      setTokens(tokensData.tokens);
+      setHasMore(tokensData.hasMore);
       setUser(userData);
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -46,11 +50,33 @@ const TokensTab: React.FC = () => {
   const loadTokens = async () => {
     try {
       const data = await tokensAPI.list();
-      setTokens(data);
+      setTokens(data.tokens);
+      setHasMore(data.hasMore);
     } catch (error) {
       console.error('Failed to load tokens:', error);
     }
   };
+
+  const loadMoreTokens = async () => {
+    setLoadingMore(true);
+    try {
+      const data = await tokensAPI.list(50, tokens.length);
+      setTokens([...tokens, ...data.tokens]);
+      setHasMore(data.hasMore);
+    } catch (error) {
+      console.error('Failed to load more tokens:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Infinite scroll
+  useInfiniteScroll({
+    containerRef: tableContainerRef,
+    hasMore,
+    loading: loadingMore || loading,
+    onLoadMore: loadMoreTokens,
+  });
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
