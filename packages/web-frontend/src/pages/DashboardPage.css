@@ -247,6 +247,8 @@
   padding: 40px;
   background: var(--dark);
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 .page-header {
