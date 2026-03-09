@@ -7,8 +7,3 @@
   padding: 3rem;
   min-height: 200px;
 }
-
-.loading-duck-message {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-}

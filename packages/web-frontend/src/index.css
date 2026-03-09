@@ -272,13 +272,6 @@ code {
   background: var(--dark);
 }
 
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px;
-}
-
 @keyframes duck-float {
   0%,
   100% {
