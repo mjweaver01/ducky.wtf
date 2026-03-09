@@ -95,8 +95,12 @@ app.get('/health', async (req, res) => {
 // Error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
+  
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
   res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
+    error: isDevelopment ? (err.message || 'Internal server error') : 'Internal server error',
+    ...(isDevelopment && err.stack && { stack: err.stack }),
   });
 });
 
