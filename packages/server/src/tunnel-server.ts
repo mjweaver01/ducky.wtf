@@ -107,12 +107,43 @@ export class TunnelServer {
     const clientIp = (ws as any)._socket?.remoteAddress || 'unknown';
     logger.debug('New tunnel connection attempt', { clientIp });
 
+    // Set up a 10-second timeout for registration
+    const registrationTimeout = setTimeout(() => {
+      logger.warn('Registration timeout - closing connection', { clientIp });
+      ws.close(1008, 'Registration timeout');
+    }, 10000);
+
+    // Enable ping/pong heartbeat
+    const heartbeatInterval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+      }
+    }, 30000);
+
+    let missedPongs = 0;
+    ws.on('pong', () => {
+      missedPongs = 0;
+    });
+
+    const pongCheckInterval = setInterval(() => {
+      if (missedPongs >= 2) {
+        logger.warn('Missed 2 pongs - closing stale connection', { clientIp });
+        ws.terminate();
+        clearInterval(heartbeatInterval);
+        clearInterval(pongCheckInterval);
+      } else if (ws.readyState === WebSocket.OPEN) {
+        missedPongs++;
+      }
+    }, 30000);
+
     ws.once('message', (data: Buffer, isBinary: boolean) => {
+      clearTimeout(registrationTimeout);
+      
       if (isBinary) {
-        // Binary frames are WS data relay frames — only valid after registration,
-        // so a binary message here means something is wrong. Ignore gracefully.
         logger.warn('Received binary frame before registration', { clientIp });
         ws.close();
+        clearInterval(heartbeatInterval);
+        clearInterval(pongCheckInterval);
         return;
       }
       try {
@@ -134,12 +165,23 @@ export class TunnelServer {
         };
         ws.send(JSON.stringify(errorMessage));
         ws.close();
+        clearInterval(heartbeatInterval);
+        clearInterval(pongCheckInterval);
       }
+    });
+
+    ws.on('close', () => {
+      clearInterval(heartbeatInterval);
+      clearInterval(pongCheckInterval);
+      clearTimeout(registrationTimeout);
     });
 
     ws.on('error', (error) => {
       logger.error('WebSocket error', { error: error.message, clientIp });
       metrics.recordError('websocket_error');
+      clearInterval(heartbeatInterval);
+      clearInterval(pongCheckInterval);
+      clearTimeout(registrationTimeout);
     });
   }
 
@@ -297,11 +339,18 @@ export class TunnelServer {
       this.statsInterval = null;
     }
     return new Promise((resolve) => {
-      this.wss.close(() => {
-        logger.info('Tunnel server stopped');
-        console.log('Tunnel server stopped');
-        resolve();
-      });
+      let closedCount = 0;
+      const checkBothClosed = () => {
+        closedCount++;
+        if (closedCount === 2) {
+          logger.info('Tunnel server stopped');
+          console.log('Tunnel server stopped');
+          resolve();
+        }
+      };
+
+      this.wss.close(() => checkBothClosed());
+      this.proxyWss.close(() => checkBothClosed());
     });
   }
 }
