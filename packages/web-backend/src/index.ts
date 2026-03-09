@@ -60,6 +60,19 @@ app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const userInfo = (req as any).user ? ` user=${(req as any).user.id}` : '';
+    console.log(`${req.method} ${req.path} ${res.statusCode} ${duration}ms${userInfo}`);
+  });
+  
+  next();
+});
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -67,6 +80,28 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api/', limiter);
+
+// Stricter rate limiting for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per 15 minutes
+  message: 'Too many auth attempts, please try again later.',
+  skipSuccessfulRequests: true, // Only count failed attempts
+});
+
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/forgot-password', authLimiter);
+app.use('/api/auth/reset-password', authLimiter);
+
+// Stricter rate limiting for anonymous token creation
+const anonymousTokenLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // 5 per hour
+  message: 'Too many anonymous token requests, please try again later.',
+});
+
+app.use('/api/tokens/anonymous', anonymousTokenLimiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
