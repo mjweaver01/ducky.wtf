@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [
     react(),
     sitemap({
-      hostname: 'https://ducky.wtf',
+      hostname: 'https://www.ducky.wtf',
       dynamicRoutes: sitemapRoutes,
     }),
   ],
