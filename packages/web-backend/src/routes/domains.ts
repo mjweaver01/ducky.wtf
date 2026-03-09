@@ -12,8 +12,14 @@ router.get(
   '/',
   authenticateToken,
   asyncHandler(async (req, res) => {
-    const domains = await domainRepo.listByUser(req.user!.id);
-    res.json({ domains: domains.map(serializeDomain) });
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
+    const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
+    
+    const domains = await domainRepo.listByUser(req.user!.id, limit, offset);
+    res.json({ 
+      domains: domains.map(serializeDomain),
+      pagination: { limit, offset, hasMore: domains.length === limit }
+    });
   })
 );
 

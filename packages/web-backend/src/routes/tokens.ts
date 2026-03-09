@@ -22,8 +22,14 @@ router.get(
   '/',
   authenticateToken,
   asyncHandler(async (req, res) => {
-    const tokens = await tokenRepo.listByUser(req.user!.id);
-    res.json({ tokens: tokens.map(serializeToken) });
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
+    const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
+    
+    const tokens = await tokenRepo.listByUser(req.user!.id, limit, offset);
+    res.json({ 
+      tokens: tokens.map(serializeToken),
+      pagination: { limit, offset, hasMore: tokens.length === limit }
+    });
   })
 );
 

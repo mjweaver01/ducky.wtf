@@ -39,11 +39,11 @@ export class DomainRepository {
     return result.rows[0] || null;
   }
 
-  async listByUser(userId: string): Promise<CustomDomain[]> {
+  async listByUser(userId: string, limit: number = 100, offset: number = 0): Promise<CustomDomain[]> {
     const db = getDatabase();
     const result = await db.query<CustomDomain>(
-      'SELECT * FROM custom_domains WHERE user_id = $1 ORDER BY created_at DESC',
-      [userId]
+      'SELECT * FROM custom_domains WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3',
+      [userId, limit, offset]
     );
     return result.rows;
   }

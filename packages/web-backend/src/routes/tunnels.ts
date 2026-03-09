@@ -12,11 +12,19 @@ router.get(
   '/',
   authenticateToken,
   asyncHandler(async (req, res) => {
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
+    const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
+    
     const tunnels = await tunnelRepo.listByUser(
       req.user!.id,
-      req.query.status as string | undefined
+      req.query.status as string | undefined,
+      limit,
+      offset
     );
-    res.json({ tunnels: tunnels.map(serializeTunnel) });
+    res.json({ 
+      tunnels: tunnels.map(serializeTunnel),
+      pagination: { limit, offset, hasMore: tunnels.length === limit }
+    });
   })
 );
 

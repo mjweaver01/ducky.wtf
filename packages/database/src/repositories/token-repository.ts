@@ -86,13 +86,14 @@ export class TokenRepository {
     return result.rows[0] || null;
   }
 
-  async listByUser(userId: string): Promise<AuthToken[]> {
+  async listByUser(userId: string, limit: number = 100, offset: number = 0): Promise<AuthToken[]> {
     const db = getDatabase();
     const result = await db.query<AuthToken>(
       `SELECT * FROM auth_tokens 
        WHERE user_id = $1 AND revoked_at IS NULL 
-       ORDER BY created_at DESC`,
-      [userId]
+       ORDER BY created_at DESC
+       LIMIT $2 OFFSET $3`,
+      [userId, limit, offset]
     );
     return result.rows;
   }
