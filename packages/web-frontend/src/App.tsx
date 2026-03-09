@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute, GuestOnlyRoute } from './protectedRoutes';
 import { routes } from './routes';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -19,13 +19,15 @@ const DocsPage = lazy(() => import('./pages/DocsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    minHeight: '100vh',
-    background: '#000'
-  }}>
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      background: '#000',
+    }}
+  >
     <div className="loading">Loading...</div>
   </div>
 );
