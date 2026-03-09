@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute, GuestOnlyRoute } from './protectedRoutes';
 import { routes } from './routes';
 import ErrorBoundary from './components/ErrorBoundary';
+import QuackingDuck from './components/QuackingDuckIcon';
 
 // Lazy load all page components
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -22,13 +23,16 @@ const LoadingFallback = () => (
   <div
     style={{
       display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      background: '#000',
+      background: 'var(--dark)',
+      gap: '1rem',
     }}
   >
-    <div className="loading">Loading...</div>
+    <QuackingDuck size={100} wobble autoQuack />
+    <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Loading...</div>
   </div>
 );
 
