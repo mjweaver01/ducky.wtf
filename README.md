@@ -205,7 +205,7 @@ All developer docs live in [`docs/`](docs/):
 | [DEV_COMMANDS.md](docs/DEV_COMMANDS.md)                             | All `npm run` commands and dev workflows             |
 | [FEATURES.md](docs/FEATURES.md)                                     | Complete feature list and technical documentation    |
 | **Email**                                                           |                                                      |
-| [EMAIL_FORWARDING.md](docs/EMAIL_FORWARDING.md)                     | Set up email forwarding with ImprovMX (5 min)       |
+| [EMAIL_FORWARDING.md](docs/EMAIL_FORWARDING.md)                     | Set up email forwarding with ImprovMX (5 min)        |
 | **Stripe Integration**                                              |                                                      |
 | [STRIPE_README.md](docs/STRIPE_README.md)                           | Stripe documentation index (start here)              |
 | [STRIPE_QUICK_START.md](docs/STRIPE_QUICK_START.md)                 | 5-minute Stripe setup (local)                        |
