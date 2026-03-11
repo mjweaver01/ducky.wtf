@@ -32,6 +32,17 @@ function buildWsDataFrame(wsId: string, data: Buffer, isBinary: boolean): Buffer
   return Buffer.concat([header, data]);
 }
 
+/**
+ * Sanitize WebSocket close codes to prevent errors from reserved codes.
+ * Codes 0, 1004, 1005, 1006 are reserved and cannot be used in close() calls.
+ */
+function sanitizeCloseCode(code: number | undefined): number {
+  if (code == null) return 1000;
+  if ((code >= 1000 && code <= 1003) || (code >= 1007 && code <= 1014)) return code;
+  if (code >= 3000 && code <= 4999) return code;
+  return 1000;
+}
+
 /** Normalize tunnel URL to https for real domains; leave localhost as-is so local dev works. */
 export function toPublicUrl(url: string): string {
   try {
@@ -63,7 +74,7 @@ export class TunnelClient {
   private options: TunnelOptions;
   private assignment: TunnelAssignment | null = null;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private maxReconnectAttempts = 100;
   /** Cached resolved hostname for localhost backends (set after first successful connection) */
   private resolvedLocalhostHostname: string | null = null;
   /** Active proxied WebSocket connections to the local server, keyed by connection ID */
@@ -441,7 +452,7 @@ export class TunnelClient {
     if (localWs) {
       this.wsConnections.delete(payload.id);
       if (localWs.readyState === WebSocket.OPEN || localWs.readyState === WebSocket.CONNECTING) {
-        localWs.close(payload.code ?? 1000, payload.reason ?? '');
+        localWs.close(sanitizeCloseCode(payload.code), payload.reason ?? '');
       }
     }
   }

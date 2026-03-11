@@ -29,6 +29,17 @@ function parseWsDataFrame(frame: Buffer): { wsId: string; isBinary: boolean; dat
   return { wsId, isBinary, data };
 }
 
+/**
+ * Sanitize WebSocket close codes to prevent errors from reserved codes.
+ * Codes 0, 1004, 1005, 1006 are reserved and cannot be used in close() calls.
+ */
+function sanitizeCloseCode(code: number | undefined): number {
+  if (code == null) return 1000;
+  if ((code >= 1000 && code <= 1003) || (code >= 1007 && code <= 1014)) return code;
+  if (code >= 3000 && code <= 4999) return code;
+  return 1000;
+}
+
 export interface TunnelStats {
   requestCount: number;
   bytesTransferred: number;
@@ -265,7 +276,7 @@ export class TunnelManager {
         browserWs.readyState === WebSocket.OPEN ||
         browserWs.readyState === WebSocket.CONNECTING
       ) {
-        browserWs.close(payload.code ?? 1000, payload.reason ?? '');
+        browserWs.close(sanitizeCloseCode(payload.code), payload.reason ?? '');
       }
     }
   }
