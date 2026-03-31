@@ -16,8 +16,8 @@ const WhyDuckyPage: React.FC = () => {
           <div className="marketing-header">
             <h1 className="hero-title">Why ducky?</h1>
             <p className="hero-subtitle">
-              Looking for a localhost tunneling solution? Here's how ducky compares to ngrok and
-              other popular options.
+              Looking for a localhost tunneling solution? Here's how ducky compares to other popular
+              options.
             </p>
           </div>
 
@@ -28,9 +28,9 @@ const WhyDuckyPage: React.FC = () => {
                   <tr>
                     <th>Feature</th>
                     <th>ducky (Free)</th>
-                    <th>ngrok (Free)</th>
+                    <th>others (Free)</th>
                     <th>ducky (Paid)</th>
-                    <th>ngrok (Paid)</th>
+                    <th>others (Paid)</th>
                   </tr>
                 </thead>
                 <tbody>
