@@ -210,6 +210,7 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
             </div>
             <div className="footer-section">
               <h4>Product</h4>
+              <Link to="/why-ducky">Why ducky?</Link>
               <Link to="/#features">Features</Link>
               <Link to="/docs">Documentation</Link>
               <Link to="/pricing">Pricing</Link>
@@ -232,6 +233,13 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
                 <Package size={14} className="footer-link-icon" />
                 npm
               </a>
+            </div>
+            <div className="footer-section">
+              <h4>Guides</h4>
+              <Link to="/guides/webhook-testing">Webhook Testing</Link>
+              <Link to="/guides/expose-localhost">Expose Localhost</Link>
+              <Link to="/guides/demo-sharing">Share Demos</Link>
+              <Link to="/guides/mobile-testing">Mobile Testing</Link>
             </div>
           </div>
           <div className="footer-bottom">

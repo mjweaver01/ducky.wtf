@@ -58,6 +58,61 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      <section className="comparison-highlight">
+        <div className="container">
+          <h2 className="section-title">Why choose ducky?</h2>
+          <div className="comparison-cards">
+            <div className="comparison-card">
+              <div className="comparison-card-label">ducky (Free)</div>
+              <ul className="comparison-features">
+                <li>
+                  <span className="comparison-icon">✓</span>
+                  Unlimited bandwidth
+                </li>
+                <li>
+                  <span className="comparison-icon">✓</span>
+                  No warning pages
+                </li>
+                <li>
+                  <span className="comparison-icon">✓</span>
+                  No signup required
+                </li>
+                <li>
+                  <span className="comparison-icon">✓</span>
+                  Instant anonymous use
+                </li>
+              </ul>
+            </div>
+            <div className="comparison-card comparison-card-muted">
+              <div className="comparison-card-label">Other Tools (Free)</div>
+              <ul className="comparison-features">
+                <li>
+                  <span className="comparison-icon comparison-icon-error">✗</span>
+                  Often have bandwidth limits
+                </li>
+                <li>
+                  <span className="comparison-icon comparison-icon-error">✗</span>
+                  May show warning pages
+                </li>
+                <li>
+                  <span className="comparison-icon comparison-icon-error">✗</span>
+                  Usually require signup
+                </li>
+                <li>
+                  <span className="comparison-icon comparison-icon-error">✗</span>
+                  Complex configuration
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '32px' }}>
+            <Link to="/why-ducky" className="btn btn-secondary">
+              See Full Comparison
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section id="features" className="features">
         <div className="container">
           <h2 className="section-title">Built for developers</h2>
@@ -113,7 +168,7 @@ const LandingPage: React.FC = () => {
           <div className="cta-content">
             {isAuthenticated ? (
               <>
-                <h2>Get started!</h2>
+                <h2 className="hero-title">Get started!</h2>
                 <p>Go to your dashboard to start tunneling in seconds.</p>
                 <Link to="/dashboard" className="btn btn-primary btn-large">
                   Go to Dashboard
@@ -122,7 +177,7 @@ const LandingPage: React.FC = () => {
               </>
             ) : (
               <>
-                <h2>Ready to get started?</h2>
+                <h2 className="hero-title">Ready to get started?</h2>
                 <p>Create your free account and start tunneling in seconds.</p>
                 <Link to="/login" className="btn btn-primary btn-large">
                   Login Now

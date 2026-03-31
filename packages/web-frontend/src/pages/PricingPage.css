@@ -165,20 +165,27 @@
 
 .pricing-help-section {
   text-align: center;
-  padding: 40px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  padding: 64px 48px;
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  border-radius: 20px;
+  margin: 64px 0 0;
 }
 
 .pricing-help-title {
-  font-size: 24px;
+  font-size: 32px;
+  font-weight: 700;
   margin-bottom: 16px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .pricing-help-text {
   color: var(--text-muted);
-  margin-bottom: 24px;
+  font-size: 16px;
+  margin-bottom: 32px;
 }
 
 .pricing-help-actions {

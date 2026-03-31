@@ -240,7 +240,7 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 24px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -326,21 +326,19 @@
 }
 
 .cta-section {
-  padding: 80px 0;
-  background: linear-gradient(135deg, var(--primary-bg), var(--primary-bg));
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  padding: 64px 48px;
+  background: var(--primary-bg);
   color: var(--text);
   text-align: center;
+  border: none;
 }
 
 .cta-content h2 {
-  font-size: 40px;
-  margin-bottom: 16px;
+  border: none;
 }
 
 .cta-content p {
-  font-size: 18px;
+  font-size: 16px;
   margin-bottom: 32px;
   color: var(--text-muted);
 }
@@ -364,8 +362,8 @@
 
 .footer-content {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 32px;
   margin-bottom: 40px;
 }
 
@@ -441,4 +439,77 @@
 
 .footer .logo-text.footer-logo-text {
   /* inherits from parent */
+}
+
+/* ──────────────────────────────
+   Comparison highlight section (homepage)
+────────────────────────────── */
+
+.comparison-highlight {
+  padding: 80px 0;
+  background: var(--dark-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.comparison-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  max-width: 800px;
+  margin: 0 auto 32px;
+}
+
+.comparison-card {
+  padding: 32px;
+  background: var(--dark);
+  border: 2px solid var(--primary);
+  border-radius: 16px;
+  text-align: left;
+}
+
+.comparison-card-muted {
+  border-color: var(--border);
+  opacity: 0.7;
+}
+
+.comparison-card-label {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.comparison-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comparison-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.comparison-icon {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--success);
+  font-size: 18px;
+}
+
+.comparison-icon-error {
+  color: var(--danger);
+}
+
+@media (max-width: 768px) {
+  .comparison-cards {
+    grid-template-columns: 1fr;
+  }
 }

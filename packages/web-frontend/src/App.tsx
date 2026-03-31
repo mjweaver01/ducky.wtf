@@ -16,6 +16,11 @@ const PricingPage = lazy(() => import('./pages/PricingPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
+const WhyDuckyPage = lazy(() => import('./pages/WhyDuckyPage'));
+const WebhookTestingGuidePage = lazy(() => import('./pages/WebhookTestingGuidePage'));
+const ExposeLocalhostGuidePage = lazy(() => import('./pages/ExposeLocalhostGuidePage'));
+const DemoSharingGuidePage = lazy(() => import('./pages/DemoSharingGuidePage'));
+const MobileTestingGuidePage = lazy(() => import('./pages/MobileTestingGuidePage'));
 const DocsPage = lazy(() => import('./pages/DocsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
@@ -38,6 +43,11 @@ const App: React.FC = () => {
             <Route path={routes.about} element={<AboutPage />} />
             <Route path={routes.contact} element={<ContactPage />} />
             <Route path={routes.terms} element={<TermsPage />} />
+            <Route path={routes.whyDucky} element={<WhyDuckyPage />} />
+            <Route path={routes.webhookTestingGuide} element={<WebhookTestingGuidePage />} />
+            <Route path={routes.exposeLocalhostGuide} element={<ExposeLocalhostGuidePage />} />
+            <Route path={routes.demoSharingGuide} element={<DemoSharingGuidePage />} />
+            <Route path={routes.mobileTestingGuide} element={<MobileTestingGuidePage />} />
 
             {/* Docs — wildcard so nested routes work */}
             <Route path={`${routes.docs}/*`} element={<DocsPage />} />

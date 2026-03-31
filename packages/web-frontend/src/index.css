@@ -88,6 +88,9 @@ select:focus-visible {
   --shadow-darker: rgba(0, 0, 0, 0.5);
   --shadow-primary: rgba(251, 191, 36, 0.5);
 
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
+
   /* Code block (Darcula) */
   --code-bg: #2b2b2b;
   --code-header-bg: #3c3f41;
