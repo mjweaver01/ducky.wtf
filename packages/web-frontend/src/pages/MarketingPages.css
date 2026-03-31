@@ -1011,6 +1011,11 @@
   margin-right: 6px;
 }
 
+.comparison-table td.highlight-win {
+  background: var(--primary-bg);
+  font-weight: 600;
+}
+
 .why-section {
   margin: 64px 0;
 }

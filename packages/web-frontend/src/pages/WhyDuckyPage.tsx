@@ -29,7 +29,7 @@ const WhyDuckyPage: React.FC = () => {
                     <th>Feature</th>
                     <th>ducky (Free)</th>
                     <th>ngrok (Free)</th>
-                    <th>ducky (Pro)</th>
+                    <th>ducky (Paid)</th>
                     <th>ngrok (Paid)</th>
                   </tr>
                 </thead>
@@ -51,7 +51,7 @@ const WhyDuckyPage: React.FC = () => {
                   </tr>
                   <tr>
                     <td>Interstitial Warnings</td>
-                    <td>
+                    <td className="highlight-win">
                       <Check size={20} className="icon-success" /> None
                     </td>
                     <td>
@@ -66,17 +66,17 @@ const WhyDuckyPage: React.FC = () => {
                   </tr>
                   <tr>
                     <td>Account Required</td>
-                    <td>
+                    <td className="highlight-win">
                       <Check size={20} className="icon-success" /> Optional
                     </td>
                     <td>
-                      <X size={20} className="icon-error" /> Yes
+                      <X size={20} className="icon-error" /> Required
                     </td>
                     <td>
-                      <Check size={20} className="icon-success" /> Yes
+                      <X size={20} className="icon-error" /> Required
                     </td>
                     <td>
-                      <X size={20} className="icon-error" /> Yes
+                      <X size={20} className="icon-error" /> Required
                     </td>
                   </tr>
                   <tr>
@@ -117,11 +117,41 @@ const WhyDuckyPage: React.FC = () => {
                     <td>
                       <X size={20} className="icon-error" /> No
                     </td>
-                    <td>
-                      <X size={20} className="icon-error" /> Enterprise only
+                    <td className="highlight-win">
+                      <Check size={20} className="icon-success" /> Yes
                     </td>
                     <td>
-                      <Check size={20} className="icon-success" /> Yes
+                      <X size={20} className="icon-error" /> No (Enterprise only)
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Usage-Based Pricing</td>
+                    <td>
+                      <Check size={20} className="icon-success" /> None
+                    </td>
+                    <td>
+                      <Check size={20} className="icon-success" /> None
+                    </td>
+                    <td className="highlight-win">
+                      <Check size={20} className="icon-success" /> Flat Fee
+                    </td>
+                    <td>
+                      <X size={20} className="icon-error" /> Credit-based ($10 credit/mo)
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>RBAC (Role-Based Access)</td>
+                    <td>
+                      <X size={20} className="icon-error" /> No
+                    </td>
+                    <td>
+                      <X size={20} className="icon-error" /> No
+                    </td>
+                    <td className="highlight-win">
+                      <Check size={20} className="icon-success" /> Included
+                    </td>
+                    <td>
+                      <X size={20} className="icon-error" /> $10/user/mo add-on
                     </td>
                   </tr>
                   <tr>
@@ -150,8 +180,8 @@ const WhyDuckyPage: React.FC = () => {
                     <td>Pricing (Paid)</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>$7/mo or $70/yr</td>
-                    <td>$8/mo or $96/yr</td>
+                    <td className="highlight-win">$7-19/mo</td>
+                    <td>$8-100+/mo</td>
                   </tr>
                 </tbody>
               </table>
@@ -179,8 +209,8 @@ const WhyDuckyPage: React.FC = () => {
                 </div>
                 <h3>No Interstitial Warnings</h3>
                 <p>
-                  ducky never shows warning pages to your visitors. Your demos and webhook tests work
-                  cleanly without interruption - no friction for you or your users.
+                  ducky never shows warning pages to your visitors. Your demos and webhook tests
+                  work cleanly without interruption - no friction for you or your users.
                 </p>
               </div>
 
@@ -190,8 +220,8 @@ const WhyDuckyPage: React.FC = () => {
                 </div>
                 <h3>Unlimited Bandwidth</h3>
                 <p>
-                  No monthly caps on the free tier. Test, demo, and develop as much as you need without
-                  worrying about hitting bandwidth limits or surprise charges.
+                  No monthly caps on the free tier. Test, demo, and develop as much as you need
+                  without worrying about hitting bandwidth limits or surprise charges.
                 </p>
               </div>
 
