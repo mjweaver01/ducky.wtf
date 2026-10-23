@@ -1,4 +1,4 @@
-FROM node:25 AS builder
+FROM node:24.22.1 AS builder
 WORKDIR /app
 
 # Copy full monorepo so npm workspaces resolve (avoids "No workspaces found" when Railway context differs)
@@ -8,7 +8,7 @@ RUN npm install
 
 RUN npm run build -w @ducky.wtf/shared && npm run build -w @ducky.wtf/database && npm run build -w @ducky.wtf/server
 
-FROM node:25-alpine
+FROM node:24.22.1-alpine
 
 WORKDIR /app
 
